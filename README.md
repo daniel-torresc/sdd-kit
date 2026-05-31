@@ -22,22 +22,39 @@ plugin depends on `brain-common`; `brain-common` depends on no domain.
 
 [arch]: ../docs/second-brain-architecture.md
 
-## Current capabilities (v0.1.0)
+## Current capabilities (v0.1.1)
 
 **SessionStart bootstrap hook** (`hooks/brain-bootstrap.sh`) — loads
-the canonical declarative-memory files into Claude Code context at
-session start:
+the **stable identity layer** of the brain into Claude Code context
+at session start. Intentionally small (~2,400 tokens) and
+cache-friendly:
 
 - `CLAUDE.md` — brain orientation + write protocol
-- `meta/SCHEMA.md` — frontmatter + path contract
 - `self/identity/current.md` — who Daniel is
-- `self/preferences.md` — how Daniel works
-- Today's daily note (if present)
+- `self/preferences/INDEX.md` — behavioral defaults digest
+
+Read on demand (NOT pre-loaded — keeps bootstrap small and stable):
+
+- `meta/SCHEMA.md` — when about to write to the brain; CLAUDE.md
+  already directs agents there
+- `self/preferences/<topic>.md` — when a specific preference detail
+  matters (INDEX has the digest)
+- `episodic/daily/YYYY/MM/YYYY-MM-DD.md` — when continuing today's
+  work; grows unboundedly, kept out of bootstrap
 
 This replaces the per-harness Claude Code memory system. Per the
 founding decision [the brain is the sole memory store][sole-mem], all
 persistent context lives in the brain and is loaded on demand by this
 hook.
+
+### Version history
+
+- **v0.1.1** (2026-05-31) — trimmed bootstrap from ~6K tokens to
+  ~2.4K by deferring SCHEMA, full preferences, and today's daily
+  to on-demand reads. Preferences split into a folder with INDEX
+  digest in the brain.
+- **v0.1.0** (2026-05-31) — initial; loaded CLAUDE.md, SCHEMA.md,
+  identity, preferences, today's daily. Verbose first cut.
 
 [sole-mem]: ../second-brain/self/decisions/2026-05-31-brain-is-sole-memory.md
 

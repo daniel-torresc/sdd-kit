@@ -1,7 +1,7 @@
 {
   "name": "brain-common",
   "description": "Domain-agnostic substrate for Daniel's second brain: lifecycle hooks, shared skills, and infrastructure agents read by every brain-* domain plugin.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "Daniel Torres Candil",
     "email": "daniel.torrescandil@hotmail.com"
