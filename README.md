@@ -22,7 +22,7 @@ plugin depends on `brain-common`; `brain-common` depends on no domain.
 
 [arch]: ../docs/second-brain-architecture.md
 
-## Current capabilities (v0.1.1)
+## Current capabilities (v0.1.2)
 
 **SessionStart bootstrap hook** (`hooks/brain-bootstrap.sh`) — loads
 the **stable identity layer** of the brain into Claude Code context
@@ -49,6 +49,15 @@ hook.
 
 ### Version history
 
+- **v0.1.2** (2026-05-31) — bug fix: brain-resolution worked in dev
+  install (sibling layout) but silently failed under marketplace
+  install (plugin cloned to `~/.claude/plugins/cache/...`, no
+  sibling brain). Replaced sibling-only lookup with a fallback
+  chain: `$BRAIN_PATH` → `$CLAUDE_PROJECT_DIR/second-brain` →
+  `$CLAUDE_PROJECT_DIR` → Daniel's known `$HOME` path → dev
+  sibling. Each candidate sanity-checked for CLAUDE.md presence.
+  Hook output now leads with a "resolved brain at: …" line for
+  easy debuggability.
 - **v0.1.1** (2026-05-31) — trimmed bootstrap from ~6K tokens to
   ~2.4K by deferring SCHEMA, full preferences, and today's daily
   to on-demand reads. Preferences split into a folder with INDEX
