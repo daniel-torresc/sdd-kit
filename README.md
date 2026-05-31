@@ -22,7 +22,23 @@ plugin depends on `brain-common`; `brain-common` depends on no domain.
 
 [arch]: ../docs/second-brain-architecture.md
 
-## Current capabilities (v0.1.2)
+## Current capabilities (v0.2.0)
+
+**`synthesizer` agent** (`agents/synthesizer.md`) — custodian of the
+brain's *semantic* memory. Runs in its own context so heavy source-reading
+never pollutes the calling session. Digests sources into topic notes and
+tends the semantic store (dedup, INDEX, wikilink graph, `needs_review`
+triage). Owns `semantic/`; links to — never rewrites — `self/`, episodic,
+and entity hubs.
+
+**`digest-sources` skill** (`skills/digest-sources/SKILL.md`) — the
+synthesizer's primary procedure (also invokable directly). Turns N sources
+on ONE topic into a single `semantic/<domain>/<topic>.md` note: ingests
+web URLs, local files (PDF/md/txt), pasted text, and video transcripts;
+extracts atomic claims; merges-not-appends against the existing note;
+dedupes, corroborates, resolves contradictions; stamps a `## Sources`
+ledger; writes atomically; updates the INDEX; logs an episodic entry; and
+commits + pushes. Re-running on a topic converges instead of bloating.
 
 **SessionStart bootstrap hook** (`hooks/brain-bootstrap.sh`) — loads
 the **stable identity layer** of the brain into Claude Code context
@@ -49,6 +65,12 @@ hook.
 
 ### Version history
 
+- **v0.2.0** (2026-05-31) — first procedural capabilities beyond the
+  bootstrap: the `synthesizer` agent and `digest-sources` skill. Fills
+  two slots the layout reserved as "future." Establishes the brain
+  write-contract pattern for kit verbs (pull → read → merge → stamp →
+  atomic write → commit + push) and the `## Sources` ledger convention
+  for multi-source semantic notes.
 - **v0.1.2** (2026-05-31) — bug fix: brain-resolution worked in dev
   install (sibling layout) but silently failed under marketplace
   install (plugin cloned to `~/.claude/plugins/cache/...`, no
@@ -76,8 +98,12 @@ brain-common/
 ├── hooks/
 │   ├── hooks.json           # hook declarations
 │   └── brain-bootstrap.sh   # SessionStart bootstrap
-├── skills/                  # future: brain-write, brain-navigation, capture, memory-consolidation
-├── agents/                  # future: librarian, diarist, optional router
+├── skills/
+│   └── digest-sources/      # N sources on one topic → one semantic note
+│                            # future: brain-write, brain-navigation, capture, memory-consolidation
+├── agents/
+│   └── synthesizer.md       # semantic-memory custodian (runs digest-sources)
+│                            # future: diarist, optional router
 ├── .mcp.json                # future: shared MCPs (Todoist, Gmail, Calendar)
 └── README.md
 ```
