@@ -12,41 +12,47 @@
 #   - self/preferences/<topic>.md — detail files; INDEX has the digest
 #   - episodic/daily/YYYY/MM/YYYY-MM-DD.md — only when continuing today's work
 #
-# Brain resolution (first match wins):
-#   1. $BRAIN_PATH                                    — explicit override
-#   2. $CLAUDE_PROJECT_DIR/second-brain               — cwd is brain's parent
-#   3. $CLAUDE_PROJECT_DIR                            — cwd IS the brain
-#   4. $HOME/Library/CloudStorage/OneDrive-Personal/Personal/Second Brain/second-brain
-#                                                     — Daniel's known location
-#   5. $CLAUDE_PLUGIN_ROOT/../second-brain            — dev sibling layout
-#
-# Each candidate must contain CLAUDE.md to qualify (cheap sanity check).
+# Brain resolution: BRAIN_PATH only.
+#   The brain lives in a different place on each machine (personal, work,
+#   …), so its location is configured per-machine via the BRAIN_PATH
+#   environment variable — the absolute path to your second-brain/ dir.
+#   Set it in ~/.claude/settings.json ("env": { "BRAIN_PATH": "…" }) or
+#   export it from your shell profile. If BRAIN_PATH is unset or does not
+#   point at a valid brain, this hook prints a warning and loads nothing.
 
 set -uo pipefail
 
 is_brain() { [ -f "$1/CLAUDE.md" ] && [ -d "$1/self" ] && [ -d "$1/episodic" ]; }
 
-BRAIN=""
-TRIED=()
-for candidate in \
-  "${BRAIN_PATH:-}" \
-  "${CLAUDE_PROJECT_DIR:-}/second-brain" \
-  "${CLAUDE_PROJECT_DIR:-}" \
-  "${HOME}/Library/CloudStorage/OneDrive-Personal/Personal/Second Brain/second-brain" \
-  "${CLAUDE_PLUGIN_ROOT:-}/../second-brain"; do
-  [ -z "$candidate" ] && continue
-  candidate_abs="$(cd "$candidate" 2>/dev/null && pwd)" || { TRIED+=("$candidate (not a dir)"); continue; }
-  if is_brain "$candidate_abs"; then
-    BRAIN="$candidate_abs"
-    break
-  fi
-  TRIED+=("$candidate_abs (no CLAUDE.md)")
-done
+warn() {
+  cat <<'WARN'
+===== brain-bootstrap — brain NOT loaded =====
 
-if [ -z "$BRAIN" ]; then
-  echo "[brain-bootstrap] could not locate the brain. Tried:"
-  for t in "${TRIED[@]}"; do echo "  - $t"; done
-  echo "Set BRAIN_PATH to the absolute path of your second-brain/ to override."
+⚠️  BRAIN_PATH is not set (or does not point at a valid brain), so your
+second brain was not loaded into this session.
+
+Set it to the absolute path of your second-brain/ directory — either:
+
+  • ~/.claude/settings.json  (applies to every session on this machine):
+        "env": { "BRAIN_PATH": "/absolute/path/to/second-brain" }
+
+  • or your shell profile (~/.zshrc):
+        export BRAIN_PATH="/absolute/path/to/second-brain"
+
+Then start a new Claude Code session.
+WARN
+}
+
+if [ -z "${BRAIN_PATH:-}" ]; then
+  warn
+  exit 0
+fi
+
+BRAIN="$(cd "${BRAIN_PATH}" 2>/dev/null && pwd)" || BRAIN=""
+if [ -z "$BRAIN" ] || ! is_brain "$BRAIN"; then
+  echo "[brain-bootstrap] BRAIN_PATH=\"${BRAIN_PATH}\" is not a valid brain"
+  echo "  (expected a directory containing CLAUDE.md, self/ and episodic/)."
+  warn
   exit 0
 fi
 
@@ -59,7 +65,7 @@ emit() {
 }
 
 cat <<EOF
-===== brain-bootstrap v0.1.2 — resolved brain at: $BRAIN =====
+===== brain-bootstrap v0.3.0 — resolved brain at: $BRAIN =====
 
 # Second Brain — session bootstrap
 
