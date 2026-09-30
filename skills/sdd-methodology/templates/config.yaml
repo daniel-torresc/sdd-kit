@@ -1,0 +1,92 @@
+# SDD configuration. Owned by the human; agents propose changes via the librarian.
+version: 1
+
+permissions:
+  # true: the SDD guard approves each agent's in-policy actions (owned writes, allowlisted
+  # commands such as tests, lint and spikes) without prompting. Those commands run project
+  # code with your user's rights, so run autonomous sessions in Claude Code's sandbox or a
+  # dev container. false: normal permission prompts.
+  auto_approve: true
+
+parallelism:
+  max_parallel_tasks: 3        # engineer/test-engineer tasks running at once
+
+git:
+  main_branch: main
+  feature_branch: "sdd/{feature}-{slug}"   # e.g. sdd/F003-user-signup
+  task_branch: "sdd/{feature}-{task}"      # e.g. sdd/F003-T-04, one worktree each
+  autonomous: [local branches, worktrees, merges into sdd/* branches, push sdd/* branches, draft PRs]
+  human: [merge into main or release branches, force push, deleting remote branches]
+
+engineering:
+  diff_coverage_min: 85        # % of changed lines covered (diff-cover), part of the task definition of done
+  fix_attempts: 3              # per failing check; attempts 2–3 on opus
+  opus_for_risk: [high]        # task risk levels that run on opus
+
+verify:
+  mutation_testing: [L]        # classes that run mutation testing on changed modules
+  exploratory_testing: true    # for features with a UI or public API
+  flaky_tests: block           # zero tolerance; re-runs only for diagnosis
+
+loop_caps:
+  review_rounds: { S: 2, M: 2, L: 3 }
+  build_fix_attempts: 3
+
+# Any signal of a higher class raises the class.
+triage_signals:
+  L:
+    - authentication, authorization, sessions or secrets
+    - payments or money movement
+    - personal, health or financial data
+    - destructive or irreversible data migration
+    - public API or externally consumed contract
+    - greenfield project or new service
+    - anything whose reversal would require a rewrite
+  M:
+    - new user-facing capability
+    - new interface, endpoint, event or data model
+    - new runtime dependency
+  S:
+    - localized behavior change within existing interfaces
+  T:
+    - typo, copy change, config value, docs
+    - patch-level dependency bump
+
+# Lens triggers: which reviewers/consultants join, and from which phase.
+lens_triggers:
+  security:
+    when: [auth, sessions, secrets, user input, file upload, external calls, new dependency, PII]
+    agent: security-engineer
+  reliability:
+    when: [network calls, queues, background jobs, state, caching, new infra]
+    agent: reliability-engineer
+  ux:
+    when: [user interface]
+    agent: ux-designer
+  a11y:
+    when: [user interface]
+    agent: consultant
+    skill: lens-accessibility
+  data-migration:
+    when: [schema change, backfill]
+    agent: consultant
+    skill: lens-data-migration
+  evals:
+    when: [LLM or ML model call]
+    agent: consultant
+    skill: lens-ai-evals
+  finops:
+    when: [new cloud resource]
+    agent: consultant
+    skill: lens-finops
+  api-compat:
+    when: [public contract change]
+    agent: consultant
+    skill: lens-api-compat
+
+# Fallback mapping from repo markers to stack skills (the stack ADR takes precedence).
+stack_routing:
+  pyproject.toml: [stack-python]
+  package.json: [stack-typescript]
+
+human_gates: [G1, G2, G3]

@@ -1,0 +1,14 @@
+# Approved runtime dependencies. The SDD guard blocks engineers from adding any runtime
+# dependency not listed here (dev-only tools are not listed; they are D1 and logged).
+# Owner: security-engineer. Until security-engineer is available, the architect may add
+# entries with status: provisional; security-engineer confirms or rejects them later.
+version: 1
+runtime:
+  - name: fastapi
+    ecosystem: pypi            # pypi | npm | ...
+    version: ">=0.115,<1"
+    license: MIT
+    purpose: HTTP API framework (ADR-0001)
+    status: approved           # approved | provisional | rejected
+    approved-by: security-engineer
+    checked: 2026-10-01        # license, known vulnerabilities, maintenance health

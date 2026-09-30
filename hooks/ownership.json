@@ -1,0 +1,153 @@
+{
+  "_doc": "Per-agent permissions enforced by scripts/guard.py. Agents not listed here (and the main session) are not restricted by this guard. 'write': glob patterns relative to the project root. 'bash': regexes a command must fully match (command chaining is always denied). 'mcp': 'read-only' denies MCP tools whose name looks like a write.",
+  "product-lead": {
+    "write": [
+      ".sdd/product/*.md",
+      "specs/*/brief.md",
+      "specs/*/requirements.md",
+      "specs/*/gates/G1-*.md",
+      "specs/*/log.md",
+      "specs/*/reviews/*.md"
+    ],
+    "bash": [
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?"
+    ],
+    "mcp": "read-only"
+  },
+  "challenger": {
+    "write": [
+      "specs/*/reviews/*-challenger-r*.md",
+      "specs/*/reviews/second-opinion-challenger-*.md",
+      ".sdd/reviews/*-challenger-*.md"
+    ],
+    "bash": [
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?"
+    ],
+    "mcp": "read-only"
+  },
+  "architect": {
+    "write": [
+      "specs/*/design.md",
+      "specs/*/contracts/*",
+      "docs/adr/ADR-*.md",
+      "specs/*/gates/G2-*.md",
+      ".sdd/gates/G2-*.md",
+      ".sdd/architecture/*.md",
+      ".sdd/spikes/*",
+      "specs/*/reviews/*.md",
+      ".sdd/reviews/*.md",
+      "specs/*/log.md",
+      ".sdd/dependencies.yaml"
+    ],
+    "bash": [
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv (run|init|add|sync|remove) (--directory|--project) \\.sdd/spikes/SPK-[\\w.-]+( [^<>$]*)?"
+    ],
+    "mcp": "read-only"
+  },
+  "tech-lead": {
+    "write": [
+      "specs/*/tasks.md",
+      "specs/*/reviews/*.md",
+      "specs/*/log.md"
+    ],
+    "write_if_conflicted": true,
+    "bash": [
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?git (status|log|diff|show|rev-parse|merge-base)( [^<>$;&|`]*)?",
+      "(rtk )?git branch( (-a|-r|-v|-vv|--list|--show-current|--merged|--no-merged)[^<>$;&|`]*)?",
+      "(rtk )?git worktree list( [^<>$;&|`]*)?",
+      "(rtk )?git switch sdd/[\\w./-]+",
+      "(rtk )?git merge --no-ff (--no-edit )?sdd/[\\w./-]+( -m \\\"[^\\\"$`]*\\\")?",
+      "(rtk )?git merge --abort",
+      "(rtk )?git revert --no-edit [0-9a-f]{7,40}",
+      "(rtk )?git add [^<>$;&|`]*",
+      "(rtk )?git commit --no-edit",
+      "(rtk )?git push (-u )?origin sdd/[\\w./-]+",
+      "(rtk )?gh pr create --draft[^<>$;&|`]*",
+      "(rtk )?gh pr (edit|view|checks)[^<>$;&|`]*",
+      "(rtk )?gh run (view|list)[^<>$;&|`]*",
+      "(rtk )?uv run (-q )?pytest[^<>$;&|`]*"
+    ],
+    "mcp": "read-only"
+  },
+  "test-engineer": {
+    "write": [
+      "specs/*/test-plan.md",
+      "specs/*/evidence/*",
+      "specs/*/reviews/*.md",
+      "specs/*/log.md",
+      "*tests/acceptance/*",
+      "*tests/contract/*",
+      "*tests/e2e/*",
+      "*tests/perf/*",
+      "*tests/fixtures/*",
+      "tests/conftest.py",
+      "*tests/*/conftest.py"
+    ],
+    "bash": [
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv run (-q )?(pytest|schemathesis|mutmut)[^<>$;&|`]*",
+      "(rtk )?npx (--yes )?playwright[^<>$;&|`]*",
+      "(rtk )?k6 run [^<>$;&|`]*",
+      "(rtk )?git (status|diff|log)( [^<>$;&|`]*)?",
+      "(rtk )?git add [^<>$;&|`]*",
+      "(rtk )?git commit( -m \\\"[^\\\"$`]*\\\")+",
+      "(rtk )?git switch -c sdd/[\\w./-]+"
+    ],
+    "mcp": "read-only"
+  },
+  "engineer": {
+    "write": [
+      "*"
+    ],
+    "write_except": [
+      "specs/*",
+      "!specs/*/log.md",
+      ".sdd/*",
+      "docs/adr/*",
+      "*tests/acceptance/*",
+      "*tests/contract/*",
+      "*tests/e2e/*",
+      "*tests/perf/*",
+      ".github/*",
+      "infra/*",
+      "Dockerfile*",
+      "*/Dockerfile*",
+      "docker-compose*",
+      "compose.y*ml"
+    ],
+    "deps_check": true,
+    "bash": [
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv (run|sync|lock|add|remove|tree|pip list)( [^<>$;&|`]*)?",
+      "(rtk )?(npm|pnpm|yarn) (run|test|exec|ci|install|i|add|remove|ls|audit)( [^<>$;&|`]*)?",
+      "(rtk )?npx [^<>$;&|`]*",
+      "(rtk )?git (status|diff|log|show)( [^<>$;&|`]*)?",
+      "(rtk )?git (add|restore) [^<>$;&|`]*",
+      "(rtk )?git commit( -m \\\"[^\\\"$`]*\\\")+",
+      "(rtk )?git (switch -c|branch -m) sdd/[\\w./-]+",
+      "(rtk )?curl [^<>$;&|`]*https?://(localhost|127\\.0\\.0\\.1)(:\\d+)?(/[^<>$;&|`\\s]*)?[^<>$;&|`]*"
+    ],
+    "mcp": "read-only"
+  },
+  "code-reviewer": {
+    "write": [
+      "specs/*/reviews/build-code-reviewer-*.md",
+      "specs/*/reviews/test-code-reviewer-*.md",
+      "specs/*/reviews/verify-code-reviewer-*.md"
+    ],
+    "bash": [
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?git (diff|log|show|status)( [^<>$;&|`]*)?",
+      "(rtk )?git branch( (-a|-r|-v|-vv|--list|--show-current|--merged|--no-merged|--contains)[^<>$;&|`]*)?",
+      "(rtk )?git worktree list( [^<>$;&|`]*)?",
+      "(rtk )?git worktree add --detach \\.claude/worktrees/review-[\\w.-]+ [\\w./-]+",
+      "(rtk )?git worktree remove (--force )?\\.claude/worktrees/review-[\\w.-]+",
+      "(rtk )?uv run (-q )?--directory \\.claude/worktrees/review-[\\w.-]+ (pytest|ruff|pyright|diff-cover|pip-audit|lint-imports|alembic)[^<>$;&|`]*",
+      "(rtk )?uv sync (-q )?--directory \\.claude/worktrees/review-[\\w.-]+[^<>$;&|`]*",
+      "(rtk )?npm --prefix \\.claude/worktrees/review-[\\w.-]+ (ci|test|run|audit)[^<>$;&|`]*"
+    ],
+    "mcp": "read-only"
+  }
+}

@@ -1,0 +1,12 @@
+# Written by the hub after every step. Do not edit by hand.
+feature: F000-slug
+class: M                 # T | S | M | L
+lenses: []               # e.g. [security, reliability, ux, a11y]
+phase: discover          # triage | discover | specify | design | plan | build | verify | release | operate | evolve | done
+phase_status: drafting   # drafting | in-review | revising | exit-check | gate-pending | done
+loops: {}                # { specify: 1, design: 2 }
+gates: {}                # { G1: approved@2026-09-30 }
+tasks: {}                # { T-01: done, T-02: in-progress@worktree-2, T-03: blocked(T-02) }
+stale: []                # artifacts awaiting re-validation
+pending_human: []        # gate files awaiting a decision
+history: []              # [ "2026-09-30 specify: G1 approved" ]
