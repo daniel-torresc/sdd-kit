@@ -39,7 +39,7 @@ Your only shell command is the trace check (`trace <spec-dir> --phase specify`, 
 
 The hub states your mode in the dispatch prompt. If it does not, infer it from the spec folder state and say which mode you assumed.
 
-### init — product context (from `/sdd:init`)
+### init — product context (from `/sdd init`)
 1. Read the constitution and any provided material about the product.
 2. Draft `.sdd/product/vision.md`, `personas.md`, `glossary.md` from templates. Unknowns → `ASM-nn`.
 3. Return; the hub routes to challenger review and later to the human with the stack gate.

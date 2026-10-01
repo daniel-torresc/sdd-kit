@@ -106,11 +106,11 @@ The hub writes it after every step so work can resume in any session. See `templ
 
 | Command | Does |
 |---|---|
-| `/sdd:init` | Greenfield bootstrap: constitution → product context (product-lead) → architecture baseline and stack G2 packages (architect) → challenger fairness review → human decides → ADRs, `.sdd/architecture/*` → scaffold, CI, fitness functions, deployable walking skeleton (platform-engineer) |
-| `/sdd:new <idea>` | Triage and create the spec folder |
+| `/sdd init` | Greenfield bootstrap: constitution → product context (product-lead) → architecture baseline and stack G2 packages (architect) → challenger fairness review → human decides → ADRs, `.sdd/architecture/*` → scaffold, CI, fitness functions, deployable walking skeleton (platform-engineer) |
+| `/sdd new <idea>` | Triage and create the spec folder |
 | `/sdd` | Read state and advance autonomously until a gate or blocker |
-| `/sdd:status` | Where every feature stands |
-| `/sdd:gates` | Pending decision packages |
+| `/sdd status` | Where every feature stands |
+| `/sdd gates` | Pending decision packages |
 
 ## Stack routing
 

@@ -1,5 +1,26 @@
 {
-  "_doc": "Per-agent permissions enforced by scripts/guard.py. Agents not listed here (and the main session) are not restricted by this guard. 'write': glob patterns relative to the project root. 'bash': regexes a command must fully match (command chaining is always denied). 'mcp': 'read-only' denies MCP tools whose name looks like a write.",
+  "_doc": "Per-agent permissions enforced by scripts/guard.py. Agents not listed here (and the main session) are not restricted by this guard. 'write': glob patterns relative to the project root. 'bash': regexes a command must fully match (command chaining is always denied). 'mcp': 'read-only' denies MCP tools whose name looks like a write. '__hub__' lists the main session's bookkeeping actions that are auto-approved (everything else in the main session keeps normal prompts). 'write_except_platform' applies unless .sdd/config.yaml sets engineer_does_platform: true (Wave 1 fallback while platform-engineer does not exist).",
+  "__hub__": {
+    "write": [
+      "specs/*/state.yaml",
+      "specs/*/gates/*",
+      "specs/*/log.md",
+      ".sdd/state.yaml",
+      ".sdd/gates/*",
+      ".sdd/log.md",
+      ".sdd/active"
+    ],
+    "bash": [
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "git (status|log|diff|show)( [^<>$;&|`]*)?",
+      "git branch( (-a|-r|-v|-vv|--list|--show-current|--merged|--no-merged)[^<>$;&|`]*)?",
+      "git add( (specs|\\.sdd|docs/adr)[\\w./-]*)+",
+      "git commit( -m \\\"chore\\(sdd\\)[^\\\"$`]*\\\")( -m \\\"[^\\\"$`]*\\\")*",
+      "git switch (-c )?sdd/[\\w./-]+( [\\w./-]+)?",
+      "git worktree (list|prune)",
+      "git worktree remove (--force )?\\.claude/worktrees/agent-[\\w-]+"
+    ]
+  },
   "product-lead": {
     "write": [
       ".sdd/product/*.md",
@@ -109,13 +130,7 @@
       "*tests/acceptance/*",
       "*tests/contract/*",
       "*tests/e2e/*",
-      "*tests/perf/*",
-      ".github/*",
-      "infra/*",
-      "Dockerfile*",
-      "*/Dockerfile*",
-      "docker-compose*",
-      "compose.y*ml"
+      "*tests/perf/*"
     ],
     "deps_check": true,
     "bash": [
@@ -129,7 +144,15 @@
       "(rtk )?git (switch -c|branch -m) sdd/[\\w./-]+",
       "(rtk )?curl [^<>$;&|`]*https?://(localhost|127\\.0\\.0\\.1)(:\\d+)?(/[^<>$;&|`\\s]*)?[^<>$;&|`]*"
     ],
-    "mcp": "read-only"
+    "mcp": "read-only",
+    "write_except_platform": [
+      ".github/*",
+      "infra/*",
+      "Dockerfile*",
+      "*/Dockerfile*",
+      "docker-compose*",
+      "compose.y*ml"
+    ]
   },
   "code-reviewer": {
     "write": [

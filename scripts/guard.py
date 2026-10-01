@@ -98,6 +98,41 @@ def unapproved_runtime_deps(cmd: str, cwd: Path) -> list[str]:
     return [p for p in pkgs if p not in approved]
 
 
+def config_flag(cwd: Path, name: str) -> bool:
+    """True when '<name>: true' appears in .sdd/config.yaml."""
+    try:
+        text = (cwd / ".sdd" / "config.yaml").read_text(encoding="utf-8")
+    except OSError:
+        return False
+    return bool(re.search(rf"^\s*{re.escape(name)}\s*:\s*(true|yes|on)\b", text, re.M | re.I))
+
+
+def project_rel(raw: str, cwd: Path) -> str:
+    path = Path(raw)
+    if not path.is_absolute():
+        path = cwd / path
+    try:
+        return Path(os.path.relpath(path.resolve(), cwd.resolve())).as_posix()
+    except ValueError:
+        return str(path)
+
+
+def hub_grants(policy: dict, tool: str, tin: dict, cwd: Path) -> None:
+    """Main session: approve only the hub's own bookkeeping; everything else keeps normal prompts."""
+    if not policy:
+        return
+    if tool in WRITE_TOOLS:
+        rel = project_rel(tin.get("file_path") or tin.get("notebook_path") or "", cwd)
+        if not rel.startswith("../") and any(fnmatch.fnmatch(rel, g) for g in policy.get("write", [])):
+            grant(cwd, f"SDD hub bookkeeping: '{rel}'")
+    elif tool == "Bash":
+        cmd = (tin.get("command") or "").strip()
+        if CHAINING.search(re.sub(r'"[^"$`\\]*"', '""', cmd)):
+            return
+        if any(re.fullmatch(p, cmd) for p in policy.get("bash", [])):
+            grant(cwd, "SDD hub bookkeeping command")
+
+
 def auto_approve_enabled(cwd: Path) -> bool:
     """Off switch: 'auto_approve: false' under 'permissions:' in .sdd/config.yaml."""
     try:
@@ -137,17 +172,19 @@ def main() -> None:
         return
 
     agent = (data.get("agent_type") or "").split(":")[-1]
-    if not agent:
-        return
     policy_file = plugin_root / "hooks" / "ownership.json"
     try:
-        policy = json.loads(policy_file.read_text()).get(agent)
+        policies = json.loads(policy_file.read_text())
     except (OSError, json.JSONDecodeError):
         return
+    cwd = Path(data.get("cwd") or os.getcwd())
+
+    if not agent:
+        hub_grants(policies.get("__hub__") or {}, tool, tin, cwd)
+        return
+    policy = policies.get(agent)
     if not policy:
         return
-
-    cwd = Path(data.get("cwd") or os.getcwd())
 
     if tool in WRITE_TOOLS:
         raw = tin.get("file_path") or tin.get("notebook_path") or ""
@@ -163,6 +200,8 @@ def main() -> None:
             deny(f"{agent} may not write outside the project ({raw}).")
         allowed = policy.get("write", [])
         excluded = [g for g in policy.get("write_except", []) if not g.startswith("!")]
+        if not config_flag(cwd, "engineer_does_platform"):
+            excluded += policy.get("write_except_platform", [])
         reincluded = [g[1:] for g in policy.get("write_except", []) if g.startswith("!")]
         if any(fnmatch.fnmatch(rel, g) for g in excluded) and not any(fnmatch.fnmatch(rel, g) for g in reincluded):
             deny(f"{agent} may not modify '{rel}' (owned by another agent). "

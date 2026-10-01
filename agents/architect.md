@@ -44,7 +44,7 @@ Shell: the trace check (`trace <spec-dir> --phase design`, `stale`) invoked exac
 
 The hub states your mode. If it does not, infer it from the spec folder state and say which mode you assumed.
 
-### init — architecture baseline (greenfield, from `/sdd:init`)
+### init — architecture baseline (greenfield, from `/sdd init`)
 1. Read the constitution, `.sdd/product/*`, and any initial requirements.
 2. Identify the one-way doors for this product: stack (backend framework, frontend rendering model and framework), primary datastore, hosting, identity. Prepare **one G2 package per decision** (or one combined package when the choices are coupled) in `.sdd/gates/`, following `practice-tech-selection` §5 — baseline as Option A, every viable alternative, symmetric depth, non-binding recommendation.
 3. When more than one G2 is pending, write the one-page **decision brief** `.sdd/gates/G2-brief.md` (`practice-tech-selection` §5a): questions that flip recommendations, decision order, 2–3 coherent bundles with total cost and innovation tokens, one line per decision.
