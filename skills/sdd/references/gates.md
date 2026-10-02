@@ -4,6 +4,8 @@ The human should be able to decide from **one screen**, with the full package on
 
 ## For each pending gate or D3 escalation
 
+Present a gate only when its package is **final** (every review of it has returned and been resolved). Never ask the human to decide on a draft.
+
 1. Read the gate file (and `G2-brief.md` when several G2s are pending — present the brief, not each package).
 2. Print a summary of at most one screen:
    - **Decision:** the one-sentence question.
@@ -13,8 +15,9 @@ The human should be able to decide from **one screen**, with the full package on
    - **Needs your attention:** the ATTN-marked assumptions or questions (≤ 5), each with its default.
    - **Full package:** the file path.
 3. Ask with **AskUserQuestion**: one question per decision (options from the package; the recommended option first, labelled "(Recommended)"). Add a second question for ATTN assumptions when they need an explicit yes/no. The user can always answer "Other" with free text.
-4. Record the answer in the gate file — `status` (approved | rejected | changes-requested), `decided-by: human`, `decided-on: <date>`, and the **Decision** section with the chosen option, the human's reasons and any conditions or overturned assumptions — then commit (`chore(sdd): record <gate> decision`).
-5. Act on it:
+4. If the human answers in free text (e.g. "Q1: yes, Q3: the recommended"), restate the mapping in one line ("Recording: 1A strict, 2A accept RISK-01, 3B '¡Hola'") before recording it. Record only answers the human actually gave in this session; if a question is unanswered, leave the gate `pending`.
+5. Record the answer in the gate file — `status` (approved | rejected | changes-requested), `decided-by: human`, `decided-on: <date>`, and the **Decision** section with the chosen option, the human's reasons and any conditions or overturned assumptions — then commit (`chore(sdd): record <gate> decision`).
+6. Act on it:
    - **approved** → continue advancing.
    - **changes-requested / overturned assumptions** → route to the preparing agent (`revise`), which reopens the affected artifacts.
    - **G2 decided** → architect writes the ADR (`decided-by: human`).

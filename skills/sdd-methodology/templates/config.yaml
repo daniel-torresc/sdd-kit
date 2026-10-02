@@ -52,9 +52,12 @@ triage_signals:
   M:
     - new user-facing capability
     - new interface, endpoint, event or data model
+    - any behavior change to an existing interface or contract that existing callers can observe
+      (new accepted or rejected inputs, changed outputs, status codes or errors) — even when additive
     - new runtime dependency
   S:
-    - localized behavior change within existing interfaces
+    - localized change that no caller of an existing interface can observe
+      (internal logic, refactor with tests, bug fix restoring specified behavior)
   T:
     - typo, copy change, config value, docs
     - patch-level dependency bump

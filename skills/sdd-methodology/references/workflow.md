@@ -9,7 +9,7 @@ Assigned at intake from the signals in `.sdd/config.yaml`. **Any single signal o
 | Class | Typical signals | Flow | Human gates |
 |---|---|---|---|
 | **T** Trivial | typo, config value, patch dependency bump, docs | build → code-review → done | none |
-| **S** Small | localized; no new interface, data model or dependency | mini-spec (REQ+AC) → test-first build → code-review → verify | none (G1 only if ambiguous) |
+| **S** Small | localized; no new interface, data model or dependency, and no change existing callers can observe | mini-spec (REQ+AC) → test-first build → code-review → verify | none (G1 only if ambiguous) |
 | **M** Standard | new capability, new interface or data model | full flow; lenses only when triggered | G1, G3 |
 | **L** Critical | auth, money, PII, destructive migration, public API, greenfield, hard to reverse | full flow; all assurance lenses; threat model | G1, G2, G3 |
 
