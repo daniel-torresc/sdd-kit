@@ -453,6 +453,17 @@ def check(model: Model, phase: str, tests: dict[str, list[str]], junit: Junit | 
 
     if lightweight:  # class T/S: no design or plan artifacts by definition
         upto = [p for p in upto if p not in ("design", "plan")]
+    if junit is not None:
+        for nfr in nfrs:
+            for loc in tests.get(nfr.id, []):
+                status = junit_status(junit, loc) if "::" in loc else None
+                if "::" not in loc:
+                    v.append(("verify", f"{nfr.id}: reference at {loc} could not be mapped to a test function"))
+                elif status is None:
+                    v.append(("verify", f"{nfr.id}: test {loc} not found in junit results"))
+                elif not status:
+                    v.append(("verify", f"{nfr.id}: test {loc} did not pass"))
+
     return [(p, m) for p, m in v if p in upto]
 
 
