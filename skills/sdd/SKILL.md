@@ -37,7 +37,7 @@ Loop until a **stop condition**:
 
 1. Read `state.yaml` of the active feature (`.sdd/active` holds its folder name; if several are open and none is active, ask which).
 2. Decide the next action from the phase, `phase_status` and the class flow (workflow contract; dispatch table): draft → review panel → revise (≤ cap) → exit check (`sdd.py trace --phase <phase>`, plus verdicts) → gate or next phase.
-3. Build phase: ask tech-lead (`coordinate`) for ready tasks; dispatch test-engineer `test-task` / engineer `implement`; then code-reviewer `test-review` / `task-review`; on approval tech-lead `integrate`; after a fix loop is exhausted tech-lead `unblock`; after integration remove the engineer's worktree (`git worktree remove .claude/worktrees/agent-…`).
+3. Build phase: ask tech-lead (`coordinate`) for ready tasks; dispatch test-engineer `test-task` / engineer `implement`; then code-reviewer `test-review` / `task-review`; on approval tech-lead `integrate`; after a fix loop is exhausted tech-lead `unblock`; after each integration clean up that task's agent worktree: `git worktree list` to find it, `git worktree remove --force .claude/worktrees/agent-<id>`, then `git branch -D worktree-agent-<id>` (the throwaway branch the isolation created; the `sdd/<F>-<T>` branch stays). Do this for test-engineer worktrees too.
 4. Loop caps: review rounds per class; at the cap → challenger `second-opinion` (optional) → arbiter by category → human.
 5. Work that does not depend on a pending gate continues; only the blocked branch pauses.
 

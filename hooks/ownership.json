@@ -18,7 +18,8 @@
       "git commit( -m \\\"chore\\(sdd\\)[^\\\"$`]*\\\")( -m \\\"[^\\\"$`]*\\\")*",
       "git switch (-c )?sdd/[\\w./-]+( [\\w./-]+)?",
       "git worktree (list|prune)",
-      "git worktree remove (--force )?\\.claude/worktrees/agent-[\\w-]+"
+      "git worktree remove (--force )?\\.claude/worktrees/agent-[\\w-]+",
+      "git branch -D worktree-agent-[\\w-]+"
     ]
   },
   "product-lead": {

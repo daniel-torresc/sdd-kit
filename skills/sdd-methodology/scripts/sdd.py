@@ -42,7 +42,7 @@ FRONTMATTER_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
 TEST_FILE_RE = re.compile(
     r"(^test_.*\.py$|.*_test\.py$|.*\.(test|spec)\.[cm]?[jt]sx?$|.*_test\.go$|.*Test\.(java|kt)$|.*\.feature$)"
 )
-SKIP_DIRS = {".git", "node_modules", ".venv", "venv", "__pycache__", "dist", "build", ".tox", ".mypy_cache", ".pytest_cache"}
+SKIP_DIRS = {".git", ".claude", "node_modules", ".venv", "venv", "__pycache__", "dist", "build", ".tox", ".mypy_cache", ".pytest_cache"}
 
 
 @dataclass
@@ -178,10 +178,13 @@ def scan_tests(root: Path, feature: str) -> dict[str, list[str]]:
             for local in ref_re.findall(line):
                 loc = f"{rel}:{n + 1}"
                 if path.suffix == ".py":
-                    for nxt in lines[n: n + 15]:
-                        m = py_def.match(nxt)
-                        if m:
-                            loc = f"{rel}::{m.group(1)}"
+                    # The marker belongs to the next def/class below it, however many
+                    # decorator or parametrize lines sit in between.
+                    for nxt in lines[n + 1:]:
+                        if re.match(r"^\s*(async\s+def|def|class)\s", nxt):
+                            m = py_def.match(nxt)
+                            if m:
+                                loc = f"{rel}::{m.group(1)}"
                             break
                 found.setdefault(local, [])
                 if loc not in found[local]:
@@ -189,19 +192,35 @@ def scan_tests(root: Path, feature: str) -> dict[str, list[str]]:
     return found
 
 
-def junit_results(files: list[Path]) -> dict[str, bool]:
-    """Map test function name -> passed."""
-    results: dict[str, bool] = {}
+Junit = dict[tuple[str, str], bool]
+
+
+def junit_results(files: list[Path]) -> Junit:
+    """Map (classname, test function name) -> passed (all parametrized cases must pass)."""
+    results: Junit = {}
     for f in files:
         try:
             tree = ET.parse(f)
         except (ET.ParseError, OSError) as e:
             sys.exit(f"error: cannot read junit file {f}: {e}")
         for tc in tree.iter("testcase"):
-            name = re.sub(r"\[.*\]$", "", tc.get("name", ""))
+            key = (tc.get("classname", ""), re.sub(r"\[.*\]$", "", tc.get("name", "")))
             failed = any(tc.find(tag) is not None for tag in ("failure", "error", "skipped"))
-            results[name] = results.get(name, True) and not failed
+            results[key] = results.get(key, True) and not failed
     return results
+
+
+def junit_status(junit: Junit, loc: str) -> bool | None:
+    """Result for a 'path/to/test_x.py::test_fn' location: True/False, or None if not in the report."""
+    if "::" not in loc:
+        return None
+    path, fn = loc.split("::", 1)
+    module = path[:-3].replace("/", ".") if path.endswith(".py") else path.replace("/", ".")
+    hits = [ok for (cls, name), ok in junit.items()
+            if name == fn and (cls == module or cls.startswith(module + ".") or module.endswith("." + cls) or cls.endswith("." + module))]
+    if not hits:
+        return None
+    return all(hits)
 
 
 def commits_by_task(root: Path, feature: str) -> dict[str, int]:
@@ -348,7 +367,7 @@ def conflict_warnings(tasks: list[Item]) -> list[str]:
     return out
 
 
-def check(model: Model, phase: str, tests: dict[str, list[str]], junit: dict[str, bool] | None,
+def check(model: Model, phase: str, tests: dict[str, list[str]], junit: Junit | None,
           stale: list[str], lightweight: bool = False) -> list[tuple[str, str]]:
     """Return (phase, message) violations applicable up to and including `phase`."""
     upto = PHASES[: PHASES.index(phase) + 1]
@@ -423,12 +442,13 @@ def check(model: Model, phase: str, tests: dict[str, list[str]], junit: dict[str
             v.append(("verify", f"{ac.id} has no test referencing {model.feature}:{ac.id}"))
         elif junit is not None:
             for loc in locs:
-                fn = loc.split("::")[-1] if "::" in loc else None
-                if fn is None:
+                if "::" not in loc:
+                    v.append(("verify", f"{ac.id}: reference at {loc} could not be mapped to a test function"))
                     continue
-                if fn not in junit:
+                status = junit_status(junit, loc)
+                if status is None:
                     v.append(("verify", f"{ac.id}: test {loc} not found in junit results"))
-                elif not junit[fn]:
+                elif not status:
                     v.append(("verify", f"{ac.id}: test {loc} did not pass"))
 
     if lightweight:  # class T/S: no design or plan artifacts by definition
@@ -438,7 +458,7 @@ def check(model: Model, phase: str, tests: dict[str, list[str]], junit: dict[str
 
 # ---------------------------------------------------------------- report
 
-def render(model: Model, tests: dict[str, list[str]], junit: dict[str, bool] | None,
+def render(model: Model, tests: dict[str, list[str]], junit: Junit | None,
            commits: dict[str, int], violations: list[tuple[str, str]], phase: str) -> str:
     items = model.items
     comps = model.active("C") + model.active("IF")
@@ -453,7 +473,7 @@ def render(model: Model, tests: dict[str, list[str]], junit: dict[str, bool] | N
             return "❌ none"
         if junit is None:
             return f"{len(locs)} (not run)"
-        ok = all(junit.get(l.split("::")[-1], False) for l in locs if "::" in l)
+        ok = all(junit_status(junit, l) is True for l in locs)
         return f"{len(locs)} {'✅' if ok else '❌'}"
 
     out = [
