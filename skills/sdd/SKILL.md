@@ -29,7 +29,7 @@ Dispatch with the Agent tool. SDD agents are plugin agents; use the exact `subag
 1. Parse the envelope (`status`, `artifacts`, `decisions`, `assumptions`, `open_questions`, `escalations`, `next`). If it is malformed, re-dispatch once asking for the envelope only.
 2. **Route**: findings → their `route_to`; D2 escalations → the named agent (or its fallback); D3 escalations → a pending human gate; change requests → the artifact owner (the downstream chain becomes stale).
 3. **Update `state.yaml`** (phase, phase_status, loops, tasks, stale, pending_human, a one-line `history` entry).
-4. **Commit artifacts** on the feature branch: `git add specs .sdd docs/adr` then `git commit -m "chore(sdd): <agent> <mode> <what>" -m "Refs: <F>"`. Worktrees only see committed artifacts.
+4. **Commit artifacts** on the feature branch: `git add` the artifact roots that exist (`specs`, `.sdd`, and `docs/adr` once it exists) then `git commit -m "chore(sdd): <agent> <mode> <what>" -m "Refs: <F>"`. Worktrees only see committed artifacts.
 
 ## advance (no arguments)
 
