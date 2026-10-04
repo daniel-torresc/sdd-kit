@@ -14,7 +14,7 @@ Parse `$ARGUMENTS`: the first word selects the subcommand; no arguments means **
 
 ## Agents and names
 
-Dispatch with the Agent tool. SDD agents are plugin agents; use the exact `subagent_type` shown in your available agents list (e.g. `<plugin>:product-lead`). Available now: product-lead, challenger, architect, tech-lead, test-engineer, engineer, code-reviewer. Anything else → [fallbacks](references/fallbacks.md).
+Dispatch with the Agent tool. SDD agents are plugin agents; use the exact `subagent_type` shown in your available agents list (e.g. `<plugin>:product-lead`). Available now: product-lead, challenger, architect, tech-lead, test-engineer, engineer, code-reviewer, platform-engineer. Anything else → [fallbacks](references/fallbacks.md).
 
 ## Every dispatch
 
@@ -59,7 +59,7 @@ Project-level state lives in `.sdd/state.yaml` (phase: `init`).
 2. product-lead `init` (vision, personas, glossary) → challenger review → revise.
 3. architect `init` (G2 packages + `G2-brief.md`) → challenger G2 fairness review → revise → **G2 to the human** (stop).
 4. After the decision: architect `init` again (ADRs, `.sdd/architecture/*`, provisional `dependencies.yaml` entries).
-5. Walking skeleton: a T-01 enabler task (platform work — see fallbacks) → code-review → merge to `sdd/init`. Then G3 (merge `sdd/init` to main) and stop.
+5. Walking skeleton: platform-engineer `scaffold` (repo, dev container, CI proven to pass and fail, image, protected production environment, first fitness functions; a dev environment needs the human's D3 first) → code-review → merge to `sdd/init`. Then G3 (merge `sdd/init` to main) and stop.
 
 ## status
 

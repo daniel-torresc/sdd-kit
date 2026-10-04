@@ -54,9 +54,16 @@ For every step: who, which mode, what to pass, which model, and what comes next.
 | Conformance (L) | architect · `conformance` | feature branch | default | findings → owners |
 | Exit | hub: `sdd.py trace --phase verify --junit <evidence/junit.xml>` | — | — | G3 |
 
-## Release (Wave 1)
+## Release
 
-G3: present the feature branch, draft PR, evidence pack and open RISKs; the human merges (or approves the merge) and deploys. platform-engineer (Wave 2) will own `release.md` and rollout.
+| Step | Agent · mode | Pass | Model | Next |
+|---|---|---|---|---|
+| Release plan + rehearsal | platform-engineer · `release` | spec folder, feature branch, evidence pack | **opus** | `release.md`, `gates/G3-production.md` |
+| Review release plan | reliability-engineer (if available) else architect · `review` | release.md | default | revise loop |
+| G3 | — | present `gates/G3-production.md` | — | approved → merge (human, or approved merge) |
+| Deploy | platform-engineer · `deploy` (staging soak first; production via the protected workflow — the human approves in GitHub) | version, environment | default | watch window → done |
+
+Platform tasks in `tasks.md` (`agent: platform-engineer`) are dispatched like engineer tasks (own worktree, code review, integration).
 
 ## Arbiters
 

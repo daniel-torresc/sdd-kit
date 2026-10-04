@@ -173,5 +173,42 @@
       "(rtk )?npm --prefix \\.claude/worktrees/review-[\\w.-]+ (ci|test|run|audit)[^<>$;&|`]*"
     ],
     "mcp": "read-only"
+  },
+  "platform-engineer": {
+    "write": [
+      "*"
+    ],
+    "write_except": [
+      "specs/*",
+      "!specs/*/release.md",
+      "!specs/*/gates/G3-*",
+      "!specs/*/reviews/*.md",
+      "!specs/*/log.md",
+      ".sdd/*",
+      "docs/adr/*",
+      "*tests/acceptance/*",
+      "*tests/contract/*",
+      "*tests/e2e/*",
+      "*tests/perf/*",
+      "src/*/*/*"
+    ],
+    "deps_check": true,
+    "bash": [
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?docker (build|run|compose|images|ps|logs|inspect|stop|rm|buildx build)[^<>$;&|`]*",
+      "(rtk )?(actionlint|hadolint|shellcheck|trivy|syft|gitleaks|pre-commit|tflint|checkov)( [^<>$;&|`]*)?",
+      "(rtk )?(tofu|terraform) (-chdir=[\\w./-]+ )?(fmt|validate|init|plan|show|providers|version|output)( [^<>$;&|`]*)?",
+      "(rtk )?gh workflow (list|view)( [^<>$;&|`]*)?",
+      "(rtk )?gh run (list|view|watch|rerun)( [^<>$;&|`]*)?",
+      "(rtk )?gh workflow run [\\w./-]+( --ref sdd/[\\w./-]+)?( -f [\\w-]+=[\\w./-]+)*? -f environment=(dev|staging)( -f [\\w-]+=[\\w./-]+)*",
+      "(rtk )?(aws|gcloud|az|scw|fly|flyctl|doctl) [\\w -]*\\b(describe|list|get|show|status|info)[\\w-]*( [^<>$;&|`]*)?",
+      "(rtk )?uv (sync|run|lock|add|remove)( [^<>$;&|`]*)?",
+      "(rtk )?(npm|pnpm) (ci|install|run|test)( [^<>$;&|`]*)?",
+      "(rtk )?git (status|diff|log|show)( [^<>$;&|`]*)?",
+      "(rtk )?git add [^<>$;&|`]*",
+      "(rtk )?git commit( -m \\\"[^\\\"$`]*\\\")+",
+      "(rtk )?git switch -c sdd/[\\w./-]+"
+    ],
+    "mcp": "read-only"
   }
 }

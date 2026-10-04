@@ -10,10 +10,25 @@ permissions:
 
 fallbacks:
   # Wave 1: agents that do not exist yet are covered by others (see the sdd skill, references/fallbacks.md).
-  # Set to false once platform-engineer exists; while true, engineers may edit CI/infra files.
-  engineer_does_platform: true
+  # platform-engineer exists (Wave 2): keep false. true lets engineers edit CI/infra files.
+  engineer_does_platform: false
 
 notify: true                   # push notification when /sdd stops for a human decision or blocker
+
+environments:
+  # Deploy autonomy. New resources or spend are always a human decision (D3).
+  dev: { autonomous_deploy: true }
+  staging: { autonomous_deploy: true }
+  production: { autonomous_deploy: false }   # G3 + GitHub environment protection (required human reviewer)
+
+release:
+  strategy: rolling            # rolling with automatic rollback on failed health checks; canary only when the design says so
+  versioning: semver
+  changelog: conventional-commits
+  rollback_rehearsal: required
+
+supply_chain:
+  block_on: [critical-vulnerability, secret]   # unless an accepted RISK-nn lists the CVE
 
 parallelism:
   max_parallel_tasks: 3        # engineer/test-engineer tasks running at once

@@ -58,7 +58,7 @@ Class S work uses only `state.yaml`, `requirements.md` (REQ + AC), `reviews/`, `
 | test-plan.md, acceptance/contract/e2e/perf tests, evidence/ | test-engineer | code-reviewer |
 | unit tests | engineer | code-reviewer |
 | source code, unit/integration tests, migrations | engineer | code-reviewer + active lenses |
-| infra, CI, release.md | platform-engineer | reliability-engineer |
+| infra, CI, containers, dev container, runbooks, release.md | platform-engineer | code-reviewer (tasks), reliability-engineer or architect (release) |
 | gates/G<n>-* | the preparing agent (G1 product-lead, G2 architect, G3 platform-engineer); the hub records only `status`, `decided-by`, `decided-on` and the Decision section | — |
 | state.yaml, trace.md | hub | — |
 | log.md | append-only by any agent | — |

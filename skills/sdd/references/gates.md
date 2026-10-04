@@ -29,6 +29,6 @@ Present a gate only when its package is **final** (every review of it has return
 |---|---|---|
 | G1 intent | product-lead | end of Specify (M, L) |
 | G2 foundations | architect (+ challenger fairness review) | a one-way door (init, or mid-design) |
-| G3 production | hub (Wave 1) / platform-engineer | end of Verify: merge to main and deploy |
+| G3 production | platform-engineer (`release`) | end of Verify, after the release plan and rollback rehearsal: merge to main and deploy |
 | Risk acceptance | whoever deferred a critical/major finding | when deferred |
 | Deadlock | hub | loop cap exhausted with no neutral arbiter |
