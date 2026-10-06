@@ -15,6 +15,8 @@ For every step: who, which mode, what to pass, which model, and what comes next.
 |---|---|---|---|---|
 | Draft brief (L) | product-lead · `discover` | request, context.md | default | `intent_questions` → ask the human (≤3), re-dispatch; else review |
 | Research questions | researcher · `question` / `domain` | the Q-nn | default | asking agent incorporates |
+| Decided stack entry without skills | researcher · `skills` | the stack.yaml entry | default | human chooses → architect records in stack.yaml |
+| Unfamiliar technology without adequate guidance | researcher · `stack-brief` | the stack.yaml entry | default | architect links the brief from the entry |
 | Review brief (L) | challenger · `review` | brief.md@v, round | default | revise loop |
 | Draft requirements | product-lead · `specify` (S: REQ + AC only; M: brief + requirements together, with the intent check; L: requirements against the reviewed brief) | spec folder | default | review panel (for M it reviews brief and requirements together) |
 | UX flows (UI) | ux-designer · `flows` (parallel with requirements) | spec folder | default | review panel |
