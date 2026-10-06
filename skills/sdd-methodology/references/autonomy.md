@@ -26,6 +26,10 @@ The organization runs autonomously. Humans are interrupted only for decisions th
 
 The plugin's guard (`hooks/ownership.json`) is both a fence and a grant: each agent may write only the artifacts it owns and run only its allowlisted commands, and those in-policy actions are **approved without prompting** so work proceeds autonomously. Everything outside an agent's policy is denied; the main session keeps normal permission prompts. Allowlisted commands include tests and spikes, which execute project code with the user's rights — run autonomous sessions in Claude Code's sandbox or a dev container. `permissions.auto_approve: false` in `.sdd/config.yaml` restores prompts.
 
+## Fast path
+
+Incident mitigation decisions (from incident-responder `triage`) are presented to the human **immediately**, never batched with other gates. Everything else that waits for the human is batched at the hub's next stop.
+
 ## Assumption-first
 
 When information is missing and the decision is not D3: record `ASM-nn` in the artifact with the default you chose and why, and continue. The hub batches all open assumptions into the next human gate, where the human can overturn any of them. Overturned assumptions reopen the affected artifacts.

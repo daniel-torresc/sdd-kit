@@ -32,3 +32,7 @@ Present a gate only when its package is **final** (every review of it has return
 | G3 production | platform-engineer (`release`) | end of Verify, after the release plan and rollback rehearsal: merge to main and deploy |
 | Risk acceptance | whoever deferred a critical/major finding | when deferred |
 | Deadlock | hub | loop cap exhausted with no neutral arbiter |
+| Incident mitigation (fast path) | incident-responder | immediately on triage — present at once, not batched |
+| Spend / new resources | platform-engineer (`env-plan`) | a plan that adds or destroys resources |
+| Methodology changes (MIP) | librarian | constitution or gate changes proposed in a retro |
+| External sync | hub | pending outbox entries (see sync.md) |

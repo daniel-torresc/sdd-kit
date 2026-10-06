@@ -108,4 +108,5 @@ When feasibility is uncertain and cheap to test, run a spike instead of assuming
 - [ ] Testability seams specified: clock, randomness, queue drain, observable outcomes, external fakes, readable metrics/logs
 - [ ] New structural rules captured as fitness functions
 - [ ] ADR for every D1+ architectural choice; capability claims verified in current docs
+- [ ] New runtime dependencies listed for security-engineer's dependency-review
 - [ ] `.sdd/architecture/*` updates listed (applied when the feature ships)

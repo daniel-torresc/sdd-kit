@@ -31,6 +31,12 @@ refs: REQ-01, NFR-01
 ## Contracts
 <!-- Machine-readable contracts in contracts/ (required for external/public interfaces): OpenAPI 3.1, AsyncAPI, JSON Schema. -->
 
+## Runtime dependencies
+<!-- New runtime packages/services this design needs: name, version range, purpose, alternatives considered.
+     security-engineer vets each one (dependency-review) before Build. -->
+| Dependency | Version | Purpose | Alternatives |
+|---|---|---|---|
+
 ## Data model
 <!-- Entities, invariants, ownership, retention, migrations. -->
 

@@ -5,39 +5,49 @@
 ```
 <project>/
 ├── .sdd/
-│   ├── constitution.md          # principles, non-negotiables, Definition of Done
-│   ├── config.yaml              # loop caps, triage signals, lens triggers, stack routing
-│   ├── product/                 # product-level context, owned by product-lead
-│   │   ├── vision.md            # why the product exists, for whom, strategy
-│   │   ├── personas.md          # PER-nn user types
-│   │   └── glossary.md          # canonical domain terms
-│   ├── gates/                   # project-level decision packages (e.g. stack G2)
-│   ├── reviews/                 # reviews of project-level artifacts (product context, stack ADRs)
-│   ├── architecture/            # project architecture, owned by architect
-│   │   ├── overview.md          # context/container diagrams, module map
-│   │   ├── conventions.md       # layout, coding/API conventions, stack profile (skill routing)
-│   │   ├── fitness.md           # FF-nn architecture rules enforced in CI
-│   │   └── debt.md              # DEBT-nn technical debt register
-│   ├── dependencies.yaml        # approved runtime dependencies (guard-enforced for engineers)
-│   ├── spikes/                  # SPK-nn-<slug>/ throwaway experiments (never imported by product code)
-│   └── briefs/                  # researcher stack briefs (skill candidates)
-├── docs/adr/                    # ADR-NNNN-<slug>.md — project-wide, outlive features
+│   ├── constitution.md          # principles, non-negotiables, Definition of Done (human)
+│   ├── config.yaml              # loop caps, triage signals, lens triggers, environments, sync (human)
+│   ├── active                   # folder name of the active feature (hub)
+│   ├── state.yaml               # project-level state for init/adopt (hub)
+│   ├── product/                 # product-lead: vision.md, personas.md (PER-nn), glossary.md; ux-designer: design-system.md
+│   ├── architecture/            # architect: overview.md, conventions.md (stack profile), fitness.md (FF-nn), debt.md (DEBT-nn)
+│   ├── operations/              # reliability-engineer: slos.md (SLO-nn), capacity.md
+│   ├── dependencies.yaml        # security-engineer: approved runtime dependencies (guard-enforced)
+│   ├── map/                     # cartographer: codebase map of existing code (structure, data, integrations, …)
+│   ├── research/                # researcher: project-level research notes
+│   ├── briefs/                  # researcher: stack briefs for stacks without a skill
+│   ├── spikes/                  # architect: SPK-nn-<slug>/ throwaway experiments
+│   ├── incidents/               # incident-responder: INC-nnn-<slug>/ incident.md, postmortem.md
+│   ├── knowledge/               # librarian: lessons.md (LES-nn), decisions.md, faq.md, outbox/
+│   ├── improvements.md          # librarian: methodology improvement proposals (MIP-nn)
+│   ├── gates/                   # project-level decision packages (G2 stack, …)
+│   ├── reviews/                 # reviews of project-level artifacts
+│   └── log.md                   # project-level decision log
+├── .claude/skills/stack-*/      # librarian: stack briefs promoted to project skills (architect-reviewed)
+├── docs/
+│   ├── adr/                     # architect: ADR-NNNN-<slug>.md
+│   ├── runbooks/                # platform-engineer
+│   └── …                        # librarian: guide/, api/, dev/
 └── specs/NNN-<slug>/            # one folder per feature; NNN → feature ID F<NNN>
     ├── state.yaml               # hub durable state (resumable)
-    ├── brief.md                 # problem, users, success metrics, non-goals
-    ├── requirements.md          # REQ / NFR / AC
-    ├── ux.md                    # flows, screens, states (if UI)
-    ├── design.md                # components, interfaces, data model, NFR budgets
-    ├── contracts/               # OpenAPI / AsyncAPI / JSON Schema (required for external/public IFs)
-    ├── threat-model.md          # if security lens active
-    ├── tasks.md                 # T-nn dependency graph
-    ├── test-plan.md             # test levels, AC → test mapping
-    ├── evidence/                # Verify evidence pack: JUnit reports, NFR measurements, screenshots, README.md
+    ├── context.md               # cartographer: current behavior of existing code (brownfield)
+    ├── brief.md                 # product-lead: problem, users, success metrics, non-goals
+    ├── requirements.md          # product-lead: REQ / NFR / AC
+    ├── research/                # researcher: Q-nn research notes
+    ├── ux.md, prototypes/       # ux-designer: flows, screens, states; low-fi HTML prototypes
+    ├── design.md, contracts/    # architect: design; OpenAPI / AsyncAPI / JSON Schema
+    ├── threat-model.md          # security-engineer (security lens)
+    ├── lens-<lens>.md, evals.md # consultant: lens analyses
+    ├── tasks.md                 # tech-lead: T-nn dependency graph
+    ├── test-plan.md             # test-engineer
+    ├── perf-plan.md             # reliability-engineer: load profiles, resilience experiments
+    ├── evidence/                # test-engineer (+ security/, reliability/ subfolders): Verify evidence pack
+    ├── release.md               # platform-engineer
+    ├── retro.md                 # librarian
     ├── trace.md                 # GENERATED — never edit
-    ├── reviews/                 # <phase>-<agent>-r<n>.md
-    ├── gates/                   # G<n>-<slug>.md human decision packages
-    ├── log.md                   # append-only autonomous decision log
-    └── release.md
+    ├── reviews/                 # <phase>-<agent>[-<lens>]-r<n>.md
+    ├── gates/                   # G1/G2/G3 and risk-* decision packages
+    └── log.md                   # append-only autonomous decision log
 ```
 
 Class T work has no spec folder; it is recorded in a commit and in `.sdd/log.md`.
@@ -47,22 +57,26 @@ Class S work uses only `state.yaml`, `requirements.md` (REQ + AC), `reviews/`, `
 
 | Artifact | Owner | Reviewers |
 |---|---|---|
-| .sdd/product/* | product-lead | challenger |
-| brief.md, requirements.md | product-lead | challenger, test-engineer (testability) |
-| ux.md | ux-designer | challenger, a11y lens |
-| design.md, contracts/*, docs/adr/* | architect | challenger, security-engineer, reliability-engineer |
-| .sdd/architecture/*, .sdd/spikes/* | architect | challenger |
-| .sdd/dependencies.yaml | security-engineer (architect may add `provisional` entries until security-engineer exists) | — |
-| threat-model.md | security-engineer | architect |
-| tasks.md | tech-lead | test-engineer, architect |
+| .sdd/product/vision, personas, glossary | product-lead | challenger |
+| .sdd/product/design-system.md | ux-designer | challenger, a11y lens |
+| brief.md, requirements.md | product-lead | challenger, test-engineer (testability), reliability-engineer (NFRs), active lenses |
+| ux.md, prototypes/ | ux-designer | challenger, a11y lens |
+| research/, .sdd/research/, .sdd/briefs/ | researcher | the asking agent |
+| context.md, impact-*.md, .sdd/map/ | cartographer | — |
+| design.md, contracts/*, docs/adr/*, .sdd/architecture/*, .sdd/spikes/* | architect | challenger, security-engineer, reliability-engineer, active lenses |
+| threat-model.md, .sdd/dependencies.yaml, tests/security/ | security-engineer | architect |
+| .sdd/operations/*, perf-plan.md | reliability-engineer | architect, test-engineer |
+| lens-*.md, evals.md | consultant | owners of the affected artifacts |
+| tasks.md | tech-lead | test-engineer, architect, challenger (L) |
 | test-plan.md, acceptance/contract/e2e/perf tests, evidence/ | test-engineer | code-reviewer |
-| unit tests | engineer | code-reviewer |
-| source code, unit/integration tests, migrations | engineer | code-reviewer + active lenses |
-| infra, CI, containers, dev container, runbooks, release.md | platform-engineer | code-reviewer (tasks), reliability-engineer or architect (release) |
-| gates/G<n>-* | the preparing agent (G1 product-lead, G2 architect, G3 platform-engineer); the hub records only `status`, `decided-by`, `decided-on` and the Decision section | — |
-| state.yaml, trace.md | hub | — |
+| source code, unit/integration tests, migrations | engineer | code-reviewer, active lenses |
+| infra, CI, containers, dev container, runbooks, release.md | platform-engineer | code-reviewer (tasks), reliability-engineer (release) |
+| .sdd/incidents/* | incident-responder | reliability-engineer |
+| README, docs/ (except adr, runbooks), .sdd/knowledge/*, .sdd/improvements.md, retro.md, .claude/skills/stack-* | librarian | architect (promoted skills) |
+| gates/* | the preparing agent (G1 product-lead, G2 architect, G3 platform-engineer, risk-* security-engineer or the deferring owner, incident mitigation incident-responder); the hub records only `status`, `decided-by`, `decided-on` and the Decision section | challenger (G2 fairness) |
+| state.yaml, .sdd/active, trace.md | hub | — |
 | log.md | append-only by any agent | — |
-| .sdd/constitution.md | human (D3) | — |
+| .sdd/constitution.md, .sdd/config.yaml | human (D3; changes proposed via MIPs) | — |
 
 Only the owner edits an artifact. Anyone else files a finding (see communication.md) with `route_to: <owner>`.
 
@@ -105,6 +119,10 @@ IDs are local to a feature; fully qualified across features as `F003:REQ-02`. ID
 | `FF-nn` | Fitness function (global) | .sdd/architecture/fitness.md | ADR / NFR |
 | `DEBT-nn` | Technical debt item (global) | .sdd/architecture/debt.md | ADR / finding |
 | `SPK-nn` | Spike (global) | .sdd/spikes/SPK-nn-*/README.md | Q / design |
+| `SLO-nn` | Service level objective (global) | .sdd/operations/slos.md | NFRs |
+| `INC-nnn` | Incident (global) | .sdd/incidents/INC-nnn-*/ | — |
+| `LES-nn` | Lesson learned (global) | .sdd/knowledge/lessons.md | retro / incident |
+| `MIP-nn` | Methodology improvement proposal (global) | .sdd/improvements.md | retro evidence |
 
 ### How links are carried outside artifacts
 

@@ -9,8 +9,13 @@ upstream: [design.md@1]
 
 # Threat model: <feature name>
 
+## Verification target
+<!-- OWASP ASVS level for the touched areas (L1 for M without personal data; L2 for L or personal/financial/health data). -->
+
 ## Assets
-<!-- What an attacker wants; data classification. -->
+<!-- What an attacker wants. Classification: public | internal | personal | sensitive. -->
+| Asset | Classification | Where it lives | Retention |
+|---|---|---|---|
 
 ## Trust boundaries and entry points
 <!-- Every external IF-nn must appear here. -->

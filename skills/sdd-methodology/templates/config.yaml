@@ -8,12 +8,14 @@ permissions:
   # dev container. false: normal permission prompts.
   auto_approve: true
 
-fallbacks:
-  # Wave 1: agents that do not exist yet are covered by others (see the sdd skill, references/fallbacks.md).
-  # platform-engineer exists (Wave 2): keep false. true lets engineers edit CI/infra files.
-  engineer_does_platform: false
-
 notify: true                   # push notification when /sdd stops for a human decision or blocker
+
+sync:
+  # External writes are batched into an outbox and performed only after the human approves (/sdd sync, or at each stop).
+  issue_tracker: none          # none | github | linear | jira — link specs/tasks to issues
+  pr_review_comments: false    # mirror review findings as PR review comments
+  release_notes: true          # publish GitHub release notes after G3
+  knowledge: none              # none | <name of an external knowledge base the human connected>
 
 environments:
   # Deploy autonomy. New resources or spend are always a human decision (D3).

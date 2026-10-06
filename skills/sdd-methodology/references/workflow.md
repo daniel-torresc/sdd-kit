@@ -17,16 +17,29 @@ Assigned at intake from the signals in `.sdd/config.yaml`. **Any single signal o
 
 | # | Phase | Owner | Contributors | Reviewers | Human gate |
 |---|---|---|---|---|---|
-| 0 | Triage | hub | cartographer | — | — |
-| 1 | Discover | product-lead | researcher, cartographer, ux-designer | challenger | — |
-| 2 | Specify | product-lead | ux-designer, architect (consult on feasibility Qs) | challenger, test-engineer | **G1 intent** (M, L) |
-| 3 | Design | architect | security-engineer, reliability-engineer, researcher, consultants | challenger, security-engineer, reliability-engineer | **G2 foundations** (when triggered) |
-| 4 | Plan | tech-lead | architect | test-engineer, architect (plan-review), challenger (L only) | — |
-| 5 | Build | engineer ×N, platform-engineer | test-engineer (tests first) | code-reviewer (per task) | — |
-| 6 | Verify | test-engineer | engineer (fixes) | code-reviewer, active lenses, product-lead (acceptance: M, L), architect (conformance: L) | — |
-| 7 | Release | platform-engineer | librarian | reliability-engineer | **G3 production** |
-| 8 | Operate | incident-responder | reliability-engineer, platform-engineer | — | — |
-| 9 | Evolve | librarian | all | — | constitution changes |
+| 0 | Triage | hub | cartographer (`context`, existing code) | — | — |
+| 1 | Discover | product-lead | researcher (`domain`, `question`), cartographer | challenger | — |
+| 2 | Specify | product-lead | ux-designer (`flows`, UI features), architect (`consult`), researcher | challenger, test-engineer (`testability-review`), reliability-engineer (`nfr-review`, reliability lens), consultants (`specify-review`, active lenses) | **G1 intent** (M, L) |
+| 3 | Design | architect | security-engineer (`threat-model`, security lens), reliability-engineer (`slo`, `capacity`), researcher (`options`), consultants (`analysis`) | challenger, security-engineer (`design-review`), reliability-engineer (`design-review`), consultants (`design-review`) | **G2 foundations** (one-way doors) |
+| 4 | Plan | tech-lead | architect, reliability-engineer (`perf-plan`), test-engineer (`test-plan`) | test-engineer, architect (`plan-review`), challenger (L), consultants (`plan-review`) | — |
+| 5 | Build | engineer ×N, platform-engineer, test-engineer (tests first) | security-engineer (`dependency-review`, `secret-review` on request) | code-reviewer (`test-review`, `task-review`), security-engineer (`code-review`, security lens, `risk: high` tasks) | — |
+| 6 | Verify | test-engineer | engineer (fixes) | code-reviewer (`feature-review`), security-engineer (`verify`), ux-designer (`ux-review`), consultants (`verify`), product-lead (`accept`: M, L), architect (`conformance`: L) | — |
+| 7 | Release | platform-engineer (`release`) | librarian (`docs`) | reliability-engineer (`release-review`) | **G3 production** |
+| 8 | Operate | incident-responder | reliability-engineer, platform-engineer, engineer (`debug`) | — | mitigation execution (fast-path D3) |
+| 9 | Evolve | librarian (`docs`, `knowledge`, `retro`) | architect (`evolve`), cartographer (`refresh`), reliability-engineer (SLO review) | — | constitution and gate changes (MIPs) |
+
+## Lens activation
+
+At triage (and whenever new information appears) the hub matches `lens_triggers` in `.sdd/config.yaml` and records active lenses in `state.yaml`. Class L activates every lens whose trigger plausibly applies. Each active lens adds its agent to the reviewer panels of the phases above:
+
+| Lens | Agent | Phases |
+|---|---|---|
+| security | security-engineer | Design (threat model + review), Build (code review of security-relevant tasks), Verify |
+| reliability | reliability-engineer | Specify (NFRs), Design, Plan (perf plan), Release |
+| ux | ux-designer | Specify (flows), Verify (ux-review) |
+| a11y, data-migration, ai-evals, finops, api-compat | consultant + lens skill | Specify through Verify, as the lens skill describes |
+
+Dependency approvals (`security-engineer · dependency-review`) apply to every feature, lens or not.
 
 ## Reviewer independence
 
@@ -76,12 +89,30 @@ Worktrees branch from the **committed** feature branch, so uncommitted artifacts
 
 code-reviewer runs a `feature-review` of the integrated diff (M/L). test-engineer (`verify`) runs the full suite, `sdd.py trace --phase verify --junit`, every NFR verification, mutation testing on changed modules (class L; surviving mutants in AC code are `major`), and exploratory testing for UI or public APIs, then writes the evidence pack `specs/<f>/evidence/README.md`. product-lead's acceptance review judges the evidence pack, not just test results. **Flaky tests block Verify**; re-runs are for diagnosis only.
 
+## Operate
+
+`/sdd incident <description>` (or an alert routed by the human) opens `.sdd/incidents/INC-nnn-*`. incident-responder (`triage`) classifies and returns a **fast-path mitigation package**; the hub presents it immediately (no batching with other gates). The human executes or approves the mitigation. Then `investigate` → `postmortem` → action items routed into the workflow (new T/S features via `/sdd new`, change requests, debt, alerting, tests, runbooks, lessons) → `follow-up`.
+
+## Evolve
+
+After G3 (and after abandoned features): librarian `docs` and `knowledge`; architect `evolve` (architecture overview, conventions, debt); cartographer `refresh` of affected map sections (existing code); librarian `retro` → lessons and methodology improvement proposals (`.sdd/improvements.md`). Periodically (`/sdd retro --all`), librarian `cross-retro`. MIPs are decided by their named decider; constitution and gate changes are D3.
+
+## Existing codebases
+
+`/sdd adopt` runs cartographer `adopt` (project map + proposals to architect, product-lead, test-engineer, platform-engineer), then the owners create `.sdd/architecture/*`, `.sdd/product/*`, characterization tests and CI gaps as normal work. For every feature on existing code, triage dispatches cartographer `context` before Discover.
+
+## External sync
+
+Writes to systems outside the repository — issue trackers, PR review comments, release notes, knowledge bases, design tools — are prepared by the owning agent or the hub as an **outbox** and performed by the hub only after the human approves them (one batched approval per stop, configured in `.sdd/config.yaml` `sync`). Pushing `sdd/*` branches and updating draft PRs remain autonomous.
+
 ## Model per mode
 
 Agents declare a default model; the hub overrides it at dispatch where judgment matters more than volume:
 - test-engineer: **opus** for `testability-review`, `plan-review` and `verify`; sonnet for `test-plan`, `test-task` and `diagnose`.
 - engineer: **opus** for tasks marked `risk: high` and for fix attempts 2–3 of any task; sonnet otherwise.
 - code-reviewer: **opus** for `risk: high` tasks, `feature-review`, and re-reviews of disputed blocking findings; sonnet otherwise.
+- platform-engineer: **opus** for `release`; sonnet otherwise.
+- All other agents run on their declared model (opus for judgment roles, sonnet for cartographer and librarian).
 
 ## Backward flow
 
@@ -92,11 +123,12 @@ A finding routed upstream reopens **only the affected artifact**. The owner revi
 | Phase | Mechanical check | Plus |
 |---|---|---|
 | Specify | `sdd.py trace --phase specify` clean; every Q has a default | no open blocking findings |
-| Design | `sdd.py trace --phase design` clean; ADR for every D1+ architectural choice; threat model covers every external IF (L) | no open blocking findings |
+| Design | `sdd.py trace --phase design` clean; ADR for every D1+ architectural choice; threat model covers every external IF (security lens); SLOs exist for new journeys (reliability lens) | no open blocking findings |
 | Plan | `sdd.py trace --phase plan` clean; every task has `surface` and `stack` | no open blocking findings |
 | Build | lint, types, unit tests green (hooks) | per-task code review approved |
 | Verify | `sdd.py trace --phase verify --junit …` clean | all lens reviews and the product-lead acceptance review approve |
-| Release | rollback path documented and exercised; runbook exists | G3 approved |
+| Release | rollback rehearsed and recorded in `release.md`; runbook updated; reliability release-review approves | G3 approved |
+| Evolve | docs updated; retro written | — |
 
 ## state.yaml
 
@@ -111,6 +143,11 @@ The hub writes it after every step so work can resume in any session. See `templ
 | `/sdd` | Read state and advance autonomously until a gate or blocker |
 | `/sdd status` | Where every feature stands |
 | `/sdd gates` | Pending decision packages |
+| `/sdd adopt` | Bring an existing codebase into SDD (cartographer map + proposals) |
+| `/sdd incident <description>` | Open and drive an incident |
+| `/sdd retro [F \| --all]` | Retrospective for a feature, or across features |
+| `/sdd sync` | Review and approve the external-sync outbox |
+| `/sdd feature <F>` | Switch the active feature |
 
 ## Stack routing
 

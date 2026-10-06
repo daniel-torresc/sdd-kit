@@ -98,15 +98,6 @@ def unapproved_runtime_deps(cmd: str, cwd: Path) -> list[str]:
     return [p for p in pkgs if p not in approved]
 
 
-def config_flag(cwd: Path, name: str) -> bool:
-    """True when '<name>: true' appears in .sdd/config.yaml."""
-    try:
-        text = (cwd / ".sdd" / "config.yaml").read_text(encoding="utf-8")
-    except OSError:
-        return False
-    return bool(re.search(rf"^\s*{re.escape(name)}\s*:\s*(true|yes|on)\b", text, re.M | re.I))
-
-
 def project_rel(raw: str, cwd: Path) -> str:
     path = Path(raw)
     if not path.is_absolute():
@@ -200,8 +191,6 @@ def main() -> None:
             deny(f"{agent} may not write outside the project ({raw}).")
         allowed = policy.get("write", [])
         excluded = [g for g in policy.get("write_except", []) if not g.startswith("!")]
-        if not config_flag(cwd, "engineer_does_platform"):
-            excluded += policy.get("write_except_platform", [])
         reincluded = [g[1:] for g in policy.get("write_except", []) if g.startswith("!")]
         if any(fnmatch.fnmatch(rel, g) for g in excluded) and not any(fnmatch.fnmatch(rel, g) for g in reincluded):
             deny(f"{agent} may not modify '{rel}' (owned by another agent). "
