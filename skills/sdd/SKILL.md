@@ -39,10 +39,11 @@ Dispatch with the Agent tool, using the exact `subagent_type` shown in your avai
 1. Parse the envelope (`status`, `artifacts`, `decisions`, `assumptions`, `open_questions`, `escalations`, `next`). If it is malformed, re-dispatch once asking for the envelope only.
 2. **Docs impact**: append any "Docs impact" items from a builder's handoff to `specs/<f>/log.md`; the librarian works from them after G3.
 3. **Route**: findings → their `route_to`; D2 escalations → the named agent; D3 escalations → a pending human decision; change requests → the artifact owner (product-lead in `change-request` mode, other owners in `revise`; the downstream chain becomes stale); research questions → researcher; external writes → the sync outbox.
-4. **Stack protection**: if `.sdd/stack.yaml` changed, check with `git diff` that no `fixed: true` entry was altered or removed. If one was, raise a D3 to the human and don't commit that change. If an entry gained skills that aren't installed, add the install request to `pending_human`.
-5. **Lenses**: if a return reveals a new trigger (e.g. a schema change, a model call, personal data), add the lens to `state.yaml` and raise the class if a higher-class signal appeared.
-6. **Update `state.yaml`** (phase, phase_status, lenses, loops, tasks, stale, pending_human, a one-line `history` entry).
-7. **Commit artifacts** on the feature branch: `git add` the artifact roots that exist (`specs`, `.sdd`, `docs`, `README.md` once they exist) then `git commit -m "chore(sdd): <agent> <mode> <what>" -m "Refs: <F>"`. Worktrees only see committed artifacts.
+4. **Technology constraints from the human** (escalated by product-lead or any agent): ask the human to confirm each one. On confirmation, record it in `.sdd/stack.yaml` as a `fixed: true`, `decided-by: human` entry, with skills if the human names them.
+5. **Stack protection**: if `.sdd/stack.yaml` changed, check with `git diff` that no `fixed: true` entry was altered or removed. If one was, raise a D3 to the human and don't commit that change. If an entry gained skills that aren't installed, add the install request to `pending_human`.
+6. **Lenses**: if a return reveals a new trigger (e.g. a schema change, a model call, personal data), add the lens to `state.yaml` and raise the class if a higher-class signal appeared.
+7. **Update `state.yaml`** (phase, phase_status, lenses, loops, tasks, stale, pending_human, a one-line `history` entry).
+8. **Commit artifacts** on the feature branch: `git add` the artifact roots that exist (`specs`, `.sdd`, `docs`, `README.md` once they exist) then `git commit -m "chore(sdd): <agent> <mode> <what>" -m "Refs: <F>"`. Worktrees only see committed artifacts.
 
 ## advance (no arguments)
 
@@ -64,7 +65,7 @@ Loop until a **stop condition**:
 1. Next feature number = highest `specs/NNN-*` + 1; slug from the idea (kebab-case, ≤ 5 words).
 2. **Existing code**: if `.sdd/map/` exists or the repository has application code, dispatch cartographer `context` for the area first.
 3. **Triage** with `triage_signals` (any higher-class signal raises the class) and set lenses from `lens_triggers`. Class T: no spec folder — create `sdd/T-<slug>`, dispatch engineer `debug`/`implement` with the request as the task, then code-reviewer, then stop for G3 (merge). Otherwise:
-4. `git switch -c sdd/F<NNN>-<slug>` from the main branch; create `specs/NNN-<slug>/state.yaml` from the template (class, lenses, phase `discover` for M/L or `specify` for S); write the folder name to `.sdd/active`; commit.
+4. `git switch -c sdd/F<NNN>-<slug>` from the main branch; create `specs/NNN-<slug>/state.yaml` from the template (class, lenses, phase `discover` for L, `specify` for M and S); write the folder name to `.sdd/active`; commit.
 5. Continue with **advance**.
 
 ## init (greenfield)

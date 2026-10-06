@@ -10,15 +10,15 @@ Assigned at intake from the signals in `.sdd/config.yaml`. **Any single signal o
 |---|---|---|---|
 | **T** Trivial | typo, config value, patch dependency bump, docs | build → code-review → done | none |
 | **S** Small | localized; no new interface, data model or dependency, and no change existing callers can observe | mini-spec (REQ+AC) → test-first build → code-review → verify | none (G1 only if ambiguous) |
-| **M** Standard | new capability, new interface or data model | full flow; lenses only when triggered | G1, G3 |
-| **L** Critical | auth, money, PII, destructive migration, public API, greenfield, hard to reverse | full flow; all assurance lenses; threat model | G1, G2, G3 |
+| **M** Standard | new capability, new interface or data model | full flow, with brief and requirements written and reviewed together in Specify; lenses only when triggered | G1, G3 |
+| **L** Critical | auth, money, PII, destructive migration, public API, greenfield, hard to reverse | full flow with a separate Discover (brief challenged before requirements); all assurance lenses; threat model | G1, G2, G3 |
 
 ## Phases
 
 | # | Phase | Owner | Contributors | Reviewers | Human gate |
 |---|---|---|---|---|---|
 | 0 | Triage | hub | cartographer (`context`, existing code) | — | — |
-| 1 | Discover | product-lead | researcher (`domain`, `question`), cartographer | challenger | — |
+| 1 | Discover (L only) | product-lead | researcher (`domain`, `question`), cartographer | challenger | — |
 | 2 | Specify | product-lead | ux-designer (`flows`, UI features), architect (`consult`), researcher | challenger, test-engineer (`testability-review`), reliability-engineer (`nfr-review`, reliability lens), consultants (`specify-review`, active lenses) | **G1 intent** (M, L) |
 | 3 | Design | architect | security-engineer (`threat-model`, security lens), reliability-engineer (`slo`, `capacity`), researcher (`options`), consultants (`analysis`) | challenger, security-engineer (`design-review`), reliability-engineer (`design-review`), consultants (`design-review`) | **G2 foundations** (one-way doors) |
 | 4 | Plan | tech-lead | architect, reliability-engineer (`perf-plan`), test-engineer (`test-plan`) | test-engineer, architect (`plan-review`), challenger (L), consultants (`plan-review`) | — |
@@ -54,9 +54,9 @@ When dispatching a reviewer, the hub passes **only** the target artifact@version
 
 The hub may dispatch the challenger in `second-opinion` mode (a) on any disputed blocking finding before sending it to an arbiter, and (b) on any D1 decision in `log.md` of a class L feature at the phase exit. The second opinion informs the arbiter or the human; it does not decide.
 
-## Intent questions (Discover, hybrid)
+## Intent questions (hybrid)
 
-Before drafting, product-lead may return `needs-input` with **at most 3** intent questions, and only when the request has materially different interpretations (different users, problem, or success criteria). The hub asks the human, then re-dispatches product-lead with the answers. Every other gap becomes an `ASM-nn` and is confirmed at G1.
+Before drafting the brief (in Discover for L, in Specify for M), product-lead may return `needs-input` with **at most 3** intent questions, and only when the request has materially different interpretations (different users, problem, or success criteria). The hub asks the human, then re-dispatches product-lead with the answers. Every other gap becomes an `ASM-nn` and is confirmed at G1.
 
 ## Phase micro-cycle
 

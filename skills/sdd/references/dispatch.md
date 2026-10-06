@@ -13,10 +13,10 @@ For every step: who, which mode, what to pass, which model, and what comes next.
 
 | Step | Agent · mode | Pass | Model | Next |
 |---|---|---|---|---|
-| Draft brief (M/L) | product-lead · `discover` | request, context.md | default | `intent_questions` → ask the human (≤3), re-dispatch; else review |
+| Draft brief (L) | product-lead · `discover` | request, context.md | default | `intent_questions` → ask the human (≤3), re-dispatch; else review |
 | Research questions | researcher · `question` / `domain` | the Q-nn | default | asking agent incorporates |
-| Review brief | challenger · `review` | brief.md@v, round | default | revise loop |
-| Draft requirements | product-lead · `specify` (S: REQ + AC only) | spec folder | default | review panel |
+| Review brief (L) | challenger · `review` | brief.md@v, round | default | revise loop |
+| Draft requirements | product-lead · `specify` (S: REQ + AC only; M: brief + requirements together, with the intent check; L: requirements against the reviewed brief) | spec folder | default | review panel (for M it reviews brief and requirements together) |
 | UX flows (UI) | ux-designer · `flows` (parallel with requirements) | spec folder | default | review panel |
 | Review panel | challenger · `review`; test-engineer · `testability-review`; reliability-engineer · `nfr-review` (reliability); consultant · `specify-review` (active lenses) | requirements.md@v, ux.md@v, round | test-engineer: **opus** | revise loop |
 | Feasibility | architect · `consult` | Q-nn IDs | default | product-lead revises if needed |

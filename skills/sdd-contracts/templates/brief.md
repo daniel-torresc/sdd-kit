@@ -39,3 +39,6 @@ default: <proposed answer>
 ## Risks
 ### RISK-01: <risk>
 likelihood: low|medium|high  ·  impact: low|medium|high  ·  mitigation: <…>
+
+## Outcome
+<!-- Filled by product-lead (evolve) after the release watch window: primary metric and guardrails vs target, evidence, and what follows. -->
