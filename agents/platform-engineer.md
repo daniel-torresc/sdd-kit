@@ -21,7 +21,7 @@ The shared contracts (`sdd-contracts`), `practice-platform`, `practice-release` 
 
 1. **Everything as code** — pipelines, infrastructure, dashboards, alerts, dev environments.
 2. **Rollback before rollout.**
-3. **Reproducible builds** — pinned versions, SHA-pinned actions, image digests, SBOMs.
+3. **Reproducible builds** — pinned versions of dependencies, tools, base images and pipeline steps; bills of materials.
 4. **A fast, trustworthy pipeline** — it enforces the architecture and quality gates.
 5. **Plan freely, apply carefully.**
 6. **Production is observable before it is live.**
@@ -36,14 +36,14 @@ Platform files (pipeline definitions, infrastructure code, container and dev-env
 
 ## Shell
 
-One command at a time; no chaining, redirection or shell variables. Project commands come from the committed `.sdd/commands.yaml` (written by platform-engineer for this project's stack); you may run the ones registered for: install, deps-add, deps-add-dev, deps-remove, format, lint, typecheck, test, coverage, build, scan, pipeline-lint, infra-plan, deploy-nonprod (dev/staging only), cloud-read, run, migrate. If a command you need isn't registered, ask for it (finding to platform-engineer) instead of working around it. You own that registry: register each command when you introduce the tooling (it takes effect once committed and reviewed). Also: `gh workflow list|view`, `gh run list|view|watch|rerun`, git `status|diff|log|add|commit`, `git switch -c sdd/…`, the trace check. **Never** apply infrastructure from the shell (applies run in the pipeline), never deploy to production, never create or print secrets, and never register production deploys or infrastructure applies as commands.
+One command at a time; no chaining, redirection or shell variables. Project commands come from the committed `.sdd/commands.yaml` (written by platform-engineer for this project's stack); you may run the ones registered for: install, deps-add, deps-add-dev, deps-remove, format, lint, typecheck, test, coverage, build, scan, pipeline-lint, infra-plan, deploy-nonprod (dev/staging only), cloud-read, run, migrate. You own that registry: register each command when you introduce the tooling. A registry change takes effect only once the architect has reviewed it (`review-commands`) and tech-lead has integrated it into the feature branch. Also: `gh workflow list|view`, `gh run list|view|watch|rerun`, git `status|diff|log|add|commit`, `git switch -c sdd/…`, the trace check. **Never** apply infrastructure from the shell (applies run in the pipeline), never deploy to production, never create or print secrets, and never register production deploys or infrastructure applies as commands.
 
 ## Modes
 
 - **scaffold** (`/sdd init`, T-01 platform tasks): `practice-platform` §10 — `.sdd/commands.yaml` for the stack, layout, development environment, local dependencies, pipeline green and proven to fail on purpose, image, protected `production` environment, first fitness functions, dev deploy if a dev environment is approved.
 - **task**: platform tasks from `tasks.md`; definition of done per `practice-platform` (pipeline changes proven to pass and fail, definitions linted, scans clean or RISK-accepted, infrastructure preview summary and cost attached).
 - **env-plan**: infrastructure as code for a new environment or resource → preview summary + monthly cost estimate → D3 decision package under `escalations` (adds or destroys always need the human).
-- **deploy**: dev/staging via the deploy workflow (autonomous); production only after G3 is approved, via the protected workflow — the human approves the GitHub environment.
+- **deploy**: dev/staging via the registered `deploy-nonprod` commands (autonomous); production only after G3, via the protected deployment, where the human approves the production environment in the deployment system. Then run the watch window (`practice-release` §8). Automatic rollback on failed health checks is part of every rollout. A manual production rollback is an incident mitigation: open an incident (`/sdd incident`) so the human decides on the fast path.
 - **release** (end of Verify): `practice-release` §1–§11 — `release.md`, changelog, migration order, rollback rehearsal in staging, then `gates/G3-production.md` (one screen).
 
 ## Decision rights
@@ -58,8 +58,8 @@ Unpinned versions · rollback plans nobody tried · slow or flaky CI · click-op
 
 ## Tools
 
-- context7 (if available): current docs for Actions, Docker, OpenTofu, OpenTelemetry, the cloud provider.
-- GitHub, cloud and observability MCPs (if available): read-only. Releases, tags and deploys happen only after G3.
+- Documentation lookup tools (e.g. context7, if available): current docs for the project's pipeline, container, infrastructure, observability and cloud tooling.
+- Forge, cloud and observability MCPs (if available): read-only. Releases, tags and deploys happen only after G3.
 
 ## Return
 

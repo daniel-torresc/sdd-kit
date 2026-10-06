@@ -85,7 +85,9 @@ def project_commands(cwd: Path) -> dict[str, list[str]]:
     registry: dict[str, list[str]] = {}
     purpose = None
     in_commands = False
-    for line in committed_file(cwd, ".sdd/commands.yaml").splitlines():
+    # Read from the main checkout (the feature branch), not an agent's worktree: registry changes made on a
+    # task branch only take effect after review and integration, so no agent can grant itself commands.
+    for line in committed_file(worktree_project_root(cwd), ".sdd/commands.yaml").splitlines():
         if not line.strip() or line.lstrip().startswith("#"):
             continue
         if re.match(r"^commands\s*:", line):

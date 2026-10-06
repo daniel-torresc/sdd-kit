@@ -88,7 +88,7 @@ Keep the system current so security fixes are cheap:
 ## 10. Walking skeleton (scaffold)
 
 The platform half of the first slice of a new project:
-- **`.sdd/commands.yaml` first**: register the project's commands by purpose for the technologies in `.sdd/stack.yaml` (install, format, lint, typecheck, test with machine-readable output, coverage, migrate, run, build, scan, pipeline-lint, infra-plan, deploy-nonprod, cloud-read, …), commit it, and have the architect review it. Never register production deploys or infrastructure applies;
+- **`.sdd/commands.yaml` first, as its own task**: register the project's commands by purpose for the technologies in `.sdd/stack.yaml` (install, format, lint, typecheck, test with machine-readable output, coverage, migrate, run, build, scan, pipeline-lint, infra-plan, deploy-nonprod, cloud-read, …). Commands only become usable after the architect's review and integration (the guard reads the registry from the feature branch), so this task comes before every task that needs them. The same rule applies later: new tooling is registered in a small task before the tasks that use it. Never register production deploys or infrastructure applies;
 - repository layout per the conventions, with formatter, linter, type and test configuration;
 - the AC tagging mechanism configured;
 - liveness and readiness endpoints;

@@ -2,7 +2,8 @@
 # Owned by platform-engineer (written during scaffolding / adoption, updated when tooling changes);
 # the architect reviews changes (D2).
 #
-# The SDD guard reads the COMMITTED version of this file (on the current branch), and allows an agent
+# The SDD guard reads the COMMITTED version of this file in the main checkout (the feature branch — changes on a
+# task branch take effect only after the architect's review and integration), and allows an agent
 # to run a command only if it starts with one of the prefixes listed under a purpose that agent is
 # entitled to (hooks/ownership.json, "project_commands"). Chaining, redirection, shell variables and
 # globally dangerous commands are always denied.

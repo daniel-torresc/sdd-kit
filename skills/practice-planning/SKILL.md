@@ -24,7 +24,7 @@ Walk the approved design and list every unit of work it implies, with its source
 | Runtime dependencies | Introduction (after dependency review) |
 | Security mitigations (threat model) | Each control and its verification |
 | UX states (ux.md) | Every state of every screen, not just the success path |
-| Enablers | Scaffolding, environments, CI, test infrastructure, data fixtures |
+| Enablers | Scaffolding, environments, CI, test infrastructure, data fixtures; registering new commands in `.sdd/commands.yaml` (its own task, before the tasks that use them) |
 
 Every inventory item must trace to a design element and, through it, to REQ/NFR IDs. An item that traces to nothing is scope creep. A design element with no work items is a gap in the plan.
 

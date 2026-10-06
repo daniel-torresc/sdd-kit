@@ -75,7 +75,7 @@ Project-level state lives in `.sdd/state.yaml` (phase: `init`).
 2. product-lead `init` (vision, personas, glossary); researcher `domain` if the product context needs evidence → challenger review → revise.
 3. researcher `options` for each foundational decision → architect `init` (G2 packages + `G2-brief.md`) → challenger G2 fairness review → revise → **G2 to the human** (stop).
 4. After the decisions: architect `init` again (ADRs, `.sdd/stack.yaml`, `.sdd/architecture/*`); platform-engineer `env-plan` for the dev and staging environments on the chosen hosting (D3: you approve resources and spend); researcher `stack-brief` for each decided technology that is unfamiliar and lacks adequate guidance; security-engineer `dependency-review` for the baseline runtime dependencies; reliability-engineer `slo` and `capacity`; ux-designer `init` (design system) if the product has a UI.
-5. Walking skeleton: platform-engineer `scaffold` (repo, dev container, CI proven to pass and fail, image, protected production environment, first fitness functions; a dev environment needs the human's D3 first) → code-review → merge to `sdd/init`. Then G3 (merge `sdd/init` to main) and stop.
+5. Walking skeleton: platform-engineer `scaffold` in two steps — first the command registry (`.sdd/commands.yaml`) → architect `review-commands` → integrate; then the skeleton (repo, dev container, CI proven to pass and fail, image, protected production environment, first fitness functions; a dev environment needs the human's D3 first) → code-review → merge to `sdd/init`. Then G3 (merge `sdd/init` to main) and stop.
 
 ## adopt (existing codebase)
 
