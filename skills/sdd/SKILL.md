@@ -28,18 +28,20 @@ Dispatch with the Agent tool, using the exact `subagent_type` shown in your avai
 
 1. Build the prompt from the dispatch table: **mode**, spec folder, target artifact@version, round, task ID, branches, the **lens** (consultant), and the absolute path of `sdd.py` (`<sdd-contracts skill dir>/scripts/sdd.py`) as fallback.
 2. Pick the **model** by the per-mode rules (workflow contract) and pass `model` on the Agent call when it differs from the agent's default.
-3. **Isolation**: engineer and platform-engineer isolate themselves; pass `isolation: "worktree"` for test-engineer `test-task`. Everything else runs in the main checkout.
+3. **Isolation**: engineer and platform-engineer isolate themselves; pass `isolation: "worktree"` for test-engineer `test-task` and for every code-reviewer dispatch (give the reviewer the task branch to check out and the **absolute main-checkout path** for its review file). Everything else runs in the main checkout.
 4. **Reviewers get artifacts only** — never the author's envelope, summary or reasoning.
 5. Run independent dispatches **in parallel** (review panels; ready build tasks up to `parallelism.max_parallel_tasks`).
 6. Include every **active lens** from `state.yaml` in the panels the dispatch table assigns it to.
+7. **Technology skills**: resolve the technologies the work involves (the task's `stack:` concerns; for non-task work, the concerns of the agent's area) to their `skills` in `.sdd/stack.yaml`, and name them in the prompt: "Load these skills first: …". Check them against your available skills. For any that are missing, add a pending human item ("install skill X from <source in `skill-sources`>") and still dispatch, telling the agent which skills are unavailable.
 
 ## After every return
 
 1. Parse the envelope (`status`, `artifacts`, `decisions`, `assumptions`, `open_questions`, `escalations`, `next`). If it is malformed, re-dispatch once asking for the envelope only.
 2. **Route**: findings → their `route_to`; D2 escalations → the named agent; D3 escalations → a pending human decision; change requests → the artifact owner (the downstream chain becomes stale); research questions → researcher; external writes → the sync outbox.
-3. **Lenses**: if a return reveals a new trigger (e.g. a schema change, a model call, personal data), add the lens to `state.yaml` and raise the class if a higher-class signal appeared.
-4. **Update `state.yaml`** (phase, phase_status, lenses, loops, tasks, stale, pending_human, a one-line `history` entry).
-5. **Commit artifacts** on the feature branch: `git add` the artifact roots that exist (`specs`, `.sdd`, `docs`, `README.md` once they exist) then `git commit -m "chore(sdd): <agent> <mode> <what>" -m "Refs: <F>"`. Worktrees only see committed artifacts.
+3. **Stack protection**: if `.sdd/stack.yaml` changed, check with `git diff` that no `fixed: true` entry was altered or removed. If one was, raise a D3 to the human and don't commit that change. If an entry gained skills that aren't installed, add the install request to `pending_human`.
+4. **Lenses**: if a return reveals a new trigger (e.g. a schema change, a model call, personal data), add the lens to `state.yaml` and raise the class if a higher-class signal appeared.
+5. **Update `state.yaml`** (phase, phase_status, lenses, loops, tasks, stale, pending_human, a one-line `history` entry).
+6. **Commit artifacts** on the feature branch: `git add` the artifact roots that exist (`specs`, `.sdd`, `docs`, `README.md` once they exist) then `git commit -m "chore(sdd): <agent> <mode> <what>" -m "Refs: <F>"`. Worktrees only see committed artifacts.
 
 ## advance (no arguments)
 
@@ -67,7 +69,7 @@ Loop until a **stop condition**:
 ## init (greenfield)
 
 Project-level state lives in `.sdd/state.yaml` (phase: `init`).
-1. If `.sdd/` does not exist: copy `constitution.md`, `config.yaml` and `dependencies.yaml` from the sdd-contracts templates; ask the human for the product idea if not given, and for any technologies they want to fix as constraints (recorded in the constitution); commit on `sdd/init`.
+1. If `.sdd/` does not exist: copy `constitution.md`, `config.yaml`, `dependencies.yaml`, `stack.yaml` and `commands.yaml` from the sdd-contracts templates. Ask the human for the product idea if not given, and for any technologies they want to fix as constraints, with the skills to use for them if they know. Record those as `fixed: true`, `decided-by: human` entries in `stack.yaml`, in the human's words. Commit on `sdd/init`.
 2. product-lead `init` (vision, personas, glossary); researcher `domain` if the product context needs evidence → challenger review → revise.
 3. researcher `options` for each foundational decision → architect `init` (G2 packages + `G2-brief.md`) → challenger G2 fairness review → revise → **G2 to the human** (stop).
 4. After the decisions: architect `init` again (ADRs, `.sdd/architecture/*`); researcher `stack-brief` for each decided technology that is unfamiliar and lacks adequate guidance; security-engineer `dependency-review` for the baseline runtime dependencies; reliability-engineer `slo` and `capacity`; ux-designer `init` (design system) if the product has a UI.
@@ -75,7 +77,7 @@ Project-level state lives in `.sdd/state.yaml` (phase: `init`).
 
 ## adopt (existing codebase)
 
-Project-level state in `.sdd/state.yaml` (phase: `adopt`). Copy the `.sdd/` templates if missing; dispatch cartographer `adopt`; route its proposals to architect (`init`-style overview and conventions), product-lead (`init` product context and behavior baseline), test-engineer (characterization-test plan), platform-engineer (CI gaps) as normal work; stop for any G2 the architect raises.
+Project-level state in `.sdd/state.yaml` (phase: `adopt`). Copy the `.sdd/` templates if missing (including `stack.yaml` and `commands.yaml`); dispatch cartographer `adopt`; route its proposals to architect (`init`-style overview and conventions, and `stack.yaml` entries for the technologies already in use, with `decided-by: existing`), platform-engineer (`.sdd/commands.yaml` from the existing tooling), product-lead (`init` product context and behavior baseline), test-engineer (characterization-test plan), platform-engineer (CI gaps) as normal work; stop for any G2 the architect raises.
 
 ## incident <description>
 

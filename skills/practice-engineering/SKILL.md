@@ -12,7 +12,7 @@ Before writing anything, read in this order:
 2. its ACs;
 3. the relevant design sections and ADRs;
 4. the contracts;
-5. the project conventions (`.sdd/architecture/conventions.md`);
+5. the project conventions (`.sdd/architecture/conventions.md`) and stack (`.sdd/stack.yaml`);
 6. the acceptance tests for your ACs;
 7. the code you will touch, and its callers.
 
@@ -57,7 +57,7 @@ Only runtime dependencies approved in `.sdd/dependencies.yaml`. If you need a ne
 
 ## 7. Local definition of done
 
-Before handoff, run the project's checks (the commands listed in `conventions.md`) and pass all of them:
+Before handoff, run the project's checks (the registered commands in `.sdd/commands.yaml`) and pass all of them:
 - formatting and linting;
 - type checking (where the stack has it);
 - the **full** test suite, not just your tests;

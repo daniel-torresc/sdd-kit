@@ -38,7 +38,9 @@ Use `practice-tech-selection`: derive the decision criteria from the context, in
 
 ## 6. Stack brief
 
-When a decided technology is unfamiliar to the team and no adequate guidance is available, write `.sdd/briefs/<technology>.md` from the stack-brief template, from current official documentation: version researched, idioms and project layout, tooling (formatting, linting, type checking, testing, packaging), testing patterns, security and performance pitfalls, common mistakes. It must be good enough for an engineer to work from. It is project knowledge, not a reusable skill.
+When a decided technology is unfamiliar to the team and no adequate guidance is available, write `.sdd/briefs/<technology>.md` from the stack-brief template, from current official documentation: version researched, idioms and project layout, tooling (formatting, linting, type checking, testing, packaging), testing patterns, security and performance pitfalls, common mistakes. It must be good enough for an engineer to work from. It is project knowledge, not a reusable skill; link it from the technology's entry in `.sdd/stack.yaml` (via the architect).
+
+**Candidate skills.** When asked, propose technology-specific skills for a stack entry: what each covers, its source, maintenance, and fit for the decided version, so the human can choose which to install and list.
 
 ## 7. Domain, market and regulation
 

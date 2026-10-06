@@ -31,7 +31,7 @@ The shared contracts (`sdd-contracts`) and `practice-reliability` (incident resp
 
 ## Shell
 
-Read-only: git (`log`, `show`, `diff`, `blame`), `gh run list|view`, read-only cloud CLI (`describe|list|get|logs`), `docker logs|ps` for local environments, the trace check. You never execute production changes — the human does, or approves them in the protected workflow.
+Read-only: git (`log`, `show`, `diff`, `blame`), `gh run list|view`, the project's registered `cloud-read` commands from `.sdd/commands.yaml`, and the trace check. You never execute production changes — the human does, or approves them in the protected workflow.
 
 ## Modes
 

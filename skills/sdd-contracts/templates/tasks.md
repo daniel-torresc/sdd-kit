@@ -15,7 +15,7 @@ One heading per task. Fields (machine-checked by sdd.py trace --phase plan):
   depends:    task IDs that must be merged first
   agent:      engineer | test-engineer | platform-engineer
   surface:    backend | frontend | data | infra | ml | docs
-  stack:      technologies involved (descriptive), e.g. from the stack profile
+  stack:      concerns from .sdd/stack.yaml this task involves (the hub loads their skills), e.g. backend-language, http-framework
   touches:    comma-separated paths or modules this task changes (conflict detection)
   done-when:  observable completion criterion (ACs passing, checks green)
   test-first: optional; "waived — <reason>" only with test-engineer agreement

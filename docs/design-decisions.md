@@ -73,10 +73,23 @@ This file records every design decision behind the agent organization, so the co
 
 Result: 31 → 24 skills (`sdd`, `sdd-contracts`, 17 practices, 5 lenses).
 
-### Known implicit technology assumptions outside the skills
+### Project stack and command registry (agreed 2026-10-06)
 
-- **Guard allowlists and agents' Shell sections** (`hooks/ownership.json`) hard-code command patterns for specific toolchains (uv/pytest, npm, docker, tofu, semgrep, …). A project on another stack would be blocked. Candidate fix: a project-level command registry (e.g. `.sdd/commands.yaml`, owned by platform-engineer and reviewed by the architect) that the guard reads, so agents' allowed commands follow the project's stack.
-- **The trace script** runs through `uv` (a plugin requirement, not a project assumption) and maps tests to definitions most precisely for Python-style `def` syntax; other languages map by file and line.
+- **`.sdd/stack.yaml`** (template in `sdd-contracts/templates/`) is the per-project place for its technologies.
+  - Each concern has: a choice, version, status, `decided-by` (human, human-at-G2, architect, existing), ADR or gate, stack brief, and the **technology skills** to load.
+  - **Who writes it:** the human writes `fixed: true` constraints (also captured by the hub at `/sdd init`); the architect records G2 outcomes and smaller choices; the researcher proposes candidate skills.
+  - **How it's used:** the hub resolves each task's `stack:` concerns to skills and names them in the dispatch; missing skills become install requests to the human (`skill-sources`).
+  - **Protection:** the hub refuses to commit changes to `fixed` entries.
+- **`.sdd/commands.yaml`** (template too) is the project command registry by purpose, owned by platform-engineer and reviewed by the architect.
+  - The guard reads the **committed** file and allows each agent only the purposes in its policy (`project_commands` in `hooks/ownership.json`).
+  - A global denylist always applies.
+  - Runtime additions through `deps-add` are checked against `.sdd/dependencies.yaml`.
+  - This removed every hard-coded toolchain pattern (uv, npm, docker, tofu, scanners) from the guard policies and agent shell sections.
+- The code-reviewer now runs in an isolated worktree, checks out the task branch detached, and writes its review to the main checkout. The guard allows SDD artifacts (`specs/`, `.sdd/`) to be written back from worktrees.
+- Remaining assumptions, deliberately kept:
+  - GitHub as the forge (`gh` for draft PRs and pipeline runs);
+  - conventional platform paths (`.github/`, `infra/`, container files) in the engineer's write exclusions;
+  - `uv` to run the plugin's own `sdd.py`.
 
 ## 5. Review backlog (before testing)
 

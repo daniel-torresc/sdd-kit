@@ -10,7 +10,9 @@
 │   ├── active                   # folder name of the active feature (hub)
 │   ├── state.yaml               # project-level state for init/adopt (hub)
 │   ├── product/                 # product-lead: vision.md, personas.md (PER-nn), glossary.md; ux-designer: design-system.md
-│   ├── architecture/            # architect: overview.md, conventions.md (stack profile), fitness.md (FF-nn), debt.md (DEBT-nn)
+│   ├── stack.yaml               # architect + human: the project's technologies and the skills to load for each
+│   ├── commands.yaml            # platform-engineer: project command registry by purpose (read by the guard)
+│   ├── architecture/            # architect: overview.md, conventions.md, fitness.md (FF-nn), debt.md (DEBT-nn)
 │   ├── operations/              # reliability-engineer: slos.md (SLO-nn), capacity.md
 │   ├── dependencies.yaml        # security-engineer: approved runtime dependencies (guard-enforced)
 │   ├── map/                     # cartographer: codebase map of existing code (structure, data, integrations, …)
@@ -62,6 +64,8 @@ Class S work uses only `state.yaml`, `requirements.md` (REQ + AC), `reviews/`, `
 | ux.md, prototypes/ | ux-designer | challenger, test-engineer (testability of accessibility and states) |
 | research/, .sdd/research/, .sdd/briefs/ | researcher | the asking agent |
 | context.md, impact-*.md, .sdd/map/ | cartographer | — |
+| .sdd/stack.yaml | architect (entries with `fixed: true` are written only by the human and never changed by agents) | challenger (G2 fairness), human (G2) |
+| .sdd/commands.yaml | platform-engineer | architect (D2); takes effect once committed |
 | design.md, contracts/*, docs/adr/*, .sdd/architecture/*, .sdd/spikes/* | architect | challenger, security-engineer, reliability-engineer, active lenses |
 | threat-model.md, .sdd/dependencies.yaml, tests/security/ | security-engineer | architect |
 | .sdd/operations/*, perf-plan.md | reliability-engineer | architect, test-engineer |

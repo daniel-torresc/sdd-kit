@@ -167,4 +167,12 @@ The hub writes it after every step so work can resume in any session. See `templ
 
 ## Technology context
 
-The methodology skills describe how to work; technology-specific knowledge comes from whatever skills the harness makes available for the task. Agents learn the technologies involved from the project's stack profile (`.sdd/architecture/conventions.md`) and each task's `stack:` field, which are descriptive metadata, not skill routing. When a chosen technology is unfamiliar and no adequate guidance is available, the researcher writes a stack brief (`.sdd/briefs/<technology>.md`) from current official documentation.
+The methodology skills describe *how to work*; technology-specific knowledge comes from technology skills declared per project.
+
+- **`.sdd/stack.yaml`** is the single place that declares the project's technologies: one entry per concern (language, frameworks, datastore, testing, pipeline, infrastructure, cloud, frontend, …), each with its version, status, who decided it, its ADR or pending gate, and the **skills** to load for it.
+  - The **human** may write entries at any time; `fixed: true` entries are constraints that agents never change and every technology decision must respect.
+  - The **architect** records decisions: G2 outcomes (`decided-by: human-at-G2`) and smaller reversible choices (`decided-by: architect`, logged), always with an ADR when significant.
+  - The **researcher** may propose candidate skills for a technology in a research note; the human chooses.
+- **Skill loading:** at every dispatch the hub resolves the technologies the task involves (the task's `stack:` concerns, or the agent's area for non-task work) to their `skills` in `stack.yaml` and names them in the dispatch; agents load them before working. If a listed skill isn't installed, the hub asks the human to install it (from `skill-sources`); meanwhile agents rely on official documentation and any stack brief.
+- **Stack briefs:** when a decided technology is unfamiliar and no adequate skill exists, the researcher writes `.sdd/briefs/<technology>.md` from current official documentation and links it from the entry.
+- **`.sdd/commands.yaml`** is the project's command registry by purpose (install, test, lint, build, migrate, scan, deploy-nonprod, …), written by platform-engineer when tooling is introduced and reviewed by the architect. The guard lets each agent run only the registered commands for the purposes in its policy, read from the **committed** file, with a global denylist.

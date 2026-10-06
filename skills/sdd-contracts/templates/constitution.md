@@ -20,10 +20,9 @@
 - No PII in logs.
 
 ## Technology constraints
-<!-- Technologies fixed by the human (not defaults — constraints every decision must respect),
-     and technologies decided at G2, each with its ADR. There are no other defaults: choices are derived from context. -->
-- Fixed by the human: <e.g. backend language>
-- Decided (G2): <technology — ADR-NNNN>
+<!-- Technologies the human fixes as constraints are recorded in .sdd/stack.yaml with `fixed: true`.
+     There are no other defaults: every other choice is derived from context (practice-tech-selection). -->
+See `.sdd/stack.yaml`.
 
 ## Definition of Done (feature)
 - [ ] `sdd.py trace --phase verify` is clean

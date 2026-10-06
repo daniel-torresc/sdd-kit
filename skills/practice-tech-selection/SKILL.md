@@ -5,13 +5,13 @@ description: How to choose technologies from context in SDD — deriving decisio
 
 # Practice: Technology selection
 
-There are **no default technologies** in this methodology. Every choice is derived from the context of the product being built. The only fixed technologies are those the human has stated as constraints in the project's constitution.
+There are **no default technologies** in this methodology. Every choice is derived from the context of the product being built. The only fixed technologies are those the human has stated as constraints (`fixed: true` entries in `.sdd/stack.yaml`).
 
 ## 1. Start from the context, not the catalogue
 
 Before naming any technology, write down for the decision:
 - **What it must do**: the REQ/NFR IDs it serves, with their numbers (latency, throughput, availability, data volume, consistency, offline, compliance).
-- **Constraints**: technologies fixed by the human (constitution), existing systems it must integrate with, data residency, budget, deadlines, licensing policy.
+- **Constraints**: technologies fixed by the human (`fixed: true` in `.sdd/stack.yaml`), existing systems it must integrate with, data residency, budget, deadlines, licensing policy.
 - **Context of the people**: who will build and operate it (the agent team and the humans who inherit it), existing skills, operational capacity.
 - **Horizon**: expected scale and how long the decision must hold.
 - **Reversibility**: what reversing it would cost (rewrite, data migration, vendor exit).
@@ -71,8 +71,8 @@ When several G2s are pending together, add `G2-brief.md`, one screen long:
 - one line per decision;
 - how to answer.
 
-The challenger reviews the packages and the brief for fairness before the human sees them. After the decision, the architect records an ADR with `decided-by: human` and the human's reasons.
+The challenger reviews the packages and the brief for fairness before the human sees them. After the decision, the architect records an ADR with `decided-by: human` and the human's reasons, and updates `.sdd/stack.yaml`: the chosen technology, version, `decided-by: human-at-G2`, the ADR link, and the technology skills agents should load for it (agreed with the human; the researcher may propose candidates).
 
 ## 8. Smaller choices (two-way doors)
 
-For a library or tool within an already decided stack: check fit, maintenance, license and known vulnerabilities; prefer what the project already uses; log the choice (D1). A new **runtime** dependency also goes through security-engineer's dependency review (D2).
+For a library or tool within an already decided stack: check fit, maintenance, license and known vulnerabilities; prefer what the project already uses; log the choice (D1), and record it in `.sdd/stack.yaml` if it is a technology agents need specific knowledge of (`decided-by: architect`). A new **runtime** dependency also goes through security-engineer's dependency review (D2).

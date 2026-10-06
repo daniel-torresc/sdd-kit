@@ -1,0 +1,44 @@
+# The project's technology stack — the single place that says which technologies this project uses
+# and which technology-specific skills the agents should load for each.
+#
+# Who writes it:
+#   - The human, at any time: entries with `fixed: true` are constraints. Agents must never change
+#     or remove them; they appear in every technology decision as non-negotiable.
+#   - The architect: entries decided at a G2 gate (`decided-by: human-at-G2`) or as smaller
+#     reversible choices (`decided-by: architect`, logged as D1, ADR if significant).
+#   - The researcher may propose candidate skills for an entry (in a research note); the human chooses.
+#
+# How it is used:
+#   - The hub reads it at every dispatch and tells each agent which `skills` to load for the
+#     technologies its task involves (the task's `stack:` field names the concerns).
+#   - Skills listed here must be installed; if one is missing, the hub tells the human where it
+#     comes from (`skill-sources`). Until then agents rely on official docs and any stack brief.
+#   - Entries with `status: proposed` are pending decisions (see `gate`).
+
+version: 1
+
+technologies:
+  - concern: backend-language          # what this entry covers (language, framework, datastore, testing, ci, infra, cloud, frontend, …)
+    choice: <technology>               # null while undecided
+    version: "<version or range>"
+    status: decided                    # proposed | decided | superseded
+    decided-by: human                  # human | human-at-G2 | architect | existing (adopted codebase)
+    fixed: true                        # true = human constraint; agents may not change it
+    rationale: "<why>"
+    adr: null                          # ADR-NNNN when decided through the architect
+    gate: null                         # gates/G2-<slug>.md while proposed
+    brief: null                        # .sdd/briefs/<technology>.md if one was written
+    skills: []                         # technology-specific skills to load for this technology
+
+  - concern: <concern>
+    choice: null
+    status: proposed
+    decided-by: null
+    fixed: false
+    gate: .sdd/gates/G2-<slug>.md
+    skills: []
+
+# Where listed skills come from (so the human can install missing ones).
+skill-sources:
+  - skill: <skill-name>
+    source: <marketplace/plugin or repository>

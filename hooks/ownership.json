@@ -1,5 +1,5 @@
 {
-  "_doc": "Per-agent permissions enforced by scripts/guard.py. Agents not listed here are not restricted by this guard. 'write': glob patterns relative to the project root that the agent may write; 'write_except': globs it may never write ('!pattern' re-includes); 'write_if_conflicted': may edit files that contain merge-conflict markers; 'deps_check': runtime package additions must be approved in .sdd/dependencies.yaml; 'bash': regexes a command must fully match (chaining and redirection always denied); 'mcp': 'read-only' denies MCP tools whose name looks like a write. '__hub__' lists the main session's bookkeeping actions that are auto-approved; everything else in the main session keeps normal prompts. In-policy actions are auto-approved unless .sdd/config.yaml sets permissions.auto_approve: false.",
+  "_doc": "Per-agent permissions enforced by scripts/guard.py. Agents not listed here are not restricted by this guard. 'write': glob patterns relative to the project root that the agent may write; 'write_except': globs it may never write ('!pattern' re-includes); 'write_if_conflicted': may edit files that contain merge-conflict markers; 'bash': regexes for SDD commands the agent may run (git, gh, the trace script, \u2026); 'project_commands': purposes from the project's committed .sdd/commands.yaml the agent may run (the registry follows the project's stack; a global denylist always applies; runtime additions via 'deps-add' must be approved in .sdd/dependencies.yaml); chaining and redirection are always denied; 'mcp': 'read-only' denies MCP tools whose name looks like a write. '__hub__' lists the main session's bookkeeping actions that are auto-approved; everything else in the main session keeps normal prompts. In-policy actions are auto-approved unless .sdd/config.yaml sets permissions.auto_approve: false.",
   "__hub__": {
     "write": [
       "specs/*/state.yaml",
@@ -9,7 +9,8 @@
       ".sdd/gates/*",
       ".sdd/log.md",
       ".sdd/active",
-      ".sdd/outbox.md"
+      ".sdd/outbox.md",
+      ".sdd/stack.yaml"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -59,13 +60,16 @@
       ".sdd/spikes/*",
       "specs/*/reviews/*.md",
       ".sdd/reviews/*.md",
-      "specs/*/log.md"
+      "specs/*/log.md",
+      ".sdd/stack.yaml"
     ],
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
-      "(rtk )?uv (run|init|add|sync|remove) (--directory|--project) \\.sdd/spikes/SPK-[\\w.-]+( [^<>$]*)?"
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?"
     ],
-    "mcp": "read-only"
+    "mcp": "read-only",
+    "project_commands": [
+      "spike"
+    ]
   },
   "tech-lead": {
     "write": [
@@ -88,10 +92,15 @@
       "(rtk )?git push (-u )?origin sdd/[\\w./-]+",
       "(rtk )?gh pr create --draft[^<>$;&|`]*",
       "(rtk )?gh pr (edit|view|checks)[^<>$;&|`]*",
-      "(rtk )?gh run (view|list)[^<>$;&|`]*",
-      "(rtk )?uv run (-q )?pytest[^<>$;&|`]*"
+      "(rtk )?gh run (view|list)[^<>$;&|`]*"
     ],
-    "mcp": "read-only"
+    "mcp": "read-only",
+    "project_commands": [
+      "install",
+      "test",
+      "lint",
+      "typecheck"
+    ]
   },
   "test-engineer": {
     "write": [
@@ -109,15 +118,21 @@
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
-      "(rtk )?uv run (-q )?(pytest|schemathesis|mutmut)[^<>$;&|`]*",
-      "(rtk )?npx (--yes )?playwright[^<>$;&|`]*",
-      "(rtk )?k6 run [^<>$;&|`]*",
       "(rtk )?git (status|diff|log)( [^<>$;&|`]*)?",
       "(rtk )?git add [^<>$;&|`]*",
       "(rtk )?git commit( -m \\\"[^\\\"$`]*\\\")+",
       "(rtk )?git switch -c sdd/[\\w./-]+"
     ],
-    "mcp": "read-only"
+    "mcp": "read-only",
+    "project_commands": [
+      "install",
+      "test",
+      "contract-test",
+      "e2e",
+      "mutation",
+      "perf",
+      "run"
+    ]
   },
   "engineer": {
     "write": [
@@ -139,19 +154,29 @@
       "docker-compose*",
       "compose.y*ml"
     ],
-    "deps_check": true,
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
-      "(rtk )?uv (run|sync|lock|add|remove|tree|pip list)( [^<>$;&|`]*)?",
-      "(rtk )?(npm|pnpm|yarn) (run|test|exec|ci|install|i|add|remove|ls|audit)( [^<>$;&|`]*)?",
-      "(rtk )?npx [^<>$;&|`]*",
       "(rtk )?git (status|diff|log|show)( [^<>$;&|`]*)?",
       "(rtk )?git (add|restore) [^<>$;&|`]*",
       "(rtk )?git commit( -m \\\"[^\\\"$`]*\\\")+",
       "(rtk )?git (switch -c|branch -m) sdd/[\\w./-]+",
       "(rtk )?curl [^<>$;&|`]*https?://(localhost|127\\.0\\.0\\.1)(:\\d+)?(/[^<>$;&|`\\s]*)?[^<>$;&|`]*"
     ],
-    "mcp": "read-only"
+    "mcp": "read-only",
+    "project_commands": [
+      "install",
+      "deps-add",
+      "deps-add-dev",
+      "deps-remove",
+      "format",
+      "lint",
+      "typecheck",
+      "test",
+      "coverage",
+      "migrate",
+      "run",
+      "build"
+    ]
   },
   "code-reviewer": {
     "write": [
@@ -164,13 +189,20 @@
       "(rtk )?git (diff|log|show|status)( [^<>$;&|`]*)?",
       "(rtk )?git branch( (-a|-r|-v|-vv|--list|--show-current|--merged|--no-merged|--contains)[^<>$;&|`]*)?",
       "(rtk )?git worktree list( [^<>$;&|`]*)?",
-      "(rtk )?git worktree add --detach \\.claude/worktrees/review-[\\w.-]+ [\\w./-]+",
-      "(rtk )?git worktree remove (--force )?\\.claude/worktrees/review-[\\w.-]+",
-      "(rtk )?uv run (-q )?--directory \\.claude/worktrees/review-[\\w.-]+ (pytest|ruff|pyright|diff-cover|pip-audit|lint-imports|alembic)[^<>$;&|`]*",
-      "(rtk )?uv sync (-q )?--directory \\.claude/worktrees/review-[\\w.-]+[^<>$;&|`]*",
-      "(rtk )?npm --prefix \\.claude/worktrees/review-[\\w.-]+ (ci|test|run|audit)[^<>$;&|`]*"
+      "(rtk )?git switch --detach sdd/[\\w./-]+"
     ],
-    "mcp": "read-only"
+    "mcp": "read-only",
+    "project_commands": [
+      "install",
+      "format",
+      "lint",
+      "typecheck",
+      "test",
+      "coverage",
+      "contract-test",
+      "scan",
+      "migrate"
+    ]
   },
   "platform-engineer": {
     "write": [
@@ -188,26 +220,38 @@
       "*tests/contract/*",
       "*tests/e2e/*",
       "*tests/perf/*",
-      "src/*/*/*"
+      "src/*/*/*",
+      "!.sdd/commands.yaml"
     ],
-    "deps_check": true,
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
-      "(rtk )?docker (build|run|compose|images|ps|logs|inspect|stop|rm|buildx build)[^<>$;&|`]*",
-      "(rtk )?(actionlint|hadolint|shellcheck|trivy|syft|gitleaks|pre-commit|tflint|checkov)( [^<>$;&|`]*)?",
-      "(rtk )?(tofu|terraform) (-chdir=[\\w./-]+ )?(fmt|validate|init|plan|show|providers|version|output)( [^<>$;&|`]*)?",
       "(rtk )?gh workflow (list|view)( [^<>$;&|`]*)?",
       "(rtk )?gh run (list|view|watch|rerun)( [^<>$;&|`]*)?",
-      "(rtk )?gh workflow run [\\w./-]+( --ref sdd/[\\w./-]+)?( -f [\\w-]+=[\\w./-]+)*? -f environment=(dev|staging)( -f [\\w-]+=[\\w./-]+)*",
-      "(rtk )?(aws|gcloud|az|scw|fly|flyctl|doctl) [\\w -]*\\b(describe|list|get|show|status|info)[\\w-]*( [^<>$;&|`]*)?",
-      "(rtk )?uv (sync|run|lock|add|remove)( [^<>$;&|`]*)?",
-      "(rtk )?(npm|pnpm) (ci|install|run|test)( [^<>$;&|`]*)?",
       "(rtk )?git (status|diff|log|show)( [^<>$;&|`]*)?",
       "(rtk )?git add [^<>$;&|`]*",
       "(rtk )?git commit( -m \\\"[^\\\"$`]*\\\")+",
       "(rtk )?git switch -c sdd/[\\w./-]+"
     ],
-    "mcp": "read-only"
+    "mcp": "read-only",
+    "project_commands": [
+      "install",
+      "deps-add",
+      "deps-add-dev",
+      "deps-remove",
+      "format",
+      "lint",
+      "typecheck",
+      "test",
+      "coverage",
+      "build",
+      "scan",
+      "pipeline-lint",
+      "infra-plan",
+      "deploy-nonprod",
+      "cloud-read",
+      "run",
+      "migrate"
+    ]
   },
   "security-engineer": {
     "write": [
@@ -221,13 +265,15 @@
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
-      "(rtk )?(uvx )?(semgrep|bandit|pip-audit|osv-scanner|gitleaks|trivy)( [^<>$;&|`]*)?",
-      "(rtk )?npm audit( [^<>$;&|`]*)?",
-      "(rtk )?uv run (-q )?pytest (tests/security|\\S*tests/security)[^<>$;&|`]*",
-      "(rtk )?docker run [^<>$;&|`]*(zaproxy|zap)[^<>$;&|`]* -t https?://(localhost|127\\.0\\.0\\.1|host\\.docker\\.internal|staging[\\w.-]*)(:\\d+)?[^<>$;&|`\\s]*[^<>$;&|`]*",
       "(rtk )?git (status|diff|log|show)( [^<>$;&|`]*)?"
     ],
-    "mcp": "read-only"
+    "mcp": "read-only",
+    "project_commands": [
+      "install",
+      "test",
+      "scan",
+      "dast"
+    ]
   },
   "reliability-engineer": {
     "write": [
@@ -239,12 +285,16 @@
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
-      "(rtk )?k6 run [^<>$;&|`]*",
-      "(rtk )?uv run (-q )?(locust|pytest (\\S*tests/perf))[^<>$;&|`]*",
-      "(rtk )?(uvx )?(py-spy|scalene)( [^<>$;&|`]*)?",
       "(rtk )?git (status|diff|log|show)( [^<>$;&|`]*)?"
     ],
-    "mcp": "read-only"
+    "mcp": "read-only",
+    "project_commands": [
+      "install",
+      "perf",
+      "profile",
+      "test",
+      "run"
+    ]
   },
   "ux-designer": {
     "write": [
@@ -316,11 +366,12 @@
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
       "(rtk )?git (status|diff|log|show|blame)( [^<>$;&|`]*)?",
-      "(rtk )?gh run (list|view)( [^<>$;&|`]*)?",
-      "(rtk )?(aws|gcloud|az|scw|fly|flyctl|doctl) [\\w -]*\\b(describe|list|get|show|status|info|logs)[\\w-]*( [^<>$;&|`]*)?",
-      "(rtk )?docker (logs|ps|inspect)( [^<>$;&|`]*)?"
+      "(rtk )?gh run (list|view)( [^<>$;&|`]*)?"
     ],
-    "mcp": "read-only"
+    "mcp": "read-only",
+    "project_commands": [
+      "cloud-read"
+    ]
   },
   "consultant": {
     "write": [

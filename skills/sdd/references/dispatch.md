@@ -56,7 +56,7 @@ For every step: who, which mode, what to pass, which model, and what comes next.
 | Platform task | platform-engineer · `task` | task ID, feature branch | default | own | code-reviewer `task-review` |
 | Dependency request | security-engineer · `dependency-review` | package, version, purpose | default | — | engineer resumes or re-plans |
 | Secret request | security-engineer · `secret-review` | secret, consumer | default | — | platform-engineer wires |
-| Review | code-reviewer · `test-review` / `task-review` (no handoff note) | task, branches, round | **opus** if `risk: high` | — | approve → integrate; changes → fix |
+| Review | code-reviewer · `test-review` / `task-review` (no handoff note) | task, branches, round, main-checkout review path | **opus** if `risk: high` | **worktree** (checks out the task branch detached) | approve → integrate; changes → fix |
 | Fix | engineer · `fix` / test-engineer · `diagnose` / platform-engineer · `task` | review file | attempts 2–3: **opus** | own | `re-review` |
 | Integrate | tech-lead · `integrate` | approved branches | default | — | clean up agent worktree + `worktree-agent-*` branch |
 | Unblock | tech-lead · `unblock` | failed task, output | default | — | as decided |
