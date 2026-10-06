@@ -18,7 +18,7 @@ For every step: who, which mode, what to pass, which model, and what comes next.
 | Review brief | challenger · `review` | brief.md@v, round | default | revise loop |
 | Draft requirements | product-lead · `specify` (S: REQ + AC only) | spec folder | default | review panel |
 | UX flows (UI) | ux-designer · `flows` (parallel with requirements) | spec folder | default | review panel |
-| Review panel | challenger · `review`; test-engineer · `testability-review`; reliability-engineer · `nfr-review` (reliability); consultant · `specify-review` (active lenses; a11y also on ux.md) | requirements.md@v, ux.md@v, round | test-engineer: **opus** | revise loop |
+| Review panel | challenger · `review`; test-engineer · `testability-review`; reliability-engineer · `nfr-review` (reliability); consultant · `specify-review` (active lenses) | requirements.md@v, ux.md@v, round | test-engineer: **opus** | revise loop |
 | Feasibility | architect · `consult` | Q-nn IDs | default | product-lead revises if needed |
 | Revise | product-lead / ux-designer · `revise` | review files | default | re-review |
 | G1 (M/L) | — | gates/G1-intent.md | — | approved → Design |
@@ -92,7 +92,6 @@ For every step: who, which mode, what to pass, which model, and what comes next.
 | Architecture upkeep | architect · `evolve` | overview, conventions, debt |
 | Map refresh (existing code) | cartographer · `refresh` | `.sdd/map/*` |
 | Retrospective | librarian · `retro` | retro.md, lessons, MIPs |
-| Promote stack brief (when proven) | librarian · `promote` → architect review (D2) | `.claude/skills/stack-*` |
 
 ## Operate (`/sdd incident`)
 

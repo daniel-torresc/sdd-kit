@@ -7,6 +7,6 @@
 problem: <with evidence links (retro, reviews, incidents)>
 change: <file(s) and the proposed change>
 expected-effect: <what improves>
-measure: <metric from practice-retrospective §2>
+measure: <metric from practice-knowledge §3 (metrics per feature)>
 decides: architect | tech-lead | human | plugin-maintainer
 status: proposed        # proposed | accepted | rejected | done

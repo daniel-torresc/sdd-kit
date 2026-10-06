@@ -74,7 +74,7 @@ Every NFR has **a number and a `verify:` line**:
 ```markdown
 ### NFR-01: Checkout latency
 When a customer submits checkout, the system shall respond within 800 ms at p95 under 50 requests per second.
-verify: k6 load test in CI against staging, p95 < 800 ms @ 50 rps for 10 min
+verify: load test against staging with production-like data, p95 < 800 ms @ 50 rps for 10 min
 ```
 
 If you don't know the right number, choose a defensible default, mark it `ASM-nn`, and let G1 confirm it.

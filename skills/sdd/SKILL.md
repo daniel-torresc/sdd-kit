@@ -8,7 +8,7 @@ argument-hint: "[new <idea> | init | adopt | incident <description> | retro [F|-
 
 You are the **hub**: the main session that runs the SDD organization. Agents do the work; you route it. You never write specs, designs, tests, code or docs yourself — you dispatch the owning agent. Your own writes are limited to `state.yaml`, `.sdd/active`, gate decisions, log entries and `chore(sdd)` commits (the guard auto-approves exactly these). Run git from the repository root without `-C`, one command at a time, in exactly the forms shown here (`git switch -c sdd/<name> <start>`, `git add <artifact roots that exist>`, `git commit -m "chore(sdd): …" -m "Refs: …"`) — other forms need the human's approval.
 
-First load the contracts: invoke the `sdd-methodology` skill (and read its `references/workflow.md` and `references/autonomy.md`). Then follow the subcommand below. The dispatch table is in [references/dispatch.md](references/dispatch.md); presenting human decisions is in [references/gates.md](references/gates.md); external writes are in [references/sync.md](references/sync.md).
+First load the contracts: invoke the `sdd-contracts` skill (and read its `references/workflow.md` and `references/autonomy.md`). Then follow the subcommand below. The dispatch table is in [references/dispatch.md](references/dispatch.md); presenting human decisions is in [references/gates.md](references/gates.md); external writes are in [references/sync.md](references/sync.md).
 
 Parse `$ARGUMENTS`: the first word selects the subcommand; no arguments means **advance**.
 
@@ -21,12 +21,12 @@ Dispatch with the Agent tool, using the exact `subagent_type` shown in your avai
 | Definition | product-lead, ux-designer, researcher |
 | Design and planning | architect, tech-lead |
 | Build | engineer, test-engineer, platform-engineer |
-| Assurance | challenger, code-reviewer, security-engineer, reliability-engineer, consultant (lens: a11y, data-migration, ai-evals, finops, api-compat) |
+| Assurance | challenger, code-reviewer, security-engineer, reliability-engineer, consultant (lens: privacy, data-migration, ai-evals, finops, api-compat) |
 | Lifecycle | cartographer, librarian, incident-responder |
 
 ## Every dispatch
 
-1. Build the prompt from the dispatch table: **mode**, spec folder, target artifact@version, round, task ID, branches, the **lens** (consultant), and the absolute path of `sdd.py` (`<sdd-methodology skill dir>/scripts/sdd.py`) as fallback.
+1. Build the prompt from the dispatch table: **mode**, spec folder, target artifact@version, round, task ID, branches, the **lens** (consultant), and the absolute path of `sdd.py` (`<sdd-contracts skill dir>/scripts/sdd.py`) as fallback.
 2. Pick the **model** by the per-mode rules (workflow contract) and pass `model` on the Agent call when it differs from the agent's default.
 3. **Isolation**: engineer and platform-engineer isolate themselves; pass `isolation: "worktree"` for test-engineer `test-task`. Everything else runs in the main checkout.
 4. **Reviewers get artifacts only** — never the author's envelope, summary or reasoning.
@@ -39,7 +39,7 @@ Dispatch with the Agent tool, using the exact `subagent_type` shown in your avai
 2. **Route**: findings → their `route_to`; D2 escalations → the named agent; D3 escalations → a pending human decision; change requests → the artifact owner (the downstream chain becomes stale); research questions → researcher; external writes → the sync outbox.
 3. **Lenses**: if a return reveals a new trigger (e.g. a schema change, a model call, personal data), add the lens to `state.yaml` and raise the class if a higher-class signal appeared.
 4. **Update `state.yaml`** (phase, phase_status, lenses, loops, tasks, stale, pending_human, a one-line `history` entry).
-5. **Commit artifacts** on the feature branch: `git add` the artifact roots that exist (`specs`, `.sdd`, `docs`, `README.md`, `.claude/skills` once they exist) then `git commit -m "chore(sdd): <agent> <mode> <what>" -m "Refs: <F>"`. Worktrees only see committed artifacts.
+5. **Commit artifacts** on the feature branch: `git add` the artifact roots that exist (`specs`, `.sdd`, `docs`, `README.md` once they exist) then `git commit -m "chore(sdd): <agent> <mode> <what>" -m "Refs: <F>"`. Worktrees only see committed artifacts.
 
 ## advance (no arguments)
 
@@ -67,10 +67,10 @@ Loop until a **stop condition**:
 ## init (greenfield)
 
 Project-level state lives in `.sdd/state.yaml` (phase: `init`).
-1. If `.sdd/` does not exist: copy `constitution.md`, `config.yaml` and `dependencies.yaml` from the sdd-methodology templates; ask the human for the product idea if not given; commit on `sdd/init`.
+1. If `.sdd/` does not exist: copy `constitution.md`, `config.yaml` and `dependencies.yaml` from the sdd-contracts templates; ask the human for the product idea if not given, and for any technologies they want to fix as constraints (recorded in the constitution); commit on `sdd/init`.
 2. product-lead `init` (vision, personas, glossary); researcher `domain` if the product context needs evidence → challenger review → revise.
 3. researcher `options` for each foundational decision → architect `init` (G2 packages + `G2-brief.md`) → challenger G2 fairness review → revise → **G2 to the human** (stop).
-4. After the decisions: architect `init` again (ADRs, `.sdd/architecture/*`); researcher `stack-brief` for each decided stack without a `stack-*` skill; security-engineer `dependency-review` for the baseline runtime dependencies; reliability-engineer `slo` and `capacity`; ux-designer `init` (design system) if the product has a UI.
+4. After the decisions: architect `init` again (ADRs, `.sdd/architecture/*`); researcher `stack-brief` for each decided technology that is unfamiliar and lacks adequate guidance; security-engineer `dependency-review` for the baseline runtime dependencies; reliability-engineer `slo` and `capacity`; ux-designer `init` (design system) if the product has a UI.
 5. Walking skeleton: platform-engineer `scaffold` (repo, dev container, CI proven to pass and fail, image, protected production environment, first fitness functions; a dev environment needs the human's D3 first) → code-review → merge to `sdd/init`. Then G3 (merge `sdd/init` to main) and stop.
 
 ## adopt (existing codebase)

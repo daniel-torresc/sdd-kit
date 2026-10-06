@@ -9,7 +9,7 @@
 ## Acceptance criteria
 | AC | Test(s) | Result | Evidence |
 |---|---|---|---|
-| AC-01.1 | `tests/acceptance/test_x.py::test_y` | ✅ | screenshot `ac-01-1.png` / transcript below |
+| AC-01.1 | `<test file>::<test name>` | ✅ | screenshot `ac-01-1.png` / transcript below |
 
 ## NFRs
 | NFR | Method | Threshold | Measured | Result |

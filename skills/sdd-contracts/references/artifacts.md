@@ -23,7 +23,6 @@
 │   ├── gates/                   # project-level decision packages (G2 stack, …)
 │   ├── reviews/                 # reviews of project-level artifacts
 │   └── log.md                   # project-level decision log
-├── .claude/skills/stack-*/      # librarian: stack briefs promoted to project skills (architect-reviewed)
 ├── docs/
 │   ├── adr/                     # architect: ADR-NNNN-<slug>.md
 │   ├── runbooks/                # platform-engineer
@@ -58,9 +57,9 @@ Class S work uses only `state.yaml`, `requirements.md` (REQ + AC), `reviews/`, `
 | Artifact | Owner | Reviewers |
 |---|---|---|
 | .sdd/product/vision, personas, glossary | product-lead | challenger |
-| .sdd/product/design-system.md | ux-designer | challenger, a11y lens |
+| .sdd/product/design-system.md | ux-designer | challenger |
 | brief.md, requirements.md | product-lead | challenger, test-engineer (testability), reliability-engineer (NFRs), active lenses |
-| ux.md, prototypes/ | ux-designer | challenger, a11y lens |
+| ux.md, prototypes/ | ux-designer | challenger, test-engineer (testability of accessibility and states) |
 | research/, .sdd/research/, .sdd/briefs/ | researcher | the asking agent |
 | context.md, impact-*.md, .sdd/map/ | cartographer | — |
 | design.md, contracts/*, docs/adr/*, .sdd/architecture/*, .sdd/spikes/* | architect | challenger, security-engineer, reliability-engineer, active lenses |
@@ -72,7 +71,7 @@ Class S work uses only `state.yaml`, `requirements.md` (REQ + AC), `reviews/`, `
 | source code, unit/integration tests, migrations | engineer | code-reviewer, active lenses |
 | infra, CI, containers, dev container, runbooks, release.md | platform-engineer | code-reviewer (tasks), reliability-engineer (release) |
 | .sdd/incidents/* | incident-responder | reliability-engineer |
-| README, docs/ (except adr, runbooks), .sdd/knowledge/*, .sdd/improvements.md, retro.md, .claude/skills/stack-* | librarian | architect (promoted skills) |
+| README, docs/ (except adr, runbooks), .sdd/knowledge/*, .sdd/improvements.md, retro.md | librarian | — |
 | gates/* | the preparing agent (G1 product-lead, G2 architect, G3 platform-engineer, risk-* security-engineer or the deferring owner, incident mitigation incident-responder); the hub records only `status`, `decided-by`, `decided-on` and the Decision section | challenger (G2 fairness) |
 | state.yaml, .sdd/active, trace.md | hub | — |
 | log.md | append-only by any agent | — |
@@ -126,9 +125,7 @@ IDs are local to a feature; fully qualified across features as `F003:REQ-02`. ID
 
 ### How links are carried outside artifacts
 
-- **Tests** reference the AC (or NFR) they verify with its fully qualified ID:
-  - Python: `@pytest.mark.ac("F003:AC-02.1")` directly above the test function.
-  - Other stacks: the ID in the test name or a tag/comment inside the test, e.g. `it("F003:AC-02.1 rejects expired token", …)`.
+- **Tests** reference the AC (or NFR) they verify with its fully qualified ID (`F003:AC-02.1`), using the test framework's tagging mechanism (marker, tag, annotation) or the test's name, placed **directly above or in** the test definition. The trace script finds the ID in test files and maps it to the nearest following test definition; JUnit-format results link it to pass/fail.
 - **Commits** carry a trailer: `Refs: F003:T-04` (multiple allowed, comma-separated).
 
 ## Markup conventions (machine-readable)
@@ -145,8 +142,8 @@ The trace script depends on these; follow them exactly.
 2. **Withdrawn** — append `[withdrawn]` to the heading: `### REQ-05: Magic links [withdrawn]`.
 3. **Links** — inside the block, a line `refs: REQ-02, NFR-01`.
 4. **Task fields** — `depends: T-01, T-02` and, for tasks with no requirement, `refs: enabler`.
-   Also `surface: backend` and `stack: python, fastapi`.
-5. **NFR verification** — `verify: load test k6, p95 < 200ms @ 100 rps` (or reference an NFR from a test).
+   Also `surface: <backend|frontend|data|infra|…>` and `stack: <technologies involved>`.
+5. **NFR verification** — `verify: load test against staging, p95 < 200ms @ 100 rps` (or reference an NFR from a test).
 
 ## Traceability rules (checked by `sdd.py trace`)
 

@@ -1,7 +1,7 @@
 # Written by the hub after every step. Do not edit by hand.
 feature: F000-slug
 class: M                 # T | S | M | L
-lenses: []               # e.g. [security, reliability, ux, a11y]
+lenses: []               # e.g. [security, reliability, ux, privacy]
 phase: discover          # triage | discover | specify | design | plan | build | verify | release | operate | evolve | done
 phase_status: drafting   # drafting | in-review | revising | exit-check | gate-pending | done
 loops: {}                # { specify: 1, design: 2 }

@@ -1,6 +1,6 @@
 ---
 name: practice-cartography
-description: Codebase mapping for SDD in existing (brownfield) projects — project maps (structure, modules, entry points, data stores, integrations, build/run/test commands, conventions actually in use, test landscape, hotspots from git churn), feature context packs (relevant files, current behavior with file:line citations, callers, tests, conventions to follow), impact analysis for proposed changes, and adoption of an existing codebase into SDD. Use when onboarding a codebase, before specifying or designing a change to existing code, or when assessing the blast radius of a change.
+description: Codebase mapping for SDD in existing (brownfield) projects — project maps (structure, modules, entry points, data stores, integrations, build/run/test commands, conventions actually in use, test landscape, hotspots from git churn), feature context packs (relevant files, current behavior with file:line citations, callers, tests, conventions to follow), impact analysis for proposed changes, adoption of an existing codebase into SDD, and how to change existing code safely (characterization tests, seams, strangler, incremental change). Use when onboarding a codebase, before specifying or designing a change to existing code, or when assessing the blast radius of a change.
 ---
 
 # Practice: Cartography
@@ -42,3 +42,14 @@ When SDD is introduced to an existing project: produce the project map, then **p
 ## 5. Keeping maps fresh
 
 Maps carry the commit SHA they describe. When a feature ships, update affected sections (or the hub dispatches a refresh); stale maps are worse than none.
+
+## 6. Changing existing code safely
+
+Mapping is for understanding; changing existing code needs its own discipline. Agents use these rules when the work touches code they did not write. The cartographer recommends them in context packs and impact analyses.
+
+1. **Understand → protect → change.** First understand the current behavior (§2). Then protect it with **characterization tests** that pin down what the code does today, even where that behavior is odd. Only then change it.
+2. **Find seams.** Look for places where behavior can be substituted without editing the logic: interfaces, injection points, configuration, module boundaries. Where none exists, a small preparatory refactoring that creates one is its own task.
+3. **Change incrementally.** Prefer the *strangler* approach: build the new path beside the old one, route traffic gradually, and remove the old path when nothing uses it. Avoid big-bang rewrites.
+4. **Keep it releasable.** Every step leaves the system working and deployable. Use feature flags or branch-by-abstraction for long transitions.
+5. **Preserve contracts.** External behavior and interfaces stay compatible unless a requirement says otherwise (see the api-compat lens).
+6. **Leave a trail.** Record unknowns, oddities and deliberately preserved quirks in the context pack and the debt register, so the next change starts from knowledge rather than archaeology.

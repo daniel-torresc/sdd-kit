@@ -1,91 +1,62 @@
 ---
 name: practice-security
-description: Deep security practice for the SDD security-engineer — data classification, STRIDE threat modeling per trust boundary, security requirements by verification level (OWASP ASVS L1/L2), authentication/authorization/session design, cryptography defaults, secrets management, dependency and supply-chain vetting (license, CVEs, maintenance, provenance), security review of designs and code, security testing (SAST, dependency audit, secret scanning, DAST baseline, authorization tests), severity rating, and risk-acceptance packages. Use for threat models, security reviews, dependency approvals, security verification, and security exceptions. Builds on practice-security-basics.
+description: Security principles for everyone who designs, builds, reviews or operates software in SDD, independent of technology — trust boundaries and untrusted input, injection, authentication and sessions, authorization on every object, secrets, cryptography, sensitive data and logging, safe parsing and files, server-side requests, abuse resistance, dependencies and supply chain, and failing securely — plus, in references/, the security-engineer's procedures (data classification and verification levels, threat modeling, dependency vetting, security verification, risk acceptance). Use when writing, reviewing or designing anything that handles input, identity, data or dependencies.
 ---
 
 # Practice: Security
 
-`practice-security-basics` is the floor every engineer applies. This skill is the security-engineer's depth on top of it.
+This file holds the **principles** every engineer, reviewer and platform engineer applies. The **procedures** the security-engineer runs are in `references/` and loaded on demand:
 
-## 1. Verification level
-
-| Feature class / data | Target |
+| Reference | Used for |
 |---|---|
-| M without personal or financial data | OWASP ASVS **Level 1** controls for the touched areas |
-| L, or any feature handling authentication, personal, financial or health data | ASVS **Level 2** for the touched areas |
-| Regulated data (health, payments card data) | Level 2 + the regulation's specific controls → flag for D3 legal review |
+| [references/threat-modeling.md](references/threat-modeling.md) | Data classification, verification level, STRIDE threat models, design-level security patterns |
+| [references/dependency-vetting.md](references/dependency-vetting.md) | Approving or rejecting runtime dependencies |
+| [references/verification.md](references/verification.md) | Security review and security testing in Verify; severity |
+| [references/risk-acceptance.md](references/risk-acceptance.md) | Packages for consciously accepting security risk |
 
-Record the target in the threat model.
+## Principles
 
-## 2. Data classification
+**1. Know your trust boundaries.** Everything that crosses into the process from outside is untrusted: requests, headers, cookies, files, messages, environment, data from other services, even your own database if others can write to it. Validate at the boundary against an explicit schema (type, length, range, format, allowed values) and reject rather than "clean and continue". Bound every size: bodies, uploads, list lengths, page sizes.
 
-For every data element the feature stores, processes or transmits: `public`, `internal`, `personal`, `sensitive` (credentials, tokens, financial, health, government IDs). Classification drives encryption, retention, logging (never log `personal`/`sensitive` values), access control and the threat model's assets.
+**2. Keep data and instructions apart.** Injection happens whenever untrusted data reaches an interpreter as code: query languages, markup, shells, file paths, URLs, templates, and model prompts. Use the parameterized or structured form of every interpreter, encode output for its context, never build commands by concatenation, keep resolved paths inside their intended root, and allow-list redirect targets.
 
-## 3. Threat modeling (Design phase)
+**3. Authenticate with vetted mechanisms.**
+- Never invent authentication or cryptography.
+- Store passwords only with a modern, slow, salted password-hashing algorithm.
+- Tokens come from a cryptographically secure generator, carry enough entropy, are stored hashed, expire, and are single-use where the spec says so.
+- Compare secrets in constant time.
+- Sessions are invalidated on logout and on credential change.
+- Cookies are restricted (secure, not script-readable, same-site), and state-changing requests are protected against cross-site forgery.
 
-Write `specs/<f>/threat-model.md` from the template, **in parallel with the architect's design** (read the draft `design.md` and contracts):
-1. **Assets** with classification.
-2. **Trust boundaries and entry points** — every external `IF-nn` must appear (users, other services, admin paths, background jobs consuming external data, file uploads, webhooks).
-3. **Threats per entry point with STRIDE**: Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege. Add abuse cases from the requirements' unwanted behaviors (enumeration, brute force, replay, mass assignment, IDOR, SSRF, injection).
-4. For each `THR-nn`: likelihood, impact, **mitigation** (a control in the design, a REQ/NFR, or a test), **verified-by** (a test ID, a review check, or a CI tool).
-5. **Residual risks** → `RISK-nn` entries; high residual risk → D3 risk acceptance.
-Mitigations that need design changes become findings to the architect; ones that need requirements become findings to product-lead.
+**4. Authorize every access to every object.** "Logged in" is not authorization. Check, in the service layer, that this actor may perform this action on this specific object. Deny by default. Missing object-level authorization is the most common serious flaw.
 
-## 4. Design patterns and defaults
+**5. Treat secrets as radioactive.**
+- No secrets in code, tests, fixtures, images, logs, error messages or commits.
+- They come from a secret store or platform injection at runtime.
+- Startup fails if a required secret is missing.
+- Each secret has an owner and a rotation path.
 
-- **Authentication**: prefer a vetted library or provider over hand-rolled flows; password hashing argon2id; MFA-ready design; session tokens server-side or short-lived signed tokens with rotation; logout and password change invalidate sessions.
-- **Authorization**: deny by default; object-level checks in the service layer; roles/permissions explicit in the design; admin paths separated and audited.
-- **Cryptography**: platform/library primitives only (no custom crypto); TLS everywhere; AES-GCM or libsodium for data at rest when application-level encryption is needed; keys in a KMS/secret store with rotation.
-- **Secrets**: secret store or platform secrets, injected at runtime; no secrets in repo, images, logs or CI output; rotation plan for each secret.
-- **Input/Output**: schema validation at boundaries; output encoding by context; safe parsers; SSRF allow-lists.
-- **Auditability**: security-relevant events (auth success/failure, permission changes, admin actions, data export) logged with actor, action, target, result — no sensitive values.
-- **Abuse resistance**: rate limits and quotas on authentication and expensive endpoints; uniform responses where enumeration matters.
+**6. Protect sensitive data.** Know the classification of what you handle. Log opaque identifiers, never personal data, credentials, tokens or full payloads. Error responses carry stable codes and generic messages, and details go to logs (still without sensitive data). Apply the retention and deletion rules from the design.
 
-## 5. Dependency and supply-chain vetting (D2 approvals)
+**7. Parse safely.** Never deserialize untrusted data into executable structures or use evaluation functions on it. Validate uploaded files by content, cap their size, store them outside served paths with generated names, and never execute them.
 
-For each requested runtime dependency, check and record in `.sdd/dependencies.yaml`:
+**8. Be careful with server-side requests.** When the system fetches a URL influenced by users (webhooks, previews, imports), allow-list destinations or block private and internal address ranges.
 
-| Check | Pass condition |
-|---|---|
-| License | Permissive (MIT, Apache-2.0, BSD, ISC, PSF, MPL-2.0 file-level) — copyleft (GPL/AGPL/LGPL) or unknown → D3 |
-| Vulnerabilities | No unfixed critical/high in the requested version (OSV, pip-audit, npm audit) |
-| Maintenance | Release within ~12 months, responsive issue tracker, >1 active maintainer for anything security-critical |
-| Provenance | Published by the expected org; no typosquat; signed releases/provenance where available |
-| Necessity | Not trivially replaceable by the standard library or an already-approved package |
+**9. Resist abuse.**
+- Rate-limit and add quotas to authentication-adjacent and expensive operations.
+- Respond uniformly where differences would reveal whether an account or object exists.
+- Make effectful operations idempotent so retries can't be abused.
 
-Decision: `approved` (with version range), `rejected` (with reason and alternative), or D3 (license/legal).
+**10. Trust dependencies only after vetting.** Use only approved runtime dependencies, pinned through lockfiles. Audit them when they change, and treat known-vulnerable versions as defects. The supply chain is attack surface.
 
-## 6. Security review (designs and code)
+**11. Fail securely and leave a trail.** On error, deny rather than allow. Log security-relevant events (authentication outcomes, permission changes, administrative actions, data exports) with actor, action, target and result, without sensitive values.
 
-Review against the threat model and ASVS target, not general taste:
-- every `THR-nn` mitigation present and verified;
-- authorization on every object access; no IDOR; no privilege escalation paths;
-- injection sinks, deserialization, SSRF, path traversal, open redirects;
-- session/token handling, crypto use, secrets handling;
-- logging of security events without sensitive data; error responses not leaking internals;
-- new dependencies approved; supply-chain checks present in CI.
-Findings use the schema; severity by §8.
+## Quick check (writing or reviewing code)
 
-## 7. Security testing (Verify)
-
-| Test | Tool | Scope |
-|---|---|---|
-| SAST | semgrep (rulesets for the stack), ruff `S` / bandit | changed code; CI-wired by platform-engineer |
-| Dependency audit | pip-audit / npm audit / osv-scanner | full lockfile |
-| Secret scan | gitleaks | full history of the feature branch |
-| Authorization tests | your own tests in `tests/security/` (pytest) | every object-level access path in the feature: other user's object, missing auth, wrong role |
-| DAST baseline | OWASP ZAP baseline scan (Docker) | local or staging deployment only — never production, never third-party hosts |
-| Threat checks | tests named in `verified-by` | each `THR-nn` |
-
-## 8. Severity
-
-| Severity | Examples |
-|---|---|
-| critical | Remote code execution, auth bypass, mass data exposure, secrets in repo/image |
-| major | IDOR on a single object type, stored XSS, missing rate limit on authentication, vulnerable dependency (high) reachable from the feature |
-| minor | Missing security header, verbose error in non-sensitive path, weak but non-exploitable configuration |
-| nit | Hardening suggestions |
-
-## 9. Risk acceptance (D3)
-
-When a critical/major issue is deferred or a control is consciously omitted, write a decision package `specs/<f>/gates/risk-<RISK-nn>.md` (gate template): the risk, exploit scenario, likelihood/impact, options (fix now / mitigate partially / accept with expiry), recommendation, and an **expiry date** for any acceptance.
+- [ ] Every new input validated and bounded at the boundary
+- [ ] No untrusted data reaching an interpreter as code
+- [ ] Authorization checked per object, deny by default
+- [ ] Tokens, passwords and sessions handled per principle 3
+- [ ] No secrets or sensitive data in code, logs or errors
+- [ ] No unsafe parsing; uploads constrained; server-side requests restricted
+- [ ] Dependencies approved and audited

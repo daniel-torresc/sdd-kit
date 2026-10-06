@@ -1,47 +1,100 @@
 ---
 name: practice-release
-description: How SDD releases software — trunk-based development with feature flags, semantic versioning and changelogs from Conventional Commits, rolling deploys with health checks and automatic rollback, canary only when the design requires it, migration ordering (expand/migrate/contract), rollback rehearsal, release.md, and the one-screen G3 package. Use when preparing a release, writing release.md or the G3 gate, or deploying.
+description: How SDD gets a verified change to users safely, independent of technology — release readiness, versioning and changelogs, release types (feature, patch, hotfix, security fix), progressive delivery strategies (rolling, canary, blue-green, dark launch) and how to choose, feature-flag lifecycle, database and contract changes across releases, rollback design and rehearsal, verification and the watch window after release, communication, release.md, and the one-screen G3 package. Use when preparing, approving or executing a release.
 ---
 
 # Practice: Release
 
-## 1. Defaults
+A release is the moment risk meets users. The goal is a release that is **boring**: small, verified, observable, and reversible within minutes.
 
-| Aspect | Default |
-|---|---|
-| Branching | Trunk-based: `main` is always releasable; features land behind **feature flags** when risky or incomplete |
-| Versioning | Semantic versioning: breaking contract change → major, feature → minor, fix → patch |
-| Changelog | Generated from Conventional Commits (`feat`, `fix`, `perf`, `!`/`BREAKING CHANGE`), edited for users |
-| Deploy | **Rolling** with readiness checks; **automatic rollback** when health checks or error-rate thresholds fail during the bake window |
-| Canary | Only when the design says so (high-risk change, large blast radius) — percentage steps with explicit success signals |
+## 1. Readiness
 
-## 2. release.md
+A feature is ready to release when:
+- Verify has passed (evidence pack, traceability clean, lens reviews approved);
+- the artifact is built once and has already run in staging;
+- migrations are ordered and rehearsed;
+- the rollback has been rehearsed;
+- monitoring and alerts for the change exist;
+- the runbook is updated;
+- the error budget allows it (an exhausted budget means hold or a D3);
+- open risks are listed for the human.
 
-Write `specs/<f>/release.md` from the template:
-- **Change summary** for users and operators; version bump and changelog entry.
-- **Rollout plan**: environments in order (dev → staging → production), what "healthy" means at each step (readiness, error rate, latency vs NFR budgets), bake time, who/what decides to proceed.
-- **Feature flags**: which, default state, how and when to remove them (a `DEBT-nn` if they linger).
-- **Data migrations** in **expand → migrate → contract** order, each step backward compatible with the previous release; the contract step ships in a later release.
-- **Rollback plan**: exact steps, expected time, data implications (what happens to rows written by the new version), and **rehearsal evidence**.
-- **Monitoring**: dashboards and alerts to watch for 24 h; runbook links.
+## 2. Versioning and changelog
 
-## 3. Rollback rehearsal
+- **Semantic versioning** for anything with consumers: a breaking contract change bumps the major version, a feature the minor, a fix the patch.
+- The changelog is generated from Conventional Commits, then edited for its readers: what changed for users and integrators, what they must do, and what was deprecated.
+- Releases are tagged and their notes published after G3 (external write, via the sync outbox).
 
-Before G3, in staging: deploy the new version, exercise it (smoke tests), roll back with the documented procedure, verify the old version works with any data the new one wrote, roll forward again. Record commands, timings and results in `release.md`. No rehearsal → not ready (unless the human explicitly accepts the risk at G3).
+## 3. Release types
 
-## 4. G3 package (one screen)
+| Type | Path | Notes |
+|---|---|---|
+| Feature release | Full flow through G3 | Default |
+| Patch | Class S/T flow, G3 | Bug fix restoring specified behavior |
+| Hotfix | Fast path: class T/S from the incident, minimal change plus regression test, review, G3 | Branch from the released version if main has moved; merge back immediately |
+| Security fix | Like a hotfix, coordinated with security-engineer | Disclose only after the fix is out; external communication is the human's |
+
+## 4. Choosing a delivery strategy
+
+| Strategy | When | Health criteria |
+|---|---|---|
+| Rolling (default) | Most changes; stateless services with backward-compatible data | Readiness per instance; error rate and latency vs SLO during the roll |
+| Canary | High-risk or large-blast-radius changes; when the design calls for it | Percentage steps (e.g. 1% → 10% → 50% → 100%) with an explicit success signal and bake time at each |
+| Blue-green | Fast switch-back needed; changes hard to roll gradually | Full parallel environment; switch traffic and keep the old one warm through the watch window |
+| Dark launch | Risky backends or new data paths | Ship off, exercise with shadow traffic or internal users, then enable |
+
+**Automatic rollback** triggers on failed health checks or SLO-burn thresholds during the rollout, for every strategy.
+
+## 5. Feature flags
+
+- Use flags to **decouple deploy from release**: risky or incomplete behavior ships dark and is enabled deliberately.
+- Every flag has an owner, a default state, a planned removal date and a debt entry. A flag that outlives its purpose is debt.
+- Flags never replace authorization. Test both states of each flag in Verify.
+
+## 6. Data and contracts across releases
+
+- Migrations follow **expand → migrate → contract** across releases. Every release is compatible with the data of the previous one, so rollback is always possible.
+- Contract changes follow the api-compat rules: additive within a version; breaking changes only with a new version or a deprecation window that has been communicated.
+
+## 7. Rollback
+
+Design the rollback before the rollout:
+- the exact steps;
+- the expected time;
+- what happens to data written by the new version;
+- who or what decides to trigger it.
+
+**Rehearse it in staging**: deploy, exercise, roll back, verify the old version works with the new data, roll forward. Record the evidence in `release.md`. If rollback is impossible (a destructive migration), say so explicitly, and the human accepts that at G3.
+
+## 8. After release
+
+- **Watch window**: compare SLIs, error rates, latency and business signals against the pre-release baseline for a defined period (24 h by default).
+- **Verification in production**: smoke checks of the critical journeys, and checks that the feature's metrics are flowing.
+- **Close the release**: record the outcome in `release.md`, remove completed flags (as tasks), and hand docs, knowledge and the retro to the librarian.
+- If users were harmed, open an incident.
+
+## 9. Communication
+
+Release notes for users and integrators: what changed, why it matters, what they need to do. Internal notes for operators: what to watch and how to roll back. Deprecations are announced with dates. Everything external goes through the sync outbox and needs the human's approval.
+
+## 10. `release.md`
+
+Write it from the template, covering:
+- the change summary;
+- version and changelog entry;
+- the readiness checklist (§1);
+- the strategy and its health criteria (§4);
+- flags (§5);
+- migration order (§6);
+- the rollback plan and its rehearsal evidence (§7);
+- monitoring for the watch window (§8);
+- communication (§9).
+
+## 11. G3 package (one screen)
 
 `gates/G3-production.md`:
 - **Decision**: release `<feature>` as version `<x.y.z>` to production?
-- **Evidence**: Verify verdict and evidence-pack link; CI status of the release commit; staging soak results; rollback rehearsal result.
-- **Risk**: open `RISK-nn`, accepted exceptions, `DEBT-nn` going live, migration risk.
-- **Options**: approve / approve with conditions (e.g. flag off by default) / hold.
-- **Recommendation** (non-binding) and **what happens on approval**: merge to main, tag, protected production deploy (requires the human's reviewer approval in GitHub), watch window.
-
-## 5. After approval
-
-1. Merge `sdd/<F>-<slug>` to `main` (the human merges, or approves the merge).
-2. Tag `v<x.y.z>`; publish release notes (external write — only after G3).
-3. Trigger the production deploy workflow; the human approves the protected environment in GitHub.
-4. Watch the bake window; on failure, automatic rollback — then report and open an incident if users were affected.
-5. Record the outcome in `release.md` and the history.
+- **Evidence**: the Verify verdict and evidence pack, pipeline status of the release commit, staging soak, rollback rehearsal.
+- **Risk**: open `RISK-nn`, accepted exceptions, debt going live, migration risk, error-budget status.
+- **Options**: approve / approve with conditions (e.g. flag off by default, canary only) / hold.
+- **Recommendation** (non-binding), and **what happens on approval**: merge, tag, protected production deploy (the human approves it in the deployment system), watch window.

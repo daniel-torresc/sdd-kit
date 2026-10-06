@@ -36,8 +36,8 @@ At triage (and whenever new information appears) the hub matches `lens_triggers`
 |---|---|---|
 | security | security-engineer | Design (threat model + review), Build (code review of security-relevant tasks), Verify |
 | reliability | reliability-engineer | Specify (NFRs), Design, Plan (perf plan), Release |
-| ux | ux-designer | Specify (flows), Verify (ux-review) |
-| a11y, data-migration, ai-evals, finops, api-compat | consultant + lens skill | Specify through Verify, as the lens skill describes |
+| ux (includes accessibility) | ux-designer | Specify (flows), Verify (ux-review) |
+| privacy, data-migration, ai-evals, finops, api-compat | consultant + lens skill | Specify through Verify, as the lens skill describes |
 
 Dependency approvals (`security-engineer · dependency-review`) apply to every feature, lens or not.
 
@@ -84,6 +84,22 @@ Worktrees branch from the **committed** feature branch, so uncommitted artifacts
 3. Each finished task gets a code review: `test-review` for test-engineer tasks (before engineers build against them) and `task-review` for engineer tasks. When it is approved, tech-lead (`integrate`) merges it into the feature branch, runs the tests, and pushes. The draft PR is kept updated.
 4. After 3 failed fix attempts on a task, tech-lead (`unblock`) re-scopes, re-sequences, routes upstream, or escalates.
 5. When all tasks are merged and green, the feature moves to Verify.
+
+## Git conventions
+
+| Thing | Convention |
+|---|---|
+| Feature branch | `sdd/F<NNN>-<slug>`, created from the main branch at intake |
+| Task branch | `sdd/F<NNN>-T-<nn>` (task ID verbatim), one worktree per task, branched from the feature branch |
+| Commits | Conventional Commits (`feat`, `fix`, `test`, `refactor`, `chore`, `docs`, `perf`; `!` for breaking), one logical change each, trailer `Refs: F<NNN>:T-<nn>` |
+| Artifact commits | `chore(sdd): <agent> <mode> <what>` by the hub |
+| Task → feature | merge commit (`--no-ff`), in dependency order, by tech-lead |
+| Feature → main | only through G3 |
+| Remote | pushing `sdd/*` branches and draft PRs are autonomous; merges to main, force-pushes and remote branch deletion are human decisions |
+
+## Integration
+
+Integrate each task as soon as its review approves — never in batches at the end. After each merge, run the full suite on the feature branch. Only mechanical conflicts (both sides added entries, regenerated lockfiles) are resolved by tech-lead; anything touching logic is aborted and returned to the later task's engineer. A merge that turns the feature branch red is reverted and routed to that task. Each integration is recorded in `reviews/integration-tech-lead-<n>.md`.
 
 ## Verify
 
@@ -138,7 +154,7 @@ The hub writes it after every step so work can resume in any session. See `templ
 
 | Command | Does |
 |---|---|
-| `/sdd init` | Greenfield bootstrap: constitution → product context (product-lead) → architecture baseline and stack G2 packages (architect) → challenger fairness review → human decides → ADRs, `.sdd/architecture/*` → scaffold, CI, fitness functions, deployable walking skeleton (platform-engineer) |
+| `/sdd init` | Greenfield bootstrap: constitution → product context (product-lead) → foundational technology decisions as G2 packages (architect) → challenger fairness review → human decides → ADRs, `.sdd/architecture/*` → scaffold, CI, fitness functions, deployable walking skeleton (platform-engineer) |
 | `/sdd new <idea>` | Triage and create the spec folder |
 | `/sdd` | Read state and advance autonomously until a gate or blocker |
 | `/sdd status` | Where every feature stands |
@@ -149,6 +165,6 @@ The hub writes it after every step so work can resume in any session. See `templ
 | `/sdd sync` | Review and approve the external-sync outbox |
 | `/sdd feature <F>` | Switch the active feature |
 
-## Stack routing
+## Technology context
 
-The skills loaded into a builder are resolved from, in order: the task's `stack:` field → the stack profile in `.sdd/architecture/conventions.md` → `.sdd/config.yaml` `stack_routing`. If no skill exists for a chosen stack, the researcher writes `.sdd/briefs/<stack>.md` from current docs; the librarian may later promote it to a skill.
+The methodology skills describe how to work; technology-specific knowledge comes from whatever skills the harness makes available for the task. Agents learn the technologies involved from the project's stack profile (`.sdd/architecture/conventions.md`) and each task's `stack:` field, which are descriptive metadata, not skill routing. When a chosen technology is unfamiliar and no adequate guidance is available, the researcher writes a stack brief (`.sdd/briefs/<technology>.md`) from current official documentation.

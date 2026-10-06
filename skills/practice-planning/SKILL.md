@@ -1,98 +1,83 @@
 ---
 name: practice-planning
-description: How to turn an SDD design into an executable build plan and run it — vertical slicing, walking skeleton, dependency graphs, task sizing, risk-first ordering, test-first pairing with separate test-engineer tasks, conflict detection via touches, done-when criteria, parallelism limits, re-planning triggers, integration of parallel worktree branches, and git branch/commit conventions. Use when writing or reviewing tasks.md, coordinating the Build phase, or integrating task branches.
+description: How to derive an implementation plan from an approved SDD design — inventorying the work the design implies (components, interfaces, contracts, data changes and migrations, NFR budgets, failure handling, observability, fitness functions, enablers), grouping it into vertical slices that each deliver observable acceptance criteria, sequencing slices (walking skeleton, riskiest, most valuable), turning slices into small task specifications with test-first pairing, and checking the plan against the design for completeness. Use when writing or reviewing tasks.md, and when re-planning during Build.
 ---
 
-# Practice: Planning and integration
+# Practice: Deriving the plan from the design
 
-## 1. From design to slices
+A plan is the design translated into an order of work that delivers observable value early, retires risk early, and never leaves integration to the end. It describes **what** is built and **in which order**, never **how** (that is the design's and the engineer's job).
 
-1. List the ACs and group them into **vertical slices**: each slice is a user-observable behavior that crosses every layer it needs (UI → API → logic → storage) and can be tested end to end.
-2. Order slices: **walking skeleton** → **riskiest slice** (most uncertain design, external dependency, performance-critical path) → **highest-value slices** → the rest.
-3. Identify **enablers** the slices need: scaffolding, CI, migrations, contract wiring, fitness functions, observability. Make each an explicit `refs: enabler` task placed just before its first consumer — not all up front.
-4. Write the slice table at the top of `tasks.md`: slice → tasks → ACs → why this position.
+## 1. Inventory the work the design implies
 
-Never slice by layer ("all models", "all endpoints", "all screens"). Never leave integration or "wire it together" for the end.
+Walk the approved design and list every unit of work it implies, with its source:
 
-## 2. Walking skeleton (T-01)
+| Design element | Work it implies |
+|---|---|
+| Each component (`C-nn`) | Creating or changing it; its module boundary |
+| Each interface (`IF-nn`) and contract | Implementing it exactly; contract tests |
+| Data model changes | Schema changes and migrations (each step of expand → migrate → contract), backfills |
+| NFR budgets and quality scenarios | Work to meet them (caching, async processing, limits) and to verify them |
+| Failure-mode table | Timeouts, retries, degradation paths, recovery behavior |
+| Observability section | Logs, metrics, traces, alerts, dashboards |
+| Testability seams | Clock, ID generators, drainable workers, fakes for external systems |
+| Fitness functions | Wiring each new architecture rule into CI |
+| Runtime dependencies | Introduction (after dependency review) |
+| Security mitigations (threat model) | Each control and its verification |
+| UX states (ux.md) | Every state of every screen, not just the success path |
+| Enablers | Scaffolding, environments, CI, test infrastructure, data fixtures |
 
-The thinnest path that exercises the whole architecture (its `.gitignore` includes `.claude/worktrees/`, where agent worktrees live): the app starts, one trivial request goes through every layer that exists in the design (including the database and the deployed environment), CI runs lint, types and tests on it. For brownfield work, the skeleton is the thinnest path through the *changed* parts. If none makes sense, say why.
+Every inventory item must trace to a design element and, through it, to REQ/NFR IDs. An item that traces to nothing is scope creep. A design element with no work items is a gap in the plan.
 
-## 3. Tasks
+## 2. Group into vertical slices
 
-Each task has (machine-checked by `sdd.py trace --phase plan`):
+A slice is the smallest set of inventory items that makes one or more **acceptance criteria observable end to end**, through every layer they need. Group by:
+- user-visible behavior (one flow or one AC cluster), happy path first, then the essential unwanted behaviors;
+- never by technical layer ("all the data model", "all the endpoints").
 
-| Field | Rule |
+Each slice states the ACs it makes pass. Enablers attach to the first slice that needs them, not to an up-front "setup phase".
+
+## 3. Sequence the slices
+
+1. **Walking skeleton**: the thinnest path that exercises the whole architecture (entry point → logic → storage → response, built, tested and deployable). Integration problems surface on day one.
+2. **Riskiest slice next**: the most uncertain design decision, the least-known dependency, the performance-critical path. Learn while there is still time to change course.
+3. **Highest-value slices**: those that move the brief's primary metric.
+4. **The rest**, ordered by dependency.
+
+Sequential constraints are real dependencies only: shared migrations, shared contracts, a component another slice builds on.
+
+## 4. Turn slices into tasks
+
+Each task is one reviewable change: one concern, small enough to understand in one sitting. Split larger work by sub-behavior, by AC, or with a preparatory refactoring task ("make the change easy, then make the easy change").
+
+Every task specifies (machine-checked by `sdd.py trace --phase plan`):
+
+| Field | Meaning |
 |---|---|
 | `refs` | REQ/AC IDs it delivers, or `enabler` |
-| `depends` | Tasks that must be **merged** before it starts |
-| `agent` | `engineer`, `test-engineer`, or `platform-engineer` |
-| `surface` / `stack` | Used by the hub to load skills |
-| `touches` | Paths or modules it will change — as specific as possible |
-| `done-when` | Observable: named ACs passing, specific checks green |
-| `risk` (optional) | `high` for security-sensitive, concurrency, data-migration or riskiest-slice work — the engineer runs on opus |
+| `depends` | Tasks that must be integrated first |
+| `agent` | engineer, test-engineer or platform-engineer |
+| `surface`, `stack` | Where it lives and which technologies are involved (descriptive) |
+| `touches` | Paths or modules it will change, as precisely as possible, to detect conflicts between parallel tasks |
+| `done-when` | Observable completion: named ACs passing, specific checks green |
+| `risk` | `high` for security-sensitive, concurrency, data-migration or riskiest-slice work |
 
-**Size**: one concern; roughly ≤ 400 changed lines; one reviewer can understand it in one sitting. Bigger → split by sub-behavior, by AC, or by "make the change easy, then make the easy change" (a preparatory refactor task first).
+**Test-first pairing:** for every slice, a test-engineer task writes the acceptance tests for its ACs, and the engineer task depends on it. Tests for the next slice can be written while the current one is built.
 
-## 4. Test-first pairing
+**Parallelism:** tasks without a dependency path may run in parallel if their `touches` don't overlap. Shared hotspots (registration and wiring files, migration heads, lockfiles) are sequenced or owned by a single task.
 
-For each slice:
-- a **test-engineer task** writes the acceptance tests for the slice's ACs (they must fail for the right reason);
-- the **engineer task** that implements those ACs `depends` on it.
+## 5. Check the plan against the design
 
-Tests for slice n+1 can be written while slice n is implemented. Unit tests stay with the engineer. Waiving test-first (`test-first: waived — <reason>`) needs test-engineer agreement and a logged reason (e.g. a pure refactor covered by existing tests).
+- Every inventory item from §1 is in exactly one task.
+- Every AC is delivered by a task and tested by a test task that precedes it.
+- Every design element has work, and every task traces to the design.
+- The skeleton comes first, risk comes early, and integration is continuous.
+- Nothing in the plan decides *how* to implement. If a task needs a design decision, that is a design gap: route it to the architect.
 
-## 5. Parallelism and conflicts
+## 6. Re-planning
 
-- Tasks with no dependency path between them may run in parallel, up to `parallelism.max_parallel_tasks` in `.sdd/config.yaml`.
-- Parallel tasks must have **non-overlapping `touches`**. The trace script warns on overlap; resolve by adding a dependency, narrowing `touches`, or accepting the merge-order risk explicitly in the slice table.
-- Shared hot files (router registration, dependency injection wiring, migration heads, lockfiles) are the usual conflict sources: give their changes to one task or sequence them.
-- Migrations: one migration head at a time — tasks that add migrations are sequenced.
-
-## 6. Re-planning triggers
-
-Re-plan (new `tasks.md` version) when: a task fails its fix loop; a task discovers a design or requirements gap (after the change request is resolved); a task is much larger than planned; an upstream artifact changes (stale). Keep completed task IDs; add new IDs; mark dropped tasks `[withdrawn]`.
-
-## 7. Stepping in after a failed fix loop
-
-When an engineer task fails its fix-attempt cap: read the failing output, the diff and the task. Decide one of:
-1. **Re-scope** — the task was too big: split it.
-2. **Re-sequence** — a missing prerequisite: add an enabler task first.
-3. **Upstream** — the design or an AC is wrong/infeasible: change request to the owner, pause the task.
-4. **Re-assign context** — the engineer lacked context: re-dispatch with the specific files, contract or error explained.
-5. **Escalate** — none of the above works within the loop cap: D3.
-Log the decision.
-
-## 8. Git conventions
-
-| Thing | Convention |
-|---|---|
-| Feature branch | `sdd/F003-<slug>` from the main branch |
-| Task branch | `sdd/F003-T-04` (task ID verbatim), in its own worktree, from the feature branch |
-| Commits | Conventional Commits (`feat:`, `fix:`, `test:`, `refactor:`, `chore:`, `docs:`) with trailer `Refs: F003:T-04` |
-| Merge of task → feature | `git merge --no-ff sdd/F003-T-04` (keeps task boundaries visible) |
-| Feature → main | Only through G3 (human) |
-
-Autonomy: local branches, worktrees and merges into `sdd/*` branches are autonomous; pushing `sdd/*` branches and opening **draft** PRs is autonomous; merging into the main or release branch requires the human (G3).
-
-## 9. Integration
-
-Integrate each task as soon as it is approved by code review — not in batches.
-
-1. On the feature branch, merge task branches **in dependency order**.
-2. After each merge, run the full test suite (and lint/types). Record the result.
-3. **Conflicts**: resolve only trivial, mechanical ones yourself (both sides added imports/registrations/list entries; whitespace; lockfile regenerated by the tool). Anything touching logic → abort the merge (`git merge --abort`) and route to the engineer who owns the later task, with the conflict listed.
-4. **Red after merge** → identify the offending merge (the last one, or bisect), revert it on the feature branch if needed, route the failure to that task's engineer.
-5. Write `reviews/integration-tech-lead-<n>.md`: merged tasks, commit SHAs, test results, open problems.
-6. Push the feature branch and keep a draft PR updated so CI runs.
-
-## 10. Plan self-review
-
-- [ ] `sdd.py trace --phase plan` clean; overlap warnings resolved or accepted in the slice table
-- [ ] T-01 is a walking skeleton (or the reason there isn't one is stated)
-- [ ] Vertical slices; riskiest work early; no integration left to the end
-- [ ] Every task ≤ one concern / ~400 lines; `done-when` observable
-- [ ] Test-engineer task precedes every engineer task for the same ACs
-- [ ] Enablers present: CI, migrations, contract wiring, fitness functions, observability
-- [ ] Hot files and migrations sequenced
-- [ ] You planned the *what* and the *order* — not the implementation
+Re-plan (a new `tasks.md` version) when a task fails its fix loop, reveals a design or requirements gap, turns out much larger than planned, or when an upstream artifact changes. Keep completed task IDs, add new IDs, and mark dropped tasks `[withdrawn]`. When a task is stuck, decide one of the following, and log the decision:
+- re-scope it (split);
+- re-sequence it (add the missing prerequisite);
+- send it upstream (design or requirements defect);
+- re-dispatch it with better context;
+- escalate.

@@ -9,7 +9,7 @@ Usage:
   sdd.py trace <spec-dir> [--phase specify|design|plan|verify] [--junit FILE ...] [--root DIR] [--no-write]
   sdd.py stale <spec-dir>
 
-Conventions are defined in skills/sdd-methodology/references/artifacts.md.
+Conventions are defined in skills/sdd-contracts/references/artifacts.md.
 Exit codes: 0 clean, 1 violations, 2 usage/input error.
 """
 

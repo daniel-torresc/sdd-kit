@@ -1,6 +1,6 @@
 ---
 name: practice-reliability
-description: Reliability and performance practice for the SDD reliability-engineer — SLIs, SLOs and error budgets; reviewing NFRs for realism and measurability; capacity estimation; reviewing designs for failure modes, timeouts, retries, idempotency, backpressure, graceful degradation and observability; load-profile and resilience-experiment design; performance diagnosis and profiling; alert quality (symptom-based, actionable, runbook-linked); release and rollout review; and post-incident reliability actions. Use for NFR and design reviews, SLO definitions, performance/resilience plans, perf diagnosis, and release reviews.
+description: Reliability, performance and operations practice for SDD — SLIs, SLOs and error budgets; reviewing NFRs for realism and measurability; capacity estimation; reviewing designs for failure modes, timeouts, retries, idempotency, backpressure, graceful degradation and observability; load-profile and resilience-experiment design; performance diagnosis and profiling; alert quality (symptom-based, actionable, runbook-linked); release and rollout review; incident response (classification, impact assessment, mitigation first, investigation, blameless postmortems); and post-incident reliability actions. Use for NFR and design reviews, SLO definitions, performance/resilience plans, perf diagnosis, and release reviews.
 ---
 
 # Practice: Reliability and performance
@@ -43,7 +43,7 @@ You design, test-engineer executes (or you execute in diagnosis):
 
 ## 6. Performance diagnosis
 
-Measure before changing: reproduce with a load profile; profile (py-spy/scalene for Python, browser devtools/Lighthouse for frontends); inspect queries (`EXPLAIN ANALYZE`); identify the dominant cost; propose the smallest fix; verify with the same profile. Never "optimize" without a before/after measurement.
+Measure before changing: reproduce with a load profile; profile with the stack's profiler (server and client side); inspect data-access plans for the hot queries; identify the dominant cost; propose the smallest fix; verify with the same profile. Never "optimize" without a before/after measurement.
 
 ## 7. Alerts and operability
 
@@ -53,6 +53,31 @@ Every alert: symptom-based (user impact or SLO burn), actionable, owned, linked 
 
 Review `release.md`: rollout steps with health criteria tied to SLIs, bake times, automatic rollback triggers, migration order (expand → migrate → contract), rehearsed rollback evidence, monitoring for the watch window, error-budget status (exhausted budget → recommend hold).
 
-## 9. After incidents
+## 9. Operate: incidents
+
+When something is wrong in a deployed environment:
+
+1. **Declare and classify.**
+
+   | Severity | Definition | Response |
+   |---|---|---|
+   | SEV1 | A critical journey down, or data loss or exposure for many users, or a security breach | Mitigate immediately; human notified at once |
+   | SEV2 | Major degradation (SLO fast burn), or a critical journey impaired for a subset of users | Mitigate immediately; human notified |
+   | SEV3 | Minor degradation with a workaround | Fixed through a normal S/M feature |
+   | SEV4 | Cosmetic or internal only | Backlog |
+
+2. **Assess impact before causes.** What users experience, how many, since when, which journeys and SLOs, and which recent change correlates (deploys, flags, configuration, dependencies, traffic). Timestamp every observation.
+3. **Mitigate first**, with the fastest safe, reversible action:
+   - roll back the last release;
+   - turn off the feature flag;
+   - scale out or restart unhealthy instances;
+   - degrade a non-critical dependency.
+
+   Production actions are executed or approved by the human. Confirm recovery against the SLI.
+4. **Communicate** at a fixed cadence (status, impact, actions, next update). External communication is a human action.
+5. **Investigate** after mitigation: reconstruct the timeline, separate the trigger from root causes and contributing factors (detection gaps, missing tests, unclear runbooks, design weaknesses), and cite evidence.
+6. **Blameless postmortem** for SEV1–2: impact (users, duration, error budget burned), timeline, causes and factors, what went well and what went poorly, where we got lucky, and action items. Focus on systems and conditions, never people.
+
+## 10. After incidents: reliability actions
 
 Contribute reliability actions to postmortems: missing timeouts, alerts that didn't fire, SLOs that didn't reflect user pain, capacity misses. Each becomes a `DEBT-nn`, a task, or an NFR/SLO change.

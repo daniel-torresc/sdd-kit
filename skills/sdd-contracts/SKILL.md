@@ -1,5 +1,5 @@
 ---
-name: sdd-methodology
+name: sdd-contracts
 description: The shared contracts of the SDD (Spec-Driven Development) workflow — artifact layout and ownership, traceability IDs, the agent return envelope, the review findings schema, the autonomy/escalation policy (D0–D3), triage classes, phase state machine, gates and loop caps. Load this whenever you create, edit, review or route any SDD artifact (anything under specs/, docs/adr/ or .sdd/), when acting as any SDD agent, or when deciding whether a decision needs another agent or a human.
 ---
 

@@ -1,84 +1,92 @@
 ---
 name: practice-engineering
-description: How an SDD engineer implements a task — loading the right stack skills, reading before writing, working in an isolated worktree on an sdd/ task branch, making acceptance tests pass without touching them, small conventional commits, refactoring only while green and within scope, errors/logging/metrics/validation as part of the feature, the local definition of done (full suite, lint, types, diff coverage, migrations, contracts), the fix loop, debugging method, and the handoff note. Use when implementing, fixing, debugging or refactoring code for an SDD task.
+description: How an SDD engineer approaches implementation work, independent of technology — understanding before changing, working from the task and its acceptance tests (never editing them), small verified steps, scope discipline, production concerns as part of every change, dependency discipline, the local definition of done, the fix loop, systematic debugging, refactoring safely, commits, and the handoff note. Use when implementing, fixing, debugging or refactoring code for an SDD task.
 ---
 
 # Practice: Engineering
 
-## 1. Start of task
+## 1. Understand before changing
 
-1. **Branch.** You run in your own worktree. Create the task branch from the current HEAD (the feature branch): `git switch -c sdd/<F>-<T>` using the task ID verbatim (e.g. `sdd/F001-T-04`). Confirm with `git status`.
-2. **Load skills.** Invoke the skills named by the task's `stack` / `surface` (e.g. `stack-python`); if none are named, use the stack profile in `.sdd/architecture/conventions.md`. If a stack has no skill, read `.sdd/briefs/<stack>.md`.
-3. **Read before writing**, in this order: the task (refs, touches, done-when, depends), its ACs in `requirements.md`, the relevant `design.md` sections and ADRs, `contracts/`, `conventions.md`, the acceptance tests for your ACs, then the existing code you will touch and its callers.
-4. **Run the acceptance tests first** and confirm they fail for the expected reason. If they pass already, or fail for a reason unrelated to your task, stop and report (`blocked`, finding to test-engineer).
+Before writing anything, read in this order:
+1. the task (`refs`, `touches`, `done-when`, `depends`);
+2. its ACs;
+3. the relevant design sections and ADRs;
+4. the contracts;
+5. the project conventions (`.sdd/architecture/conventions.md`);
+6. the acceptance tests for your ACs;
+7. the code you will touch, and its callers.
 
-## 2. Implementing
+Then run the acceptance tests and confirm they fail for the expected reason. If they pass already, or fail for an unrelated reason, stop and report it.
 
-- Work in **small steps**, each leaving the build green except for the not-yet-passing acceptance tests. Commit at each meaningful step.
-- Follow the design's module boundaries and the contract exactly (names, status codes, error codes, payloads).
-- **Production concerns are part of the step**, not a later task: input validation at the edge, authorization on every object access, explicit error handling mapped to the contract's errors, timeouts on outbound calls, structured logs (no PII), the metrics the design names.
-- **Unit tests** for non-trivial logic you add (branches, calculations, parsing, state transitions). Integration tests against real infrastructure where the design's failure modes need proving.
-- Check any API you are not sure of in current documentation (context7) before using it.
-- Do not add abstractions for hypothetical futures. Three similar lines beat a premature framework.
+When the change touches existing code you did not write, protect current behavior first: `practice-cartography` §6 (characterization tests, seams, incremental change).
 
-## 3. Scope
+When you are unsure how a library, framework or platform behaves, check its current documentation before relying on it. Memory of an API is not evidence.
 
-- Change only what the task's `touches` covers.
-- **Refactor freely inside `touches`**, only while tests are green, as separate commits (`refactor:`).
-- Outside `touches`: only mechanical changes (rename, import, call-site update) — list each in the handoff note.
-- Anything larger outside scope: don't do it. Add a `DEBT-nn` proposal or an enabler-task suggestion in the handoff note.
-- A design or contract that does not work: stop and file a change request to the architect with evidence (failing experiment, doc citation). Never silently deviate.
-- An acceptance test that contradicts its AC or the contract: file a finding to test-engineer. **Never edit acceptance, contract, e2e or perf tests** — the guard blocks it.
+## 2. The tests define done
 
-## 4. Dependencies
+The acceptance tests are the executable specification, and they are owned by test-engineer. **You never edit them.** If one contradicts its AC or the contract, file a finding to test-engineer and wait. Your own unit and integration tests cover the logic you add: branches, calculations, parsing, state transitions, and the failure modes the design names.
 
-- Runtime dependencies: only those approved in `.sdd/dependencies.yaml`. The guard blocks others. Need a new one → return `blocked` with a D2 escalation to security-engineer (name, version, purpose, license, alternatives).
-- Dev-only tools (`uv add --dev`, `npm install -D`) are D1: add and log them in `specs/<f>/log.md`.
+## 3. Small, verified steps
 
-## 5. Local definition of done
+Work in steps that each leave the build green, apart from the acceptance tests that aren't passing yet. Commit each meaningful step. Make it work, then make it right: refactor only while tests are green, and in separate commits.
 
-Run and pass, in this order, before handoff:
+## 4. Production concerns are part of the change
 
-| Check | Python example |
-|---|---|
-| Format | `uv run ruff format --check .` |
-| Lint | `uv run ruff check .` |
-| Types | `uv run pyright` |
-| Full test suite (not just yours) | `uv run pytest --cov --cov-report=xml` |
-| Diff coverage ≥ 85% on changed lines — **after committing** (diff-cover only sees committed changes; untracked files are invisible to it) | `uv run diff-cover coverage.xml --compare-branch=<feature branch> --fail-under=85` |
-| Migrations up and down (if any) | `uv run alembic upgrade head`, `uv run alembic downgrade -1`, `uv run alembic upgrade head` |
-| Architecture rules | `uv run lint-imports` (if configured) |
+Every change carries the following, as the design specifies:
+- input validation at the boundary;
+- authorization on every object access;
+- explicit error handling mapped to the contract's errors;
+- timeouts on outbound calls;
+- structured logs without sensitive data;
+- the metrics and traces the design names.
 
-Use the equivalents from `conventions.md` for other stacks. No new lint/type suppressions without an inline reason. No debug prints, commented-out code, or `TODO` without a `DEBT-nn`.
+None of these is a later task.
 
-## 6. Fix loop
+## 5. Scope discipline
 
-At most **3 attempts** per failing check. Each attempt: read the failure fully, form one hypothesis, change one thing, re-run. After the third failed attempt, stop and return `failed` with: what fails (exact output), the hypotheses tried, the evidence, and what you think is needed. The hub may re-dispatch attempts 2–3 on a stronger model; tech-lead takes over after that.
+- Change what the task's `touches` covers.
+- Inside that scope, improve freely while tests are green.
+- Outside it, make only mechanical changes (rename, import, call-site update), and declare each one in the handoff.
+- Anything larger outside scope: don't do it. Propose it as debt or as an enabler task.
+- A design or contract that doesn't work in practice: stop and file a change request to the architect with evidence (a failing experiment, a documentation citation). Never deviate silently.
+- No speculative abstractions. Build for the requirements in front of you, not imagined futures.
 
-## 7. Debugging (debug mode)
+## 6. Dependencies
+
+Only runtime dependencies approved in `.sdd/dependencies.yaml`. If you need a new one, return `blocked` with an escalation to security-engineer: name, version, purpose, license, alternatives. Development-only tools are your decision, and you log them.
+
+## 7. Local definition of done
+
+Before handoff, run the project's checks (the commands listed in `conventions.md`) and pass all of them:
+- formatting and linting;
+- type checking (where the stack has it);
+- the **full** test suite, not just your tests;
+- diff coverage at or above the configured minimum, measured **after committing**;
+- migrations up and down, if you added any;
+- architecture rules (fitness functions).
+
+No new suppressions without an inline reason, no debug output, no commented-out code, and no TODO without a debt entry.
+
+## 8. Fix loop
+
+At most the configured number of attempts per failing check. Each attempt reads the failure fully, forms one hypothesis, changes one thing and re-runs. When attempts are exhausted, stop and return `failed` with:
+- the exact failure;
+- the hypotheses you tried;
+- the evidence;
+- what you think is needed.
+
+## 9. Debugging
 
 1. **Reproduce** with a failing automated test at the lowest level that shows the bug.
-2. **Localize**: read the stack trace, bisect (inputs, commits, code paths), add temporary logging if needed (remove it after).
-3. **Fix the cause**, not the symptom; check for the same bug elsewhere.
-4. The reproduction test stays as a regression test.
+2. **Localize**: read the full error, bisect inputs, commits and code paths, and add temporary instrumentation (then remove it).
+3. **Fix the cause**, not the symptom, and look for the same bug elsewhere.
+4. Keep the reproduction as a regression test.
 
-## 8. Commits
+## 10. Commits and handoff
 
-Conventional Commits, one logical change each, with the trailer:
-
-```
-feat(identity): hash passwords with argon2id
-
-Refs: F001:T-04
-```
-
-Use `git commit -m "<subject>" -m "Refs: F001:T-04"`. Do not push — tech-lead integrates.
-
-## 9. Handoff note (in the return envelope `summary`)
-
-- **Changed:** what and where (modules, migrations, config).
-- **Verified:** each check from §5 with its result; acceptance tests passing (IDs).
-- **Outside touches:** mechanical changes made, if any.
-- **Risks / follow-ups:** DEBT proposals, change requests filed, anything reviewers should look at first.
-- **Skills loaded:** the stack/surface skills you invoked (or the brief you read).
-- **Branch:** `sdd/<F>-<T>` (the task ID verbatim, e.g. `sdd/F002-T-02`) and the head commit SHA.
+Follow the commit conventions in the workflow contract. Your return envelope's `summary` is the handoff note:
+- **Changed**: what, where.
+- **Verified**: each check and its result; the acceptance tests passing, by ID.
+- **Outside touches**: the mechanical changes, if any.
+- **Risks and follow-ups**: debt proposals, change requests filed, where reviewers should look first.
+- **Branch**: the task branch and the head commit SHA.

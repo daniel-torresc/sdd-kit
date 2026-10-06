@@ -59,7 +59,7 @@ For every external dependency and every stateful operation, fill the table:
 
 Standard defenses: timeouts on every network call, bounded retries with backoff and jitter only for idempotent operations, circuit breaking or fallback for non-critical dependencies, bulkheads for resource isolation, graceful degradation defined per REQ.
 
-**Observability by design**, per interface: structured logs (with correlation ID, no PII), RED metrics (rate, errors, duration), traces across boundaries (OpenTelemetry), and the alerts that would page someone — each alert tied to a user-visible symptom or an SLO.
+**Observability by design**, per interface: structured logs (with correlation ID, no PII), RED metrics (rate, errors, duration), traces propagated across boundaries (vendor-neutral instrumentation), and the alerts that would page someone — each alert tied to a user-visible symptom or an SLO.
 
 ## 6a. Testability seams
 
@@ -74,8 +74,8 @@ Acceptance tests drive the system only through public interfaces, so the design 
 ## 7. Fitness functions
 
 Architecture rules that are automated and run in CI, recorded in `.sdd/architecture/fitness.md` as `FF-nn`:
-- **Dependency rules** — module A may not import module B (Python: import-linter; TypeScript: dependency-cruiser or eslint-plugin-boundaries).
-- **Contract conformance** — the implementation matches `contracts/` (schemathesis for OpenAPI; generated clients compile).
+- **Dependency rules** — module A may not depend on module B (enforced by the stack's dependency-rule tooling).
+- **Contract conformance** — the implementation matches `contracts/` (contract tests generated from the contract; generated clients compile).
 - **Performance budgets** — load test thresholds from the NFR `verify:` lines.
 - **Migration safety** — migrations apply and roll back on a copy of the schema.
 You define them; platform-engineer wires them into CI.

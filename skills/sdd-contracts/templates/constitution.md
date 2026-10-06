@@ -19,11 +19,11 @@
 - No dependency with an unknown or copyleft license without a D3 decision.
 - No PII in logs.
 
-## Technology baseline
-<!-- The comparison baseline every G2 option must beat is in practice-tech-selection §1.
-     Override it here if you want a different baseline. Decided technologies (from G2) are listed with their ADRs. -->
-- Backend language: Python (fixed by the human)
-- Baseline overrides: none
+## Technology constraints
+<!-- Technologies fixed by the human (not defaults — constraints every decision must respect),
+     and technologies decided at G2, each with its ADR. There are no other defaults: choices are derived from context. -->
+- Fixed by the human: <e.g. backend language>
+- Decided (G2): <technology — ADR-NNNN>
 
 ## Definition of Done (feature)
 - [ ] `sdd.py trace --phase verify` is clean

@@ -12,10 +12,10 @@
       ".sdd/outbox.md"
     ],
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
       "git (status|log|diff|show)( [^<>$;&|`]*)?",
       "git branch( (-a|-r|-v|-vv|--list|--show-current|--merged|--no-merged)[^<>$;&|`]*)?",
-      "git add( (specs|\\.sdd|docs|README\\.md|\\.claude/skills)[\\w./-]*)+",
+      "git add( (specs|\\.sdd|docs|README\\.md)[\\w./-]*)+",
       "git commit( -m \\\"chore\\(sdd\\)[^\\\"$`]*\\\")( -m \\\"[^\\\"$`]*\\\")*",
       "git switch (-c )?sdd/[\\w./-]+( [\\w./-]+)?",
       "git worktree (list|prune)",
@@ -33,7 +33,7 @@
       "specs/*/reviews/*.md"
     ],
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?"
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?"
     ],
     "mcp": "read-only"
   },
@@ -44,7 +44,7 @@
       ".sdd/reviews/*-challenger-*.md"
     ],
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?"
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?"
     ],
     "mcp": "read-only"
   },
@@ -62,7 +62,7 @@
       "specs/*/log.md"
     ],
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
       "(rtk )?uv (run|init|add|sync|remove) (--directory|--project) \\.sdd/spikes/SPK-[\\w.-]+( [^<>$]*)?"
     ],
     "mcp": "read-only"
@@ -75,7 +75,7 @@
     ],
     "write_if_conflicted": true,
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
       "(rtk )?git (status|log|diff|show|rev-parse|merge-base)( [^<>$;&|`]*)?",
       "(rtk )?git branch( (-a|-r|-v|-vv|--list|--show-current|--merged|--no-merged)[^<>$;&|`]*)?",
       "(rtk )?git worktree list( [^<>$;&|`]*)?",
@@ -108,7 +108,7 @@
       "*tests/*/conftest.py"
     ],
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
       "(rtk )?uv run (-q )?(pytest|schemathesis|mutmut)[^<>$;&|`]*",
       "(rtk )?npx (--yes )?playwright[^<>$;&|`]*",
       "(rtk )?k6 run [^<>$;&|`]*",
@@ -141,7 +141,7 @@
     ],
     "deps_check": true,
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
       "(rtk )?uv (run|sync|lock|add|remove|tree|pip list)( [^<>$;&|`]*)?",
       "(rtk )?(npm|pnpm|yarn) (run|test|exec|ci|install|i|add|remove|ls|audit)( [^<>$;&|`]*)?",
       "(rtk )?npx [^<>$;&|`]*",
@@ -160,7 +160,7 @@
       "specs/*/reviews/verify-code-reviewer-*.md"
     ],
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
       "(rtk )?git (diff|log|show|status)( [^<>$;&|`]*)?",
       "(rtk )?git branch( (-a|-r|-v|-vv|--list|--show-current|--merged|--no-merged|--contains)[^<>$;&|`]*)?",
       "(rtk )?git worktree list( [^<>$;&|`]*)?",
@@ -192,7 +192,7 @@
     ],
     "deps_check": true,
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
       "(rtk )?docker (build|run|compose|images|ps|logs|inspect|stop|rm|buildx build)[^<>$;&|`]*",
       "(rtk )?(actionlint|hadolint|shellcheck|trivy|syft|gitleaks|pre-commit|tflint|checkov)( [^<>$;&|`]*)?",
       "(rtk )?(tofu|terraform) (-chdir=[\\w./-]+ )?(fmt|validate|init|plan|show|providers|version|output)( [^<>$;&|`]*)?",
@@ -220,7 +220,7 @@
       "specs/*/evidence/security/*"
     ],
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
       "(rtk )?(uvx )?(semgrep|bandit|pip-audit|osv-scanner|gitleaks|trivy)( [^<>$;&|`]*)?",
       "(rtk )?npm audit( [^<>$;&|`]*)?",
       "(rtk )?uv run (-q )?pytest (tests/security|\\S*tests/security)[^<>$;&|`]*",
@@ -238,7 +238,7 @@
       "specs/*/log.md"
     ],
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
       "(rtk )?k6 run [^<>$;&|`]*",
       "(rtk )?uv run (-q )?(locust|pytest (\\S*tests/perf))[^<>$;&|`]*",
       "(rtk )?(uvx )?(py-spy|scalene)( [^<>$;&|`]*)?",
@@ -256,7 +256,7 @@
       ".sdd/reviews/*-ux-designer-*.md"
     ],
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
       "(rtk )?git (status|diff|log|show)( [^<>$;&|`]*)?"
     ],
     "mcp": "read-only"
@@ -269,7 +269,7 @@
       "specs/*/log.md"
     ],
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
       "(rtk )?git (status|diff|log|show)( [^<>$;&|`]*)?"
     ],
     "mcp": "read-only"
@@ -282,7 +282,7 @@
       "specs/*/log.md"
     ],
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
       "(rtk )?git (status|diff|log|show|blame|ls-files|rev-parse|shortlog)( [^<>$;&|`]*)?",
       "(rtk )?(scc|cloc|tokei)( [^<>$;&|`]*)?"
     ],
@@ -295,7 +295,6 @@
       ".sdd/knowledge/*",
       ".sdd/improvements.md",
       "specs/*/retro.md",
-      ".claude/skills/stack-*",
       "specs/*/log.md",
       "specs/*/reviews/*.md"
     ],
@@ -304,7 +303,7 @@
       "docs/adr/*"
     ],
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
       "(rtk )?git (status|diff|log|show|shortlog)( [^<>$;&|`]*)?"
     ],
     "mcp": "read-only"
@@ -315,7 +314,7 @@
       "specs/*/log.md"
     ],
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
       "(rtk )?git (status|diff|log|show|blame)( [^<>$;&|`]*)?",
       "(rtk )?gh run (list|view)( [^<>$;&|`]*)?",
       "(rtk )?(aws|gcloud|az|scw|fly|flyctl|doctl) [\\w -]*\\b(describe|list|get|show|status|info|logs)[\\w-]*( [^<>$;&|`]*)?",
@@ -331,7 +330,7 @@
       "specs/*/log.md"
     ],
     "bash": [
-      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-methodology/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
+      "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
       "(rtk )?git (status|diff|log|show)( [^<>$;&|`]*)?"
     ],
     "mcp": "read-only"

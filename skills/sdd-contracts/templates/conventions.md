@@ -9,15 +9,13 @@ upstream: []
 # Engineering conventions
 
 ## Stack profile
-<!-- Machine-readable: the hub routes skills from this. Every entry links the ADR that decided it. -->
+<!-- The technologies in use (descriptive context for agents and the harness). Every entry links the ADR that decided it. -->
 ```yaml
 stack:
-  backend: { language: python, framework: fastapi, adr: ADR-0001 }
-  persistence: { db: postgresql, orm: sqlalchemy, migrations: alembic, adr: ADR-0002 }
+  backend: { language: <language>, framework: <framework>, adr: ADR-NNNN }
+  persistence: { db: <datastore>, data-access: <library>, migrations: <tool>, adr: ADR-NNNN }
   frontend: { rendering: <tbd>, framework: <tbd>, adr: <tbd> }
   hosting: { platform: <tbd>, adr: <tbd> }
-skills:
-  backend: [stack-python]
   frontend: []
 ```
 

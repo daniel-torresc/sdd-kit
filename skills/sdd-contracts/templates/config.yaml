@@ -81,39 +81,35 @@ triage_signals:
 
 # Lens triggers: which reviewers/consultants join, and from which phase.
 lens_triggers:
+  # Active lenses add their agent to the review panels (workflow contract, "Lens activation").
   security:
-    when: [auth, sessions, secrets, user input, file upload, external calls, new dependency, PII]
+    when: [auth, sessions, secrets, user input, file upload, external calls, new dependency, personal data]
     agent: security-engineer
   reliability:
-    when: [network calls, queues, background jobs, state, caching, new infra]
+    when: [network calls, queues, background jobs, state, caching, new infra, NFRs on latency or availability]
     agent: reliability-engineer
   ux:
     when: [user interface]
-    agent: ux-designer
-  a11y:
-    when: [user interface]
+    agent: ux-designer          # includes accessibility (WCAG 2.2 AA)
+  privacy:
+    when: [personal data collected, stored, processed or shared]
     agent: consultant
-    skill: lens-accessibility
+    skill: lens-privacy
   data-migration:
-    when: [schema change, backfill]
+    when: [schema change, backfill, data moved between stores]
     agent: consultant
     skill: lens-data-migration
-  evals:
+  ai-evals:
     when: [LLM or ML model call]
     agent: consultant
     skill: lens-ai-evals
   finops:
-    when: [new cloud resource]
+    when: [new cloud resource, paid service, usage-billed API or model]
     agent: consultant
     skill: lens-finops
   api-compat:
-    when: [public contract change]
+    when: [public or externally consumed contract introduced or changed]
     agent: consultant
     skill: lens-api-compat
-
-# Fallback mapping from repo markers to stack skills (the stack ADR takes precedence).
-stack_routing:
-  pyproject.toml: [stack-python]
-  package.json: [stack-typescript]
 
 human_gates: [G1, G2, G3]

@@ -1,6 +1,6 @@
 # Stack brief: <technology>
 
-> Written by the researcher when no stack skill exists. Candidate for promotion to a skill by the librarian.
+> Written by the researcher when a decided technology is unfamiliar and no adequate guidance is available. Project knowledge, not a reusable skill.
 
 - **Version researched:** <x.y> · **Sources:** <docs links, retrieved YYYY-MM-DD>
 

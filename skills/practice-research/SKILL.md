@@ -1,6 +1,6 @@
 ---
 name: practice-research
-description: Research practice for the SDD researcher — framing a research question, search strategy, source selection and credibility, current-documentation lookups (context7), triangulation, citing every claim, confidence levels, separating facts from inferences, technology option analyses that feed G2 packages, stack briefs for technologies without a stack skill, and domain/market/regulatory research. Use when answering a routed Q-nn, preparing technology options, or writing a stack brief.
+description: Research practice for the SDD researcher — framing a research question, search strategy, source selection and credibility, current official documentation, triangulation, citing every claim, confidence levels, separating facts from inferences, technology option analyses that feed G2 packages, stack briefs for unfamiliar technologies, and domain/market/regulatory research. Use when answering a routed Q-nn, preparing technology options, or writing a stack brief.
 ---
 
 # Practice: Research
@@ -13,7 +13,7 @@ Restate the question in one sentence, name the **decision it informs** and who w
 
 | Source tier | Examples | Use for |
 |---|---|---|
-| Primary | Official docs (via context7 or the vendor site), specifications/RFCs, laws and regulator guidance, release notes, pricing pages, source code | Facts, capabilities, limits, versions, prices |
+| Primary | Current official documentation, specifications/RFCs, laws and regulator guidance, release notes, pricing pages, source code | Facts, capabilities, limits, versions, prices |
 | Secondary | Reputable engineering blogs, benchmarks with published methodology, conference talks, academic papers | Experience, trade-offs, performance |
 | Tertiary | Forums, Q&A, social posts | Signals of problems — never the only source for a claim |
 
@@ -34,11 +34,11 @@ Prefer the newest authoritative source; record the retrieval date. Check version
 
 ## 5. Technology option analysis (feeds G2)
 
-Use `practice-tech-selection`: include the baseline, every viable option, evidence per criterion (fit to named REQ/NFR IDs, maturity, ecosystem, operational cost with a sourced monthly estimate, lock-in and reversal cost, license, security record, team/hiring, longevity), and one-line exclusions for non-viable options. Present options symmetrically; your lean, if any, goes in a separate section. The architect builds the G2 package from it.
+Use `practice-tech-selection`: derive the decision criteria from the context, include the reference option (derived from context, with its reasoning) and every viable option, evidence per criterion (fit to named REQ/NFR IDs, maturity, ecosystem, operational cost with a sourced monthly estimate, lock-in and reversal cost, license, security record, team/hiring, longevity), and one-line exclusions for non-viable options. Present options symmetrically; your lean, if any, goes in a separate section. The architect builds the G2 package from it.
 
 ## 6. Stack brief
 
-When a decided stack has no `stack-*` skill, write `.sdd/briefs/<stack>.md` from the stack-brief template, from current official docs: version researched, idioms and project layout, tooling (formatter, linter, type checker, test runner, package manager), testing patterns, security and performance pitfalls, common mistakes. It must be good enough for an engineer to work from; the librarian may promote it to a skill later.
+When a decided technology is unfamiliar to the team and no adequate guidance is available, write `.sdd/briefs/<technology>.md` from the stack-brief template, from current official documentation: version researched, idioms and project layout, tooling (formatting, linting, type checking, testing, packaging), testing patterns, security and performance pitfalls, common mistakes. It must be good enough for an engineer to work from. It is project knowledge, not a reusable skill.
 
 ## 7. Domain, market and regulation
 

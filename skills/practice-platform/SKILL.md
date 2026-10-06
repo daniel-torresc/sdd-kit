@@ -1,77 +1,115 @@
 ---
 name: practice-platform
-description: How the SDD platform-engineer builds the path from code to production — walking-skeleton scaffold, dev containers, CI pipeline design (quality gates, fitness functions, supply-chain checks), containers, infrastructure as code with plan/apply discipline, environments and deploy autonomy, GitHub environment protection for production, secrets wiring, observability wiring (OpenTelemetry, dashboards and alerts as code), dependency update automation, and runbooks. Use for scaffold, infra/CI/observability tasks, environment plans and deploys.
+description: How the SDD platform-engineer designs and runs the path from code to production, independent of technology — the delivery pipeline as the enforcer of the methodology's quality gates, reproducible builds and the supply chain, environments and their autonomy rules, infrastructure as code with plan/apply discipline, deployment protection for production, secrets wiring, dev-environment parity, observability as code, dependency and version maintenance, the walking skeleton's platform half, and runbooks. Use for scaffolding, pipeline, infrastructure, environment, observability and maintenance work.
 ---
 
 # Practice: Platform
 
-## 0. Local tooling
+The platform is the machinery that turns a commit into a running, observable, recoverable system. Its job in SDD is to make the methodology's rules **automatic**: what the contracts require, the pipeline enforces.
 
-Run every check locally before handoff (actionlint, hadolint, shellcheck, trivy, syft, gitleaks, tofu, pre-commit, Docker). If a tool is not installed and not available in the dev container, **report that check as "not run locally"** in your envelope, with the install command — never claim a check passed that you did not run. CI runs all of them regardless.
+## 1. Principles
 
-## 1. Walking skeleton (scaffold)
+1. **Everything as code**: pipelines, infrastructure, environments, dashboards, alerts, dev environments. Nothing important lives only in a console.
+2. **Reproducible by default**: the same commit always produces the same artifact. Pin versions of dependencies, tools, base images and pipeline steps, and record what was built from what.
+3. **Fast and trustworthy feedback**: the pipeline is the developer's tightest loop. It must be quick, parallel and never flaky, or people (and agents) learn to ignore it.
+4. **Least privilege everywhere**: pipeline jobs, deploy identities and runtime identities get only what they need, preferably short-lived.
+5. **Plan freely, apply carefully**: previews of change are free; changes with real-world effects follow the autonomy classes.
+6. **Production is observable and recoverable before it is live.**
 
-The platform half of T-01, for a new project:
-1. **Repo layout** per `.sdd/architecture/conventions.md` (e.g. `stack-python` §1): `pyproject.toml` with tool config (ruff, pyright, pytest markers incl. `ac`, coverage, import-linter), `src/<app>/main.py` with `create_app()` and `/health` (liveness) + `/ready` (readiness), `.gitignore` (incl. `.venv/`, `.claude/worktrees/`, coverage files), `.dockerignore`.
-2. **Dev container** `.devcontainer/devcontainer.json`: the stack runtime, uv/node as needed, Docker-in-Docker or a compose service for PostgreSQL, the linters and scanners from §3. This is the default sandbox for autonomous sessions.
-3. **Compose** for local dependencies (database, SMTP capture, etc.) with pinned image digests.
-4. **CI** (§2) green on the skeleton, including a deliberately failing commit to prove the gates bite.
-5. **Container image** (`stack-docker`) and a **dev deploy** if a dev environment is approved.
-6. **First fitness functions** wired (e.g. import-linter contract).
+## 2. The pipeline enforces the methodology
 
-## 2. CI pipeline
+Every change to an `sdd/*` branch or pull request runs the gates the contracts define:
 
-One workflow for pull requests and `sdd/*` pushes; jobs run in parallel where independent, cached aggressively, and finish in minutes.
-
-| Job | Contents | Blocking |
+| Gate | Enforces | Blocking |
 |---|---|---|
-| lint | formatter check, linter, `actionlint`, `hadolint`, `shellcheck` | yes |
-| types | type checker (strict) | yes |
-| test | full suite with a real database service, JUnit + coverage XML artifacts, diff coverage vs the base branch (≥ `engineering.diff_coverage_min`) | yes |
-| contract | contract tests (schemathesis) against the built app | yes |
-| fitness | every `FF-nn` in `.sdd/architecture/fitness.md` (import rules, migration up/down, budgets) | yes |
-| supply-chain | dependency audit (pip-audit / npm audit), secret scan (gitleaks), SBOM (syft), image scan (trivy) | critical vulns and any secret → yes (unless an accepted `RISK-nn` lists the CVE) |
-| trace | `sdd.py trace --phase verify --junit` on the feature branch | yes once in Verify |
+| Format, lint, static checks (incl. pipeline and container definitions) | Conventions | Yes |
+| Type checks (where the stack has them) | Correctness at boundaries | Yes |
+| Full test suite with real dependencies; machine-readable results and coverage | The definition of done; evidence for Verify | Yes |
+| Diff coverage vs the base branch | `engineering.diff_coverage_min` | Yes |
+| Contract tests against the built system | Contracts are the source of truth | Yes |
+| Fitness functions (every `FF-nn`) | The architecture | Yes |
+| Supply chain: dependency audit, secret scanning, software bill of materials, artifact scanning | `supply_chain.block_on` | Critical vulnerabilities and any secret block, unless an accepted `RISK-nn` lists the issue |
+| Traceability (`sdd.py trace`) | Spec ↔ test ↔ result links | From Verify |
 
-Rules: actions pinned by **commit SHA** with a version comment; least-privilege `permissions:` per job; no secrets in pull-request jobs from forks; artifacts retained for the evidence pack. A pipeline change is proven by a run that passes **and** a run that fails on purpose.
+Prove every pipeline change twice: a run that passes, and a deliberately broken commit that fails for the right reason.
 
-## 3. Containers
+## 3. Builds, artifacts and the supply chain
 
-See `stack-docker`. Official base images pinned by digest, multi-stage builds, non-root user, minimal runtime image, health check, no secrets in layers, SBOM and scan on every build.
+- One build produces one immutable, versioned artifact, which is promoted unchanged through environments. Never rebuild per environment.
+- Artifacts are minimal, run as non-privileged users, and contain no secrets or build tooling.
+- Every artifact has a bill of materials and a scan result, and its provenance (what source, which pipeline) is recorded.
+- Third-party pipeline steps are pinned to immutable references.
 
-## 4. Infrastructure as code
+## 4. Environments and autonomy
 
-See `stack-opentofu`. Layout `infra/modules/*` + `infra/envs/<env>/`; remote state with locking; one environment per state.
-
-**Plan freely, apply carefully:**
-- `tofu fmt`, `validate`, `plan` are autonomous; attach the plan summary (add/change/destroy counts) and a **monthly cost estimate** to the task or `env-plan`.
-- A plan that **adds** resources or **destroys** anything → D3 (decision package for the human), whatever the environment.
-- Changes to **existing** dev/staging resources (no adds, no destroys) → apply through the infra CI workflow (autonomous).
-- Production → only through the protected workflow after G3.
-- Never apply from a laptop shell; applies run in CI with the reviewed plan.
-
-## 5. Environments and deploy autonomy
-
-| Environment | Deploy | Config change (existing resources) | New resources / spend |
+| Environment | Deploy | Changes to existing resources | New resources or spend |
 |---|---|---|---|
-| dev | autonomous (`gh workflow run deploy.yml -f environment=dev`) | autonomous | D3 |
-| staging | autonomous | autonomous | D3 |
-| production | **G3**, then the protected workflow; GitHub **environment protection with a required human reviewer** is the hard stop | G3 | D3 |
+| dev | Autonomous | Autonomous | D3 |
+| staging | Autonomous | Autonomous | D3 |
+| production | **G3**, then a protected deployment that requires a human approval in the deployment system itself | G3 | D3 |
 
-Configure the `production` GitHub environment with required reviewers (the human) and branch restrictions (main only) as part of the scaffold, so no agent can deploy to production even by mistake.
+The hard stop for production lives **in the deployment system** (a protected environment with a required human reviewer and restricted source branches), not just in instructions. It is configured during scaffolding. Environments are as similar as cost allows: same artifact, same configuration shape, production-like data volume in staging.
+
+## 5. Infrastructure as code
+
+- One state per environment, stored remotely, locked during changes. Modules are reusable; environments compose them.
+- **Plan freely**: formatting, validation and previews are autonomous. Attach the preview summary (adds, changes, destroys) and a **monthly cost estimate** to the task.
+- **Any preview that adds or destroys resources is D3**, whatever the environment. Replacing a stateful resource counts as a destroy.
+- Changes to existing dev/staging resources (no adds, no destroys) apply through the pipeline. Production applies only after G3.
+- Never apply from an interactive shell; applies run in the pipeline from the reviewed preview.
+- Protect data stores from accidental destruction; use explicit moves for refactors; detect drift on a schedule and treat it as a defect.
 
 ## 6. Secrets
 
-The app reads secrets from the environment or a secret store via settings; CI injects them from GitHub environment secrets / OIDC federation to the cloud (no long-lived keys). You wire **references**; you never read, print or create secret values. New secrets in production accounts → D3; a new secret exposed to the app → security-engineer (D2).
+Wire **references**, never values. The application reads secrets from a managed store or runtime injection, and the pipeline authenticates to clouds with short-lived federated identities instead of stored keys. A new secret exposed to the application is reviewed by security-engineer (D2). Creating secrets in production accounts is a human action (D3).
 
-## 7. Observability wiring
+## 7. Developer environment parity
 
-From the design's failure-mode table and NFRs: OpenTelemetry SDK/collector config, RED metrics, trace propagation, structured log shipping; **dashboards and alerts as code** (one alert per user-visible symptom or SLO, each linked to a runbook). Prove each alert fires on a simulated symptom in staging.
+Every project gets a reproducible development environment (a dev container or equivalent) with the runtime, tools, scanners and local dependencies (database, message capture) the pipeline uses. It is also the recommended sandbox for autonomous agent sessions. If a check passes locally but fails in the pipeline, that is a parity defect: fix the environment, not the check.
 
-## 8. Dependency updates
+## 8. Observability as code
 
-Renovate (or Dependabot) grouped by ecosystem, weekly, auto-merge only for patch-level dev dependencies with green CI; runtime dependency updates go through normal review (and `.sdd/dependencies.yaml` for new packages).
+From the design's failure modes and the SLO catalog, wire:
+- instrumentation and collection (logs, metrics, traces, correlation);
+- dashboards per service (SLIs, rate/errors/duration, saturation, dependencies);
+- **alerts as code** on SLO burn rate and user-visible symptoms, each linked to a runbook section.
 
-## 9. Runbooks
+Prove each alert fires on a simulated symptom in staging.
 
-`docs/runbooks/<service>.md`: what it is, dashboards, each alert → meaning → first checks → mitigation → rollback, how to deploy and roll back, contacts. Written when the alert or service is added, not after the first incident.
+## 9. Dependency and version maintenance
+
+Keep the system current so security fixes are cheap:
+- automated update proposals, grouped by ecosystem, on a schedule;
+- patch-level updates of development tools merge on green;
+- runtime updates go through normal review (new runtime packages through dependency review);
+- runtimes, base images and major frameworks are tracked against their end-of-life dates, and upgrades are planned as debt items before support ends;
+- deprecation warnings from dependencies become debt items, not noise.
+
+## 10. Walking skeleton (scaffold)
+
+The platform half of the first slice of a new project:
+- repository layout per the conventions, with formatter, linter, type and test configuration;
+- the AC tagging mechanism configured;
+- liveness and readiness endpoints;
+- ignore rules (including `.claude/worktrees/`);
+- the development environment (§7);
+- the pipeline with every gate from §2, proven to pass and fail;
+- the build artifact;
+- the protected production environment;
+- the first fitness function;
+- a deploy to dev, if a dev environment has been approved.
+
+## 11. Runbooks
+
+`docs/runbooks/<service>.md`:
+- what the service is;
+- its dashboards;
+- for each alert: what it means, first checks, mitigation, rollback;
+- how to deploy and roll back;
+- whom to involve.
+
+Write the runbook when the service or alert is added, never after the first incident.
+
+## 12. Local verification
+
+Run every check locally before handoff. If a tool isn't available locally or in the dev environment, report that check as **"not run locally"** with what is needed, and never claim it passed. The pipeline runs everything regardless.

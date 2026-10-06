@@ -125,7 +125,7 @@ The assumption ranking is used by the preparing agent to order the G1 assumption
 - Coupling: hidden shared state, chatty interfaces, circular dependencies.
 - One-way doors identified; ADRs exist; G2 raised where required.
 - Observability and rollback designed, not deferred.
-- Claims about libraries/platforms verified (docs, context7).
+- Claims about libraries/platforms verified against current official documentation.
 
 **ADR**
 - Context states the forces; options are real alternatives; consequences include the downsides.
@@ -141,7 +141,7 @@ The assumption ranking is used by the preparing agent to order the G1 assumption
 **G2 decision brief** (when several G2s are pending)
 - Fits on one screen; the human could decide from it alone.
 - Questions that flip recommendations are listed first; decision order is correct.
-- Bundles are genuinely coherent, include the baseline, and are presented symmetrically (costs, tokens, reversal risk for each).
+- Bundles are genuinely coherent, include the reference option derived from context, and are presented symmetrically (costs, novelty spent, reversal risk for each).
 - One-liners match the packages (no lean stated more strongly than in the package).
 
 **Tasks (class L)**
