@@ -28,7 +28,7 @@ Dispatch with the Agent tool, using the exact `subagent_type` shown in your avai
 
 1. Build the prompt from the dispatch table: **mode**, spec folder, target artifact@version, round, task ID, branches, the **lens** (consultant), and the absolute path of `sdd.py` (`<sdd-contracts skill dir>/scripts/sdd.py`) as fallback.
 2. Pick the **model** by the per-mode rules (workflow contract) and pass `model` on the Agent call when it differs from the agent's default.
-3. **Isolation**: engineer and platform-engineer isolate themselves; pass `isolation: "worktree"` for test-engineer `test-task` and for every code-reviewer dispatch (give the reviewer the task branch to check out and the **absolute main-checkout path** for its review file). Everything else runs in the main checkout.
+3. **Isolation**: engineer and platform-engineer isolate themselves; pass `isolation: "worktree"` for test-engineer `test-task`, for every code-reviewer dispatch and for ux-designer's Build-time `ux-review` (give the reviewer the task branch to check out and the **absolute main-checkout path** for its review file). Everything else runs in the main checkout.
 4. **Reviewers get artifacts only** — never the author's envelope, summary or reasoning.
 5. Run independent dispatches **in parallel** (review panels; ready build tasks up to `parallelism.max_parallel_tasks`).
 6. Include every **active lens** from `state.yaml` in the panels the dispatch table assigns it to.

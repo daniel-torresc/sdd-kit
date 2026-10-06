@@ -339,9 +339,14 @@
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
-      "(rtk )?git (status|diff|log|show)( [^<>$;&|`]*)?"
+      "(rtk )?git (status|diff|log|show)( [^<>$;&|`]*)?",
+      "(rtk )?git switch --detach sdd/[\\w./-]+"
     ],
-    "mcp": "read-only"
+    "mcp": "read-only",
+    "project_commands": [
+      "install",
+      "run"
+    ]
   },
   "researcher": {
     "write": [

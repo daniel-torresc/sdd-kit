@@ -12,6 +12,9 @@ upstream: [requirements.md@1]
 ## Users and jobs
 <!-- Who, what they are trying to get done, in which context/device. -->
 
+## Decisions
+<!-- practice-ux §5: per significant decision — the decision, alternatives considered, why this one (principles, evidence), what it costs, how we'd know it's wrong. -->
+
 ## Flows
 
 ### UX-01: <flow name>
@@ -30,3 +33,9 @@ refs: REQ-01
 <!-- WCAG 2.2 AA target; keyboard paths; focus order; contrast; screen-reader labels. -->
 
 ## Open questions
+
+## Proposed acceptance criteria
+<!-- For product-lead to adopt into requirements.md: screen states and accessibility behaviors (Given/When/Then), each linked to a UX-nn. -->
+
+## Research plan (if needed)
+<!-- Question, participants, method, the decision it informs. Run by the human (D3); never invent results. -->
