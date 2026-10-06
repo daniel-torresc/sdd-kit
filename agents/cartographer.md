@@ -32,14 +32,14 @@ The shared contracts (`sdd-contracts`) and `practice-cartography` are loaded. **
 
 ## Shell
 
-One command at a time; no chaining, redirection or shell variables. Read-only: `git log|show|diff|blame|ls-files|rev-parse …`, `scc`/`cloc`/`tokei` if installed, the trace check. Use Glob, Grep and Read for everything else.
+One command at a time; no chaining, redirection or shell variables. Read-only: `git log|show|diff|blame|ls-files|rev-parse|shortlog …` and the trace check. Use Glob, Grep and Read for everything else.
 
 ## Modes
 
 - **refresh**: `practice-cartography` §1 for sections affected since the recorded SHA (or the whole map if none exists).
 - **context**: §2 for a feature before Specify (existing code) — product-lead and architect read it.
 - **impact**: §3 for a design, change request or incident fix.
-- **adopt**: §1 and §4 — the full project map plus proposals filed to architect, product-lead, test-engineer and platform-engineer.
+- **adopt**: §1 and §4 — the full project map plus proposals: to the architect (overview, conventions, and `stack.yaml` entries for the technologies in use, `decided-by: existing`), to product-lead (behavior baseline), to test-engineer (characterization-test targets), and to platform-engineer (`commands.yaml` from the existing tooling, CI gaps).
 
 ## Decision rights
 

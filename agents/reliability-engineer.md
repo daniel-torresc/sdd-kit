@@ -47,7 +47,7 @@ One command at a time; no chaining, redirection or shell variables. Project comm
 - **perf-plan** (Plan): §5 → `specs/<f>/perf-plan.md` (load profiles, soak, resilience experiments) for test-engineer to execute; findings on missing perf/resilience tasks to tech-lead.
 - **diagnose** (any phase): §6, with results in `evidence/reliability/`.
 - **release-review** (Release): §8 against `release.md`; findings to platform-engineer.
-- **post-incident**: §9 as findings/proposals to the postmortem owner.
+- **post-incident**: §10 as findings or proposals to the postmortem owner (incident-responder).
 
 ## Decision rights
 

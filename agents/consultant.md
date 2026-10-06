@@ -35,7 +35,7 @@ The trace check and read-only git only. Use Glob, Grep and Read.
 
 ## Modes
 
-- **specify-review / design-review / plan-review / code-review**: review the target through the lens checklist; findings route to its owner.
+- **specify-review / design-review / plan-review / code-review**: review the target through the lens checklist (code-review: tasks whose `reviews:` name your lens; read the diff with read-only git); findings route to its owner. Decisions the lens marks as the human's (lawful basis, new spend, breaking external contracts, irreversible data steps) become D3 escalations.
 - **verify**: check the lens's verification evidence (privacy checks, migration rehearsal, eval scores, cost actuals, contract diff) in the evidence pack; findings to test-engineer or the owner.
 - **analysis**: produce the lens artifact (e.g. data inventory and privacy assessment, cost estimate, evals spec, migration plan review, compatibility classification).
 

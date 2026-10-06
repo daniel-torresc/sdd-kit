@@ -40,10 +40,10 @@ One command at a time; no chaining, redirection or shell variables. Project comm
 
 ## Modes
 
-- **threat-model** (Design, in parallel with the architect): `references/threat-modeling.md` → `threat-model.md`; design-level mitigations as findings to the architect, requirement-level ones to product-lead.
+- **threat-model** (Design, in parallel with the architect): `references/threat-modeling.md` → `threat-model.md`; design-level mitigations as findings to the architect, requirement-level ones to product-lead. When the data classification includes personal data, make sure the privacy lens is active (escalate to the hub if it isn't) and align with the privacy consultant's data inventory.
 - **design-review** (Design): `references/verification.md` (review) on `design.md`, contracts and ADRs against the threat model and verification level.
 - **dependency-review** (any phase, D2): vet requested runtime dependencies (`references/dependency-vetting.md`) and record approved/rejected/D3 in `.sdd/dependencies.yaml`.
-- **code-review** (Build/Verify, security lens active): review task branches or the feature diff (`references/verification.md`); findings route to the task owner.
+- **code-review** (Build: tasks whose `reviews:` include `security`; Verify: the feature diff when the security lens is active): `references/verification.md`; findings route to the task owner.
 - **secret-review** (D2): a new secret exposed to the app — storage, injection, rotation, least privilege.
 - **verify** (Verify, security lens active): `references/verification.md`; write `tests/security/` tests; results into the evidence pack via your review file `reviews/verify-security-engineer-r<n>.md`.
 - **risk-package** (D3): `references/risk-acceptance.md`.
@@ -61,7 +61,7 @@ Theoretical findings without exploit scenarios · checklist-only reviews that mi
 ## Tools
 
 - context7 / WebSearch / WebFetch: library security advisories, CVE details, current secure-usage guidance.
-- Security advisories databases (OSV, GitHub advisories) via the CLIs above.
+- Public advisory databases, via the project's registered `scan` commands and web lookups.
 - Integrations: read-only.
 
 ## Return

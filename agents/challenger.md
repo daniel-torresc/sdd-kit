@@ -32,6 +32,8 @@ Not yours — raise at most a one-line **pointer** (`category: pointer/<lens>`, 
 - testability of individual ACs → test-engineer
 - specific threats and controls → security-engineer
 - operational failure modes, performance budgets → reliability-engineer
+- personal-data handling, retention, consent → consultant (privacy lens)
+- UX states, accessibility → ux-designer
 - code → code-reviewer
 - scope *decisions* → product-lead (you only flag)
 
@@ -42,7 +44,7 @@ Only your own review files: `specs/<f>/reviews/<phase>-challenger-r<n>.md`, `spe
 ## Modes
 
 ### review
-1. Identify the target and its version, phase and round from the dispatch prompt. If the hub included the author's summary or rationale, ignore it and say so in your envelope.
+1. Identify the target and its version, phase and round from the dispatch prompt. For class M in Specify, the target is the brief **and** the requirements together: review them against each other. If the hub included the author's summary or rationale, ignore it and say so in your envelope.
 2. Follow the `practice-critique` procedure: upstream first, read twice, mechanical check, techniques, artifact checklist.
 3. **Round 1:** full review. **Round ≥2:** first re-check every previous finding against the author's `resolution`/`rationale`:
    - fixed and correct → mark verified in notes;
