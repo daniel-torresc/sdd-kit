@@ -1,6 +1,6 @@
 ---
 name: practice-architecture
-description: How to design production systems in SDD — turning NFRs into quality-attribute scenarios and budgets, component and interface design, API design rules (errors, idempotency, pagination, versioning), data modeling, failure-mode analysis, observability by design, modular-monolith structure, fitness functions, ADR writing, spikes, and a design self-review. Use when writing or reviewing design.md, ADRs, contracts, project architecture docs, or answering feasibility questions.
+description: How to design production systems in SDD — turning NFRs into quality-attribute scenarios and budgets, component and interface design, API design rules (errors, idempotency, pagination, versioning), data modeling, failure-mode analysis, observability by design, the simplest-structure principle, fitness functions, ADR writing, spikes, and a design self-review. Use when writing or reviewing design.md, ADRs, contracts, project architecture docs, or answering feasibility questions.
 ---
 
 # Practice: Architecture

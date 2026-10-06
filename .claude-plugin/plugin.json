@@ -1,5 +1,5 @@
 {
-  "name": "brain-common",
+  "name": "sdd-methodology",
   "description": "Domain-agnostic substrate for Daniel's second brain: lifecycle hooks, shared skills, and infrastructure agents read by every brain-* domain plugin.",
   "version": "0.0.0",
   "author": {
