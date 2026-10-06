@@ -37,6 +37,10 @@ refs: REQ-01, NFR-01
 | Dependency | Version | Purpose | Alternatives |
 |---|---|---|---|
 
+## Infrastructure and spend
+<!-- New environments, resources or paid services this design needs, with an order-of-magnitude monthly cost.
+     The hub dispatches platform-engineer env-plan for these (human decision on resources and spend). -->
+
 ## Data model
 <!-- Entities, invariants, ownership, retention, migrations. -->
 

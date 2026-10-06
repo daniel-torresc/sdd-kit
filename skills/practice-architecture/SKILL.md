@@ -28,8 +28,8 @@ Then **budget** the measure across the path (edge 20 ms, app 60 ms, DB 40 ms, em
 
 - One **responsibility** per component, stated in one sentence; it **owns** its data (no other component writes its tables).
 - Dependencies point toward stable, abstract modules; no cycles.
-- **Default structure: modular monolith** — one deployable, modules with explicit public interfaces (a package's `__init__`/`api` module), enforced by fitness functions. Split into separately deployed services only with an ADR citing the NFR or organizational force that requires it (independent scaling, isolation of a failure domain, different compliance boundary, different release cadence owned by a different team).
-- Asynchronous work only where an NFR or failure mode needs it (slow/unreliable dependency, bursty load); prefer a database-backed queue until volume demands a broker.
+- **Start from the simplest structure that meets the requirements**: one deployable with clear module boundaries (each module exposes an explicit public interface; others depend only on it), enforced by fitness functions. Distribution (separately deployed services, message brokers, additional datastores) must be justified in an ADR by a specific NFR or constraint: independent scaling, isolation of a failure domain, a different compliance boundary, or a different release cadence owned by a different team.
+- Asynchronous work only where an NFR or failure mode needs it (slow or unreliable dependency, bursty load). Prefer the simplest mechanism the existing infrastructure already provides until volume demands more.
 
 ## 4. Interfaces and API design
 

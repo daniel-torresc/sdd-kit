@@ -39,6 +39,7 @@ For every step: who, which mode, what to pass, which model, and what comes next.
 | G2 fairness | challenger · `review` (G2 fairness) | gate files + G2-brief.md | default | architect revises → human |
 | Review panel | challenger · `review`; security-engineer · `design-review`; reliability-engineer · `design-review`; consultant · `design-review` | design.md@v, contracts, ADRs, threat model, round | default | revise loop |
 | Revise | architect · `revise` | review files | default | re-review |
+| Runtime dependencies listed in the design | security-engineer · `dependency-review` | design.md dependencies section | default | approvals in `.sdd/dependencies.yaml` before Plan |
 | New infrastructure or spend in the design | platform-engineer · `env-plan` | design, stack.yaml | default | **D3**: human approves resources and cost |
 
 ## Plan
