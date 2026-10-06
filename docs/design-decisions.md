@@ -91,13 +91,29 @@ Result: 31 → 24 skills (`sdd`, `sdd-contracts`, 17 practices, 5 lenses).
   - conventional platform paths (`.github/`, `infra/`, container files) in the engineer's write exclusions;
   - `uv` to run the plugin's own `sdd.py`.
 
-## 5. Review backlog (before testing)
+## 5. Agent review (agreed 2026-10-06)
+
+Consistency audit (mechanical): guard permissions aligned with agent instructions; every mode now has a dispatch trigger; artifact ownership tables match the guard.
+
+| Decision | Detail |
+|---|---|
+| Docs ownership | README and `docs/` belong to the librarian; engineers keep docstrings and in-code docs and report a **Docs impact** list in their handoff, which the hub collects into `log.md` |
+| Class M Discover + Specify merged | Brief and requirements are written in one dispatch and reviewed together; class L keeps a separate Discover |
+| Technology constraints from requests | Escalated by product-lead; the hub confirms with the human and records them as `fixed` entries in `stack.yaml` |
+| UX decisions and Build-time review | `ux.md` records decisions, proposed acceptance criteria and research plans; ux-designer reviews the first delivery of each new screen in Build (worktree, runs the app) as well as Verify |
+| Simplest-structure principle | The architecture skill keeps a principle, not a default: one deployable with clear module boundaries; distribution must be justified by an NFR or constraint in an ADR |
+| Architect integrates parallel work | Threat model, SLOs, capacity and lens analyses are folded into the design before review; designs list runtime dependencies (→ dependency review) and infrastructure/spend (→ env-plan) |
+| Explicit per-task reviewers | Tasks declare `reviews:` (ux, security, lens names), validated by `sdd.py`; the hub dispatches exactly those reviewers alongside code-reviewer |
+| Command registry integrity | The guard reads `.sdd/commands.yaml` from the main checkout (feature branch), so registry changes take effect only after architect review and integration; new tooling is registered in its own task before use |
+| New modes and triggers | architect `review-commands`; researcher `skills`; env-plan after hosting decisions and for designs that need resources; risk packages for deferred critical/major findings; cartographer `impact`; product-lead `evolve` with an Outcome section in the brief |
+
+## 6. Review backlog (before testing)
 
 From the human's instructions for the review phase:
 
 1. ~~Reuse existing skills~~: done as the skills review (§4). Selecting external stack skills is a separate, later step.
 2. **End-to-end workflow review.** Walk every class (T, S, M, L) and every path (greenfield init, adopt, feature, incident, retro) through the dispatch table and contracts. Look for missing handoffs, ownership gaps, circular waits and duplicated reviews.
-3. **Agent review.** For every agent, check responsibilities, inputs, outputs, interactions, boundaries, guard policy versus instructions, and model and effort.
+3. ~~Agent review~~: done (§5).
 4. **Assets review.** All templates, skills, prompts, the hub, the guard policies and `sdd.py`, for consistency of names, IDs, paths and modes.
 5. **Capability and dependency gaps** across the whole system. Known candidates:
    - Frontend stack skills: `stack-typescript` and framework skills, possibly reused from existing skills.
