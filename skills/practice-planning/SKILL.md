@@ -60,6 +60,7 @@ Every task specifies (machine-checked by `sdd.py trace --phase plan`):
 | `touches` | Paths or modules it will change, as precisely as possible, to detect conflicts between parallel tasks |
 | `done-when` | Observable completion: named ACs passing, specific checks green |
 | `risk` | `high` for security-sensitive, concurrency, data-migration or riskiest-slice work |
+| `reviews` (optional) | Extra reviewers beyond code-reviewer: `ux` (first task delivering a new screen or flow), `security` (authentication, authorization, secrets, input handling, every `risk: high` task), or an active lens name (`privacy`, `data-migration`, `ai-evals`, `finops`, `api-compat`) for tasks in its scope |
 
 **Test-first pairing:** for every slice, a test-engineer task writes the acceptance tests for its ACs, and the engineer task depends on it. Tests for the next slice can be written while the current one is built.
 
@@ -69,6 +70,7 @@ Every task specifies (machine-checked by `sdd.py trace --phase plan`):
 
 - Every inventory item from §1 is in exactly one task.
 - Every AC is delivered by a task and tested by a test task that precedes it.
+- Every task that needs specialist review declares it in `reviews:`.
 - Every design element has work, and every task traces to the design.
 - The skeleton comes first, risk comes early, and integration is continuous.
 - Nothing in the plan decides *how* to implement. If a task needs a design decision, that is a design gap: route it to the architect.

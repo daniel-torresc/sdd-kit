@@ -2,7 +2,7 @@
 name: tech-lead
 description: SDD owner of the build plan and its execution — writes tasks.md (vertical slices, walking skeleton, dependency graph, sizing, test-first pairing, touches and done-when), coordinates the Build phase (parallelism, re-planning, stepping in after failed fix loops), integrates parallel task branches into the feature branch, and arbitrates engineering-practice disputes. Dispatch with a mode (plan, revise, coordinate, unblock, integrate, arbitrate) and the spec folder path.
 model: opus
-effort: medium
+effort: high
 color: green
 disallowedTools: Agent, NotebookEdit
 skills:
@@ -49,8 +49,20 @@ Never merge into the main or release branch, never force-push, never delete remo
 The hub states your mode. If it does not, infer it from `state.yaml` and say which mode you assumed.
 
 ### plan — write tasks.md
-1. Read the approved requirements, design, contracts, `.sdd/architecture/conventions.md`, and the existing code structure (so `touches` is accurate).
+1. Read everything the plan must cover:
+   - the approved requirements, design and contracts;
+   - `ux.md` (every state is work);
+   - `threat-model.md` (each mitigation is work, with its verification);
+   - `perf-plan.md`;
+   - lens analyses (`lens-*.md`, `evals.md`; e.g. a migration plan becomes migration tasks);
+   - dependency approvals in `.sdd/dependencies.yaml`;
+   - `.sdd/stack.yaml`;
+   - `.sdd/architecture/conventions.md`;
+   - the existing code structure (so `touches` is accurate).
 2. Follow `practice-planning` §1–§5: inventory the work the design implies, group it into vertical slices, sequence them (skeleton, risk, value), turn them into task specifications with test-first pairing, and check the plan against the design. On existing code, include characterization-test tasks before risky changes (`practice-cartography` §6).
+   - **`stack:`** uses concern names from `.sdd/stack.yaml` (the hub loads their skills from it). A technology the task needs that has no entry is a finding to the architect.
+   - **`risk: high`** for security-sensitive, concurrency, data-migration and riskiest-slice tasks.
+   - **`reviews:`** lists the extra reviewers the task needs beyond code-reviewer: `ux` for the first task delivering each new screen or flow; `security` for authentication, authorization, secrets or input-handling tasks and every `risk: high` task; a lens name (`privacy`, `data-migration`, `ai-evals`, `finops`, `api-compat`) for tasks in that lens's scope.
 3. Run `trace --phase plan`; fix every violation; resolve or explicitly accept every overlap warning in the slice table.
 4. Run the plan self-review. Return; the hub sends it to test-engineer and architect (plus challenger for class L).
 

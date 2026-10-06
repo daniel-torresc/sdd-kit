@@ -20,6 +20,7 @@ One heading per task. Fields (machine-checked by sdd.py trace --phase plan):
   done-when:  observable completion criterion (ACs passing, checks green)
   test-first: optional; "waived — <reason>" only with test-engineer agreement
   risk:       optional; "high" for security-sensitive, concurrency, data-migration or riskiest-slice work (runs on opus)
+  reviews:    optional; extra reviewers beyond code-reviewer: ux, security, privacy, data-migration, ai-evals, finops, api-compat
 Engineer tasks must depend (directly or transitively) on test-engineer tasks covering the same ACs.
 -->
 

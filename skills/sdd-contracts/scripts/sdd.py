@@ -34,8 +34,9 @@ ARTIFACT_FILES = [
 ]
 LOCAL_ID = r"(?:REQ|NFR|UX|C|IF|THR|T|Q|ASM|RISK)-\d+|AC-\d+\.\d+"
 HEADING_RE = re.compile(rf"^(#{{2,4}})\s+({LOCAL_ID})\b[:\s]*(.*)$")
-FIELD_RE = re.compile(r"^\s*(refs|depends|verify|surface|stack|agent|touches|done-when|test-first)\s*:\s*(.*)$", re.I)
+FIELD_RE = re.compile(r"^\s*(refs|depends|verify|surface|stack|agent|touches|done-when|test-first|risk|reviews)\s*:\s*(.*)$", re.I)
 TASK_REQUIRED = ["agent", "surface", "stack", "touches", "done-when"]
+REVIEW_LENSES = {"ux", "security", "privacy", "data-migration", "ai-evals", "finops", "api-compat"}
 ID_TOKEN_RE = re.compile(rf"\b(?:{LOCAL_ID})\b")
 COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
 FRONTMATTER_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
@@ -352,6 +353,24 @@ def touches_overlap(a: list[str], b: list[str]) -> list[str]:
     return sorted(set(hits))
 
 
+def inactive_lens_warnings(tasks: list[Item], active: set[str]) -> list[str]:
+    out = []
+    for t in tasks:
+        for r in re.split(r"[,\s\[\]]+", t.fields.get("reviews", "")):
+            if r and r in REVIEW_LENSES and r not in active:
+                out.append(f"{t.id} requests '{r}' review but that lens is not active for the feature (state.yaml lenses)")
+    return out
+
+
+def active_lenses(spec_dir: Path) -> set[str]:
+    state = spec_dir / "state.yaml"
+    try:
+        data = yaml.safe_load(state.read_text(encoding="utf-8")) or {}
+    except (OSError, yaml.YAMLError):
+        return set(REVIEW_LENSES)  # unknown: don't warn
+    return set(data.get("lenses") or []) | {"security"}  # security review can be requested for any risky task
+
+
 def conflict_warnings(tasks: list[Item]) -> list[str]:
     """Tasks that can run in parallel (no dependency path) but touch overlapping paths."""
     anc = {t.id: ancestors(tasks, t.id) for t in tasks}
@@ -431,6 +450,10 @@ def check(model: Model, phase: str, tests: dict[str, list[str]], junit: Junit | 
         if missing:
             v.append(("plan", f"{t.id} is missing {', '.join(missing)}"))
     v += [("plan", m) for m in test_first_violations(model, tasks)]
+    for t in tasks:
+        for r in re.split(r"[,\s\[\]]+", t.fields.get("reviews", "")):
+            if r and r not in REVIEW_LENSES:
+                v.append(("plan", f"{t.id} lists unknown reviewer '{r}' (allowed: {', '.join(sorted(REVIEW_LENSES))})"))
     cycle = find_cycle(tasks)
     if cycle:
         v.append(("plan", "task dependency cycle: " + " → ".join(cycle)))
@@ -576,7 +599,7 @@ def main() -> int:
     if not args.no_write:
         (spec_dir / "trace.md").write_text(report, encoding="utf-8")
     if model.active("T") and PHASES.index(args.phase) >= PHASES.index("plan"):
-        for w in conflict_warnings(model.active("T")):
+        for w in conflict_warnings(model.active("T")) + inactive_lens_warnings(model.active("T"), active_lenses(spec_dir)):
             print(f"  warning: {w}")
     if violations:
         print(f"{model.feature}: {len(violations)} violation(s) through phase '{args.phase}':")

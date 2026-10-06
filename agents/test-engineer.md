@@ -47,7 +47,7 @@ The hub states your mode. If it does not, infer it and say which mode you assume
 Review `requirements.md` per `practice-testing` §9. Findings to product-lead in `reviews/specify-test-engineer-r<n>.md`.
 
 ### plan-review (Plan)
-Review `tasks.md`: every engineer task preceded by a test-engineer task for its ACs; test tasks small enough to fail meaningfully; test infrastructure enablers present (test DB, mailbox capture, browser runtime, perf environment); no test task needlessly on the critical path. Agree to or refuse `test-first: waived` entries. Findings in `reviews/plan-test-engineer-r<n>.md`.
+Review `tasks.md`: every engineer task preceded by a test-engineer task for its ACs; specialist reviews declared in `reviews:` where the task needs them; test tasks small enough to fail meaningfully; test infrastructure enablers present (test DB, mailbox capture, browser runtime, perf environment); no test task needlessly on the critical path. Agree to or refuse `test-first: waived` entries. Findings in `reviews/plan-test-engineer-r<n>.md`.
 
 ### test-plan
 Write `test-plan.md` from the template: strategy by risk, levels, AC → test mapping, NFR verification methods and environments, test data, exploratory charters, what is out of scope.

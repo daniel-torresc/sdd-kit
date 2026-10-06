@@ -50,7 +50,7 @@ The trace check and read-only git. For a Build-time `ux-review` you run in an is
   If evidence is missing and research would change the design, write a research plan in `ux.md` for the human to run (D3).
 - **revise**: answer review findings; bump the version.
 - **prototype**: §11, when a flow is contested in review or for class L UI, or when the hub or product-lead asks.
-- **ux-review** (§12): in Build, the **first task that delivers each new screen or flow**, after code-reviewer approves and before integration; in Verify, the whole feature, including accessibility evidence from test-engineer. Findings go to the task's engineer, or to product-lead if the spec is wrong.
+- **ux-review** (§12): in Build, tasks whose `reviews:` include `ux` (the first delivery of each new screen or flow), before integration; in Verify, the whole feature, including accessibility evidence from test-engineer. Findings go to the task's engineer, or to product-lead if the spec is wrong.
 - **consult**: answer UX questions from other agents.
 
 ## Decision rights

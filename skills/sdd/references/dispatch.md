@@ -58,12 +58,12 @@ For every step: who, which mode, what to pass, which model, and what comes next.
 |---|---|---|---|---|---|
 | Ready tasks | tech-lead · `coordinate` | state.yaml tasks | default | — | dispatch up to the parallelism limit |
 | Test task | test-engineer · `test-task` | task ID, feature branch | default | **worktree** | code-reviewer `test-review` |
-| Engineer task | engineer · `implement` | task ID, feature branch | **opus** if `risk: high` | own | code-reviewer `task-review` (+ security-engineer `code-review` if security lens and task is security-relevant or `risk: high`); + consultant · `code-review` for tasks in an active lens's scope (migrations, personal data, model calls, public contracts, new spend) |
-| Platform task | platform-engineer · `task` | task ID, feature branch | default | own | code-reviewer `task-review` |
+| Engineer task | engineer · `implement` | task ID, feature branch | **opus** if `risk: high` | own | code-reviewer `task-review` + the task's `reviews:` (in parallel) |
+| Platform task | platform-engineer · `task` | task ID, feature branch | default | own | code-reviewer `task-review` + the task's `reviews:` (in parallel) |
 | Dependency request | security-engineer · `dependency-review` | package, version, purpose | default | — | engineer resumes or re-plans |
 | Secret request | security-engineer · `secret-review` | secret, consumer | default | — | platform-engineer wires |
 | Review | code-reviewer · `test-review` / `task-review` (no handoff note) | task, branches, round, main-checkout review path | **opus** if `risk: high` | **worktree** (checks out the task branch detached) | approve → integrate; changes → fix |
-| UX review of a new screen (ux lens) | ux-designer · `ux-review` — only the **first task that delivers each new screen or flow**, after code-reviewer approves | task branch, ux.md, main-checkout review path | default | **worktree** (checks out the task branch detached and runs the app) | approve → integrate; changes → engineer `fix` |
+| Extra reviews (the task's `reviews:`) | `ux` → ux-designer · `ux-review`; `security` → security-engineer · `code-review`; a lens name → consultant · `code-review` with that lens | task branch, main-checkout review path | default | **worktree** (ux-review runs the app from the task branch) | all approve → integrate; changes → `fix` |
 | Fix | engineer · `fix` / test-engineer · `diagnose` / platform-engineer · `task` | review file | attempts 2–3: **opus** | own | code-reviewer · `re-review` |
 | Integrate | tech-lead · `integrate` | approved branches | default | — | clean up agent worktree + `worktree-agent-*` branch |
 | Unblock | tech-lead · `unblock` | failed task, output | default | — | as decided |
