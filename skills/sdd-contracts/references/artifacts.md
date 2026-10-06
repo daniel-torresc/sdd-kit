@@ -71,14 +71,14 @@ Class S work uses only `state.yaml`, `requirements.md` (REQ + AC), `reviews/`, `
 | .sdd/operations/*, perf-plan.md | reliability-engineer | architect, test-engineer |
 | lens-*.md, evals.md | consultant | owners of the affected artifacts |
 | tasks.md | tech-lead | test-engineer, architect, challenger (L) |
-| test-plan.md, acceptance/contract/e2e/perf tests, evidence/ | test-engineer | code-reviewer |
-| source code, unit/integration tests, migrations | engineer | code-reviewer, active lenses |
+| test-plan.md, acceptance/contract/e2e/perf tests, tests/support/ (shared test infrastructure), evidence/ | test-engineer | code-reviewer |
+| source code (incl. docstrings and in-code docs), unit/integration tests, migrations | engineer | code-reviewer, active lenses |
 | infra, CI, containers, dev container, runbooks, release.md | platform-engineer | code-reviewer (tasks), reliability-engineer (release) |
 | .sdd/incidents/* | incident-responder | reliability-engineer |
 | README, docs/ (except adr, runbooks), .sdd/knowledge/*, .sdd/improvements.md, retro.md | librarian | — |
 | gates/* | the preparing agent (G1 product-lead, G2 architect, G3 platform-engineer, risk-* security-engineer or the deferring owner, incident mitigation incident-responder); the hub records only `status`, `decided-by`, `decided-on` and the Decision section | challenger (G2 fairness) |
 | state.yaml, .sdd/active, trace.md | hub | — |
-| log.md | append-only by any agent | — |
+| specs/*/log.md, .sdd/log.md | append-only by any agent (the hub also records builders' docs-impact items) | — |
 | .sdd/constitution.md, .sdd/config.yaml | human (D3; changes proposed via MIPs) | — |
 
 Only the owner edits an artifact. Anyone else files a finding (see communication.md) with `route_to: <owner>`.

@@ -21,6 +21,8 @@ For every step: who, which mode, what to pass, which model, and what comes next.
 | Review panel | challenger · `review`; test-engineer · `testability-review`; reliability-engineer · `nfr-review` (reliability); consultant · `specify-review` (active lenses) | requirements.md@v, ux.md@v, round | test-engineer: **opus** | revise loop |
 | Feasibility | architect · `consult` | Q-nn IDs | default | product-lead revises if needed |
 | Revise | product-lead / ux-designer · `revise` | review files | default | re-review |
+| Contested or class L UI flow | ux-designer · `prototype` | flow IDs, the contested finding | default | the human and reviewers judge the prototype |
+| UX question from another agent | ux-designer · `consult` | the question | default | asking agent incorporates |
 | G1 (M/L) | — | gates/G1-intent.md | — | approved → Design |
 
 ## Design
@@ -35,6 +37,7 @@ For every step: who, which mode, what to pass, which model, and what comes next.
 | G2 fairness | challenger · `review` (G2 fairness) | gate files + G2-brief.md | default | architect revises → human |
 | Review panel | challenger · `review`; security-engineer · `design-review`; reliability-engineer · `design-review`; consultant · `design-review` | design.md@v, contracts, ADRs, threat model, round | default | revise loop |
 | Revise | architect · `revise` | review files | default | re-review |
+| New infrastructure or spend in the design | platform-engineer · `env-plan` | design, stack.yaml | default | **D3**: human approves resources and cost |
 
 ## Plan
 
@@ -52,14 +55,19 @@ For every step: who, which mode, what to pass, which model, and what comes next.
 |---|---|---|---|---|---|
 | Ready tasks | tech-lead · `coordinate` | state.yaml tasks | default | — | dispatch up to the parallelism limit |
 | Test task | test-engineer · `test-task` | task ID, feature branch | default | **worktree** | code-reviewer `test-review` |
-| Engineer task | engineer · `implement` | task ID, feature branch | **opus** if `risk: high` | own | code-reviewer `task-review` (+ security-engineer `code-review` if security lens and task is security-relevant or `risk: high`) |
+| Engineer task | engineer · `implement` | task ID, feature branch | **opus** if `risk: high` | own | code-reviewer `task-review` (+ security-engineer `code-review` if security lens and task is security-relevant or `risk: high`); + consultant · `code-review` for tasks in an active lens's scope (migrations, personal data, model calls, public contracts, new spend) |
 | Platform task | platform-engineer · `task` | task ID, feature branch | default | own | code-reviewer `task-review` |
 | Dependency request | security-engineer · `dependency-review` | package, version, purpose | default | — | engineer resumes or re-plans |
 | Secret request | security-engineer · `secret-review` | secret, consumer | default | — | platform-engineer wires |
 | Review | code-reviewer · `test-review` / `task-review` (no handoff note) | task, branches, round, main-checkout review path | **opus** if `risk: high` | **worktree** (checks out the task branch detached) | approve → integrate; changes → fix |
-| Fix | engineer · `fix` / test-engineer · `diagnose` / platform-engineer · `task` | review file | attempts 2–3: **opus** | own | `re-review` |
+| Fix | engineer · `fix` / test-engineer · `diagnose` / platform-engineer · `task` | review file | attempts 2–3: **opus** | own | code-reviewer · `re-review` |
 | Integrate | tech-lead · `integrate` | approved branches | default | — | clean up agent worktree + `worktree-agent-*` branch |
 | Unblock | tech-lead · `unblock` | failed task, output | default | — | as decided |
+| Registry change (`.sdd/commands.yaml` changed on a task branch) | architect · `review-commands` | task branch diff | default | — | approve → integrate; changes → platform-engineer |
+| Refactoring enabler task | engineer · `refactor` | task ID | default | own | code-reviewer `task-review` |
+| Change request or fix touching existing code | cartographer · `impact` | the change, affected area | default | — | owner revises with the impact analysis |
+| One-way door surfaces outside Design | architect · `g2` | the change request | default | — | fairness review → **G2** |
+| Critical/major finding deferred | owner prepares `gates/risk-*` (security findings: security-engineer · `risk-package`) | the finding | default | — | **D3** risk acceptance |
 
 ## Verify
 
@@ -92,6 +100,7 @@ For every step: who, which mode, what to pass, which model, and what comes next.
 | Architecture upkeep | architect · `evolve` | overview, conventions, debt |
 | Map refresh (existing code) | cartographer · `refresh` | `.sdd/map/*` |
 | Retrospective | librarian · `retro` | retro.md, lessons, MIPs |
+| Outcome vs success metric (after the watch window) | product-lead · `evolve` | release outcome, metrics | brief records the outcome; new REQs or features if needed |
 
 ## Operate (`/sdd incident`)
 
@@ -99,6 +108,7 @@ For every step: who, which mode, what to pass, which model, and what comes next.
 |---|---|---|
 | Triage | incident-responder · `triage` | **fast-path** mitigation package → human now |
 | Diagnose (if needed) | reliability-engineer · `diagnose` / engineer · `debug` | evidence into the incident |
+| Impact of the fix (existing code) | cartographer · `impact` | the proposed fix | blast radius for the fix feature |
 | Investigate | incident-responder · `investigate` | — |
 | Postmortem | incident-responder · `postmortem` (+ reliability-engineer · `post-incident`) | action items |
 | Route actions | hub | `/sdd new` for fixes; change requests; debt; lessons |

@@ -29,7 +29,7 @@ The shared contracts (`sdd-contracts`), your method (`practice-testing`) and `pr
 | You own and edit | You never edit |
 |---|---|
 | `specs/<f>/test-plan.md`, `specs/<f>/evidence/**` | production code, unit tests under `src/` or `tests/unit/` |
-| `tests/acceptance/`, `tests/contract/`, `tests/e2e/`, `tests/perf/`, `tests/fixtures/`, `conftest.py` files under `tests/` | requirements, design, contracts, tasks, CI config, `pyproject.toml` |
+| `tests/acceptance/`, `tests/contract/`, `tests/e2e/`, `tests/perf/`, `tests/fixtures/`, `tests/support/` (shared test infrastructure: harness, fakes, helpers; if the test framework requires support files elsewhere, ask the owner via a finding) | requirements, design, contracts, tasks, CI config, `pyproject.toml` |
 | Your review files; your answers inside review files | `state.yaml`, `trace.md` |
 | Appending to `specs/<f>/log.md` | |
 

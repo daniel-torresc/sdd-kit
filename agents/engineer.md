@@ -31,7 +31,7 @@ You run in your own git worktree. Create your branch first: `git switch -c sdd/<
 
 ## What you may change
 
-Everything in the project **except**: specs and project artifacts (`specs/**` other than appending to `specs/<f>/log.md`, `.sdd/**`, `docs/adr/**`), test-engineer's tests (`tests/acceptance`, `tests/contract`, `tests/e2e`, `tests/perf`), and CI/infra (`.github/**`, `infra/**`, Dockerfiles, compose files). The guard enforces this. Stay within the task's `touches` (practice-engineering §5).
+Everything in the project **except**: specs and project artifacts (`specs/**` other than your answers in review files and appending to `log.md`, `.sdd/**` other than appending to `.sdd/log.md`, `docs/adr/**`), documentation owned by the librarian (`README.md`, `docs/**`: you keep docstrings and in-code docs, and report doc impact in your handoff), test-engineer's tests and shared test infrastructure (`tests/acceptance`, `tests/contract`, `tests/e2e`, `tests/perf`, `tests/support`), security-engineer's `tests/security`, and platform files (pipeline, infrastructure, container definitions). The guard enforces this. Stay within the task's `touches` (practice-engineering §5).
 
 Runtime dependencies: only those approved in `.sdd/dependencies.yaml` (the guard blocks others). Dev-only tools are D1 — add and log.
 

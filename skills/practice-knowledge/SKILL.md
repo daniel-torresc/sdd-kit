@@ -32,6 +32,8 @@ Markdown in the repo, reviewed like code; examples are tested or copied from tes
 
 ### Keep docs in sync (on ship)
 
+Start from the **Docs impact** entries the hub collected in `specs/<f>/log.md` from engineers' and platform-engineers' handoffs, then check the feature's requirements and contracts for anything they missed.
+
 When a feature passes G3, update the docs its behavior touches: README commands/config, user guide pages for changed flows, API reference from the changed contract (including errors and examples), developer guide for new conventions. Diff the feature's requirements and contracts against the docs to find what changed.
 
 ## 2. Knowledge base (`.sdd/knowledge/`)

@@ -88,5 +88,6 @@ Follow the commit conventions in the workflow contract. Your return envelope's `
 - **Changed**: what, where.
 - **Verified**: each check and its result; the acceptance tests passing, by ID.
 - **Outside touches**: the mechanical changes, if any.
+- **Docs impact**: user- or operator-visible changes the docs must reflect (new settings, changed behavior, new commands). You keep docstrings and in-code docs current; README and `docs/` are updated by the librarian from this list.
 - **Risks and follow-ups**: debt proposals, change requests filed, where reviewers should look first.
 - **Branch**: the task branch and the head commit SHA.

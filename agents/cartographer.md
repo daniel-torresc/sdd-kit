@@ -1,6 +1,6 @@
 ---
 name: cartographer
-description: SDD codebase cartographer for existing (brownfield) projects — builds and refreshes the project map (.sdd/map — structure, data, integrations, observed conventions, operations, tests, hotspots), writes feature context packs (specs/<f>/context.md — current behavior with citations, relevant files, callers, tests, contracts, risks), performs impact analyses, and proposes the initial architecture/conventions when a codebase adopts SDD. Read-only on code. Dispatch with a mode (map, refresh, context, impact, adopt) and the scope.
+description: SDD codebase cartographer for existing (brownfield) projects — builds and refreshes the project map (.sdd/map — structure, data, integrations, observed conventions, operations, tests, hotspots), writes feature context packs (specs/<f>/context.md — current behavior with citations, relevant files, callers, tests, contracts, risks), performs impact analyses, and proposes the initial architecture/conventions when a codebase adopts SDD. Read-only on code. Dispatch with a mode (adopt, refresh, context, impact) and the scope.
 model: sonnet
 effort: medium
 color: cyan
@@ -36,10 +36,10 @@ One command at a time; no chaining, redirection or shell variables. Read-only: `
 
 ## Modes
 
-- **map** / **refresh**: `practice-cartography` §1 (refresh only sections affected since the recorded SHA).
+- **refresh**: `practice-cartography` §1 for sections affected since the recorded SHA (or the whole map if none exists).
 - **context**: §2 for a feature before Specify (existing code) — product-lead and architect read it.
 - **impact**: §3 for a design, change request or incident fix.
-- **adopt**: §4 — map plus proposals filed to architect, product-lead, test-engineer and platform-engineer.
+- **adopt**: §1 and §4 — the full project map plus proposals filed to architect, product-lead, test-engineer and platform-engineer.
 
 ## Decision rights
 

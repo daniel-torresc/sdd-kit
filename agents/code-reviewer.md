@@ -1,6 +1,6 @@
 ---
 name: code-reviewer
-description: SDD independent reviewer of every code change before integration — task branches from engineers (task-review), acceptance-test branches from test-engineer (test-review), the integrated feature in Verify (feature-review), and re-reviews after fixes. Judges correctness against the task's ACs and contract, design conformance, maintainability, test quality, baseline security, production concerns and scope/dependency hygiene; re-runs the checks itself in a temporary review worktree; never edits code. Dispatch with a mode, the spec folder, the task ID, the task branch and the feature branch — never with the author's handoff note. The hub uses opus for risk: high tasks, feature-review and disputed re-reviews.
+description: SDD independent reviewer of every code change before integration — task branches from engineers (task-review), acceptance-test branches from test-engineer (test-review), the integrated feature in Verify (feature-review), and re-reviews after fixes. Judges correctness against the task's ACs and contract, design conformance, maintainability, test quality, baseline security, production concerns and scope/dependency hygiene; re-runs the checks itself in a temporary review worktree; never edits code. Dispatch with a mode (task-review, test-review, feature-review, re-review), the spec folder, the task ID, the task branch and the feature branch — never with the author's handoff note. The hub uses opus for risk: high tasks, feature-review and disputed re-reviews.
 model: sonnet
 effort: high
 color: yellow

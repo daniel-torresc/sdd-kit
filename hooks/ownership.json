@@ -26,12 +26,17 @@
   },
   "product-lead": {
     "write": [
-      ".sdd/product/*.md",
       "specs/*/brief.md",
       "specs/*/requirements.md",
       "specs/*/gates/G1-*.md",
       "specs/*/log.md",
-      "specs/*/reviews/*.md"
+      "specs/*/reviews/*.md",
+      ".sdd/product/vision.md",
+      ".sdd/product/personas.md",
+      ".sdd/product/glossary.md",
+      ".sdd/log.md",
+      ".sdd/reviews/*.md",
+      "specs/*/gates/risk-*.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?"
@@ -42,7 +47,8 @@
     "write": [
       "specs/*/reviews/*-challenger-r*.md",
       "specs/*/reviews/second-opinion-challenger-*.md",
-      ".sdd/reviews/*-challenger-*.md"
+      ".sdd/reviews/*-challenger-*.md",
+      ".sdd/log.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?"
@@ -61,7 +67,9 @@
       "specs/*/reviews/*.md",
       ".sdd/reviews/*.md",
       "specs/*/log.md",
-      ".sdd/stack.yaml"
+      ".sdd/stack.yaml",
+      ".sdd/log.md",
+      "specs/*/gates/risk-*.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?"
@@ -75,7 +83,8 @@
     "write": [
       "specs/*/tasks.md",
       "specs/*/reviews/*.md",
-      "specs/*/log.md"
+      "specs/*/log.md",
+      ".sdd/log.md"
     ],
     "write_if_conflicted": true,
     "bash": [
@@ -113,8 +122,9 @@
       "*tests/e2e/*",
       "*tests/perf/*",
       "*tests/fixtures/*",
-      "tests/conftest.py",
-      "*tests/*/conftest.py"
+      ".sdd/log.md",
+      "specs/*/gates/risk-*.md",
+      "*tests/support/*"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -152,7 +162,13 @@
       "Dockerfile*",
       "*/Dockerfile*",
       "docker-compose*",
-      "compose.y*ml"
+      "compose.y*ml",
+      "!specs/*/reviews/*.md",
+      "!.sdd/log.md",
+      "*tests/security/*",
+      "*tests/support/*",
+      "README.md",
+      "docs/*"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -182,7 +198,8 @@
     "write": [
       "specs/*/reviews/build-code-reviewer-*.md",
       "specs/*/reviews/test-code-reviewer-*.md",
-      "specs/*/reviews/verify-code-reviewer-*.md"
+      "specs/*/reviews/verify-code-reviewer-*.md",
+      ".sdd/log.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -221,7 +238,16 @@
       "*tests/e2e/*",
       "*tests/perf/*",
       "src/*/*/*",
-      "!.sdd/commands.yaml"
+      "!.sdd/commands.yaml",
+      "!.sdd/log.md",
+      "!.sdd/reviews/*.md",
+      "!.sdd/gates/G3-*",
+      "!specs/*/gates/risk-*",
+      "*tests/security/*",
+      "*tests/support/*",
+      "README.md",
+      "docs/*",
+      "!docs/runbooks/*"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -261,7 +287,9 @@
       "specs/*/reviews/*.md",
       "specs/*/gates/risk-*.md",
       "specs/*/log.md",
-      "specs/*/evidence/security/*"
+      "specs/*/evidence/security/*",
+      ".sdd/log.md",
+      ".sdd/reviews/*.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -281,7 +309,9 @@
       "specs/*/perf-plan.md",
       "specs/*/reviews/*.md",
       "specs/*/evidence/reliability/*",
-      "specs/*/log.md"
+      "specs/*/log.md",
+      ".sdd/log.md",
+      ".sdd/reviews/*.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -303,7 +333,9 @@
       ".sdd/product/design-system.md",
       "specs/*/reviews/*.md",
       "specs/*/log.md",
-      ".sdd/reviews/*-ux-designer-*.md"
+      ".sdd/reviews/*-ux-designer-*.md",
+      ".sdd/log.md",
+      ".sdd/reviews/*.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -316,7 +348,9 @@
       "specs/*/research/*",
       ".sdd/research/*",
       ".sdd/briefs/*",
-      "specs/*/log.md"
+      "specs/*/log.md",
+      ".sdd/log.md",
+      ".sdd/reviews/*.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -329,7 +363,8 @@
       ".sdd/map/*",
       "specs/*/context.md",
       "specs/*/impact-*.md",
-      "specs/*/log.md"
+      "specs/*/log.md",
+      ".sdd/log.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -346,7 +381,9 @@
       ".sdd/improvements.md",
       "specs/*/retro.md",
       "specs/*/log.md",
-      "specs/*/reviews/*.md"
+      "specs/*/reviews/*.md",
+      ".sdd/log.md",
+      ".sdd/reviews/*.md"
     ],
     "write_except": [
       "docs/runbooks/*",
@@ -361,7 +398,8 @@
   "incident-responder": {
     "write": [
       ".sdd/incidents/*",
-      "specs/*/log.md"
+      "specs/*/log.md",
+      ".sdd/log.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -378,7 +416,8 @@
       "specs/*/reviews/*-consultant-*.md",
       "specs/*/lens-*.md",
       "specs/*/evals.md",
-      "specs/*/log.md"
+      "specs/*/log.md",
+      ".sdd/log.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",

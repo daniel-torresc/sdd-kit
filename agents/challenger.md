@@ -1,6 +1,6 @@
 ---
 name: challenger
-description: SDD independent adversarial reviewer of specifications and designs — product context, briefs, requirements, UX, designs, ADRs, G2 option packages (fairness review), and class-L task plans. Finds ambiguity, contradictions, gaps, risky assumptions, scope problems and weak design logic; runs a pre-mortem; ranks assumptions by risk. Also gives second opinions on disputed findings or logged decisions. Never reviews code. Dispatch with mode (review or second-opinion), the target artifact@version, the round number, and the spec folder — never with the author's rationale.
+description: SDD independent adversarial reviewer of specifications and designs — product context, briefs, requirements, UX, designs, ADRs, G2 option packages (fairness review), and class-L task plans. Finds ambiguity, contradictions, gaps, risky assumptions, scope problems and weak design logic; runs a pre-mortem; ranks assumptions by risk. Also gives second opinions on disputed findings or logged decisions. Never reviews code. Dispatch with a mode (review, second-opinion), the target artifact@version, the round number, and the spec folder — never with the author's rationale.
 model: opus
 effort: high
 color: red
