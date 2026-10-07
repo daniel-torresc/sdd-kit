@@ -8,6 +8,10 @@
 Usage:
   sdd.py trace <spec-dir> [--phase specify|design|plan|verify] [--junit FILE ...] [--root DIR] [--report PATH]
   sdd.py stale <spec-dir>
+  sdd.py expected-failing <spec-dir> [--root DIR]
+
+expected-failing lists the AC tests allowed to fail on the current branch: tests for ACs delivered
+by implementation tasks with no 'Refs: <F>:<T>' commit reachable from HEAD yet (test-first).
 
 Conventions are defined in skills/sdd-contracts/references/artifacts.md.
 Exit codes: 0 clean, 1 violations, 2 usage/input error.
@@ -166,7 +170,7 @@ def scan_tests(root: Path, feature: str) -> dict[str, list[str]]:
     py_def = re.compile(r"^\s*(?:async\s+)?def\s+(test\w*)")
     found: dict[str, list[str]] = {}
     for path in root.rglob("*"):
-        if not path.is_file() or any(part in SKIP_DIRS for part in path.parts):
+        if not path.is_file() or any(part in SKIP_DIRS for part in path.relative_to(root).parts):
             continue
         if not TEST_FILE_RE.match(path.name):
             continue
@@ -474,8 +478,8 @@ def check(model: Model, phase: str, tests: dict[str, list[str]], junit: Junit | 
                 elif not status:
                     v.append(("verify", f"{ac.id}: test {loc} did not pass"))
 
-    if lightweight:  # class T/S: no design or plan artifacts by definition
-        upto = [p for p in upto if p not in ("design", "plan")]
+    if lightweight:  # class S: no design by definition (its short plan is still checked)
+        upto = [p for p in upto if p != "design"]
     if junit is not None:
         for nfr in nfrs:
             for loc in tests.get(nfr.id, []):
@@ -563,6 +567,22 @@ def render(model: Model, tests: dict[str, list[str]], junit: Junit | None,
 
 # ---------------------------------------------------------------- cli
 
+def expected_failing(model: Model, root: Path, tests: dict[str, list[str]]) -> dict[str, list[str]]:
+    """AC -> test locations for ACs delivered only by implementation tasks not yet merged.
+
+    A task counts as merged when a commit reachable from HEAD carries its 'Refs: <F>:<T>' trailer."""
+    merged = commits_by_task(root, model.feature)
+    tasks = model.active("T")
+    pending: set[str] = set()
+    done: set[str] = set()
+    for t in tasks:
+        if t.fields.get("owner", "").strip() == "test-engineer":
+            continue
+        acs = expand_acs(model, t.refs)
+        (done if merged.get(t.id) else pending).update(acs)
+    return {ac: tests.get(ac, []) for ac in sorted(pending - done)}
+
+
 def find_root(start: Path) -> Path:
     for p in [start, *start.parents]:
         if (p / ".git").exists() or (p / ".sdd").exists():
@@ -582,6 +602,9 @@ def main() -> int:
     t.add_argument("--no-write", action="store_true", help=argparse.SUPPRESS)  # accepted for compatibility; writing is opt-in
     s = sub.add_parser("stale", help="report artifacts whose upstream versions moved")
     s.add_argument("spec_dir", type=Path)
+    e = sub.add_parser("expected-failing", help="AC tests allowed to fail until their implementation task is merged")
+    e.add_argument("spec_dir", type=Path)
+    e.add_argument("--root", type=Path, help="project root (default: git root)")
     args = ap.parse_args()
 
     spec_dir: Path = args.spec_dir.resolve()
@@ -597,6 +620,15 @@ def main() -> int:
 
     root = (args.root or find_root(spec_dir)).resolve()
     tests = scan_tests(root, model.feature)
+    if args.cmd == "expected-failing":
+        pending = expected_failing(model, root, tests)
+        if not pending:
+            print("No expected failures: every test must pass.")
+            return 0
+        print(f"{model.feature}: tests for these ACs may fail (implementation not merged); every other test must pass:")
+        for ac, locs in pending.items():
+            print(f"  {ac}: {', '.join(locs) if locs else '(no tagged tests found)'}")
+        return 0
     junit = junit_results(args.junit) if args.junit else None
     commits = commits_by_task(root, model.feature)
     violations = check(model, args.phase, tests, junit, stale, lightweight=feature_class(spec_dir) in ("T", "S"))

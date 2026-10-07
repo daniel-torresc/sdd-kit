@@ -8,10 +8,26 @@ Assigned at intake from the signals in `.sdd/config.yaml`. **Any single signal o
 
 | Class | Typical signals | Flow | Human gates |
 |---|---|---|---|
-| **T** Trivial | typo, config value, patch dependency bump, docs | build → code-review → done | none |
-| **S** Small | localized; no new interface, data model or dependency, and no change existing callers can observe | mini-spec (REQ+AC) → test-first build → code-review → verify | none (G1 only if ambiguous) |
+| **T** Trivial | typo, config value, patch dependency bump, docs | no spec folder: build → code-review → draft PR | your merge of the PR |
+| **S** Small | localized; no new interface, data model or dependency, and no change existing callers can observe | mini-spec (REQ+AC) → short plan → test-first build → verify → G3 | G3 (G1 only if ambiguous) |
 | **M** Standard | new capability, new interface or data model | full flow, with brief and requirements written and reviewed together in Specify; lenses only when triggered | G1, G3 |
-| **L** Critical | auth, money, PII, destructive migration, public API, greenfield, hard to reverse | full flow with a separate Discover (brief challenged before requirements); all assurance lenses | G1, G2, G3 |
+| **L** Critical | auth, money, PII, destructive migration, public API, greenfield, hard to reverse | full flow with a separate Discover (brief challenged before requirements); all assurance lenses | G1, G3 |
+
+**G2** applies in any class whenever a one-way door appears (usually in Design). The foundation (`000-foundation`) runs as class L.
+
+### Phases per class
+
+| Phase | T | S | M | L |
+|---|---|---|---|---|
+| Triage (+ cartographer `investigate` on existing code) | yes (no investigation) | yes | yes | yes |
+| Discover | — | — | — (brief written in Specify) | yes, challenger reviews |
+| Specify | — | REQ + AC; challenger and test-engineer review | brief + requirements; full panel; G1 | full panel; G1 |
+| Design | — | — (a design need raises the class to M) | yes | yes |
+| Plan | — | tech-lead writes a short `tasks.md` (usually one test task, one engineer task); no review panel | tasks + test plan; panel | tasks + test plan; panel incl. challenger |
+| Build | one engineer change on `sdd/T-<slug>`, code-review, tech-lead pushes a draft PR | yes | yes | yes |
+| Verify | — | test-engineer `verify` only | full | full, incl. conformance and mutation testing |
+| Release | your PR merge | G3 entry by platform-engineer (rollback note; rehearsal only with a migration); no `release.md` | full + G3 | full + G3 |
+| After release (follow-up) | — | outcome only if a metric was named; retro on request | yes | yes |
 
 ## Phases
 
@@ -21,12 +37,12 @@ Assigned at intake from the signals in `.sdd/config.yaml`. **Any single signal o
 | 1 | Discover (L only) | product-lead | researcher (`domain`, `question`), cartographer | challenger | — |
 | 2 | Specify | product-lead | ux-designer (`flows`, UI features), architect (`consult`), researcher | challenger, test-engineer (`testability-review`), reliability-engineer (`nfr-review`, reliability lens), consultants (`specify-review`, active lenses) | **G1 intent** (M, L) |
 | 3 | Design | architect | researcher (`options`), architect spikes (research notes); security, reliability and lens input arrives as review findings the architect folds into the design | challenger, security-engineer (`design-review`), reliability-engineer (`design-review`), consultants (`design-review`) | **G2 foundations** (one-way doors) |
-| 4 | Plan | tech-lead | architect, test-engineer (`test-plan`, incl. performance profiles from reliability-engineer's review) | test-engineer, architect (`plan-review`), challenger (L), consultants (`plan-review`) | — |
+| 4 | Plan | tech-lead | architect, test-engineer (`test-plan`, incl. performance profiles from reliability-engineer's review) | test-engineer (`plan-review`: tasks), architect (`plan-review`: tasks and test plan), challenger (L: tasks and test plan), consultants (`plan-review`) | — |
 | 5 | Build | engineer ×N, platform-engineer, test-engineer (tests first) | security-engineer (`dependency-review`, `secret-review` on request) | code-reviewer (`test-review`, `task-review`) plus the reviewers each task declares in `reviews:` (ux-designer, security-engineer, consultant lenses) | — |
 | 6 | Verify | test-engineer | engineer (fixes) | code-reviewer (`feature-review`), security-engineer (`verify`), ux-designer (`ux-review`), consultants (`verify`), product-lead (`accept`: M, L), architect (`conformance`: L) | — |
-| 7 | Release | platform-engineer (`release`) | librarian (`docs`) | reliability-engineer (`release-review`) | **G3 production** |
+| 7 | Release | platform-engineer (`release`) | librarian (`docs`), architect (`evolve`: `architecture.md`, ADRs, debt, `stack.yaml`) — in parallel, so they merge with the feature | reliability-engineer (`release-review`) | **G3 production** |
 | 8 | Operate | incident-responder | reliability-engineer, platform-engineer, engineer (`debug`) | — | mitigation execution (fast-path D3) |
-| 9 | Evolve | librarian (`retro`) | architect (`evolve`: architecture.md, ADRs, debt), product-lead (`evolve`: outcome, product.md) | — | constitution, config and methodology changes |
+| 9 | Evolve (follow-up branch) | librarian (`retro`) | product-lead (`evolve`: outcome, product.md), platform-engineer (deploy record) | — | constitution, config and methodology changes; merging the follow-up PR |
 
 ## Lens activation
 
@@ -75,7 +91,9 @@ drafting ──► in-review ──► revising ──(≤ cap)──► exit-ch
 
 ## Artifacts live on the feature branch
 
-Worktrees branch from the **committed** feature branch, so uncommitted artifacts are invisible to them. After every agent step that changes artifacts (specs, reviews, decisions, `.sdd/*`, docs), the hub commits them to the feature branch: `chore(sdd): <agent> <mode> <artifact>` with a `Refs:` trailer. Before a feature branch exists (Discover/Specify), the hub commits on `sdd/<F>-<slug>` created at intake.
+Worktrees branch from the **committed** feature branch, so uncommitted artifacts are invisible to them. After every agent step that changes artifacts (specs, reviews, decisions, `.sdd/*`, docs), the hub commits them to the feature branch: `chore(sdd): <agent> <mode> <artifact>` with a `Refs:` trailer. The feature branch is created at intake from the freshly fetched main branch (`origin/<main>`).
+
+**After the merge.** Once you merge the feature into main, its branch is closed. Everything that happens after — the deploy record, the watch-window outcome, the retro, `state.yaml` reaching `done` — goes on a follow-up branch `sdd/F<NNN>-followup`, created from the fetched main branch, with a docs-only draft PR that you merge. Incidents work the same way on `sdd/INC-nnn-<slug>`. Nothing is ever committed to main directly.
 
 ## Build execution
 
@@ -89,36 +107,53 @@ Worktrees branch from the **committed** feature branch, so uncommitted artifacts
 
 | Thing | Convention |
 |---|---|
-| Feature branch | `sdd/F<NNN>-<slug>`, created from the main branch at intake |
+| Feature branch | `sdd/F<NNN>-<slug>`, created from the fetched main branch (`origin/<main>`) at intake |
+| Trivial change (T) | `sdd/T-<slug>` from the fetched main branch; the engineer's branch `sdd/T-<slug>-impl` is integrated into it |
+| Follow-up / incident | `sdd/F<NNN>-followup`, `sdd/INC-nnn-<slug>`, from the fetched main branch |
 | Task branch | `sdd/F<NNN>-T-<nn>` (task ID verbatim), one worktree per task, branched from the feature branch |
 | Commits | Conventional Commits (`feat`, `fix`, `test`, `refactor`, `chore`, `docs`, `perf`; `!` for breaking), one logical change each, trailer `Refs: F<NNN>:T-<nn>` |
 | Artifact commits | `chore(sdd): <agent> <mode> <what>` by the hub |
 | Task → feature | merge commit (`--no-ff`), in dependency order, by tech-lead |
-| Feature → main | only through G3 |
+| Feature → main | only through G3 (T: your PR merge); you merge |
 | Remote | pushing `sdd/*` branches and draft PRs are autonomous; merges to main, force-pushes and remote branch deletion are human decisions |
 
 ## Integration
 
-Integrate each task as soon as its review approves — never in batches at the end. After each merge, run the full suite on the feature branch. Only mechanical conflicts (both sides added entries, regenerated lockfiles) are resolved by tech-lead; anything touching logic is aborted and returned to the later task's engineer. A merge that turns the feature branch red is reverted and routed to that task. Each integration is recorded in `reviews/integration-tech-lead-<n>.md`.
+Integrate each task as soon as its review approves — never in batches at the end. After each merge, run the full suite on the feature branch.
+
+**Green, under test-first:** test tasks are integrated before the implementation they specify, so their AC tests fail until that implementation lands. The feature branch is green when every test passes **except** those listed by `sdd.py expected-failing <spec-dir>` (ACs whose implementation task has no `Refs:` commit on the branch yet), and those still fail for the right reason. Any other failure is red. Only mechanical conflicts (both sides added entries, regenerated lockfiles) are resolved by tech-lead; anything touching logic is aborted and returned to the later task's engineer. A merge that turns the feature branch red is reverted and routed to that task. Each integration is recorded in `reviews/integration-tech-lead-<n>.md`.
 
 ## Verify
 
 code-reviewer runs a `feature-review` of the integrated diff (M/L). test-engineer (`verify`) runs the full suite, `sdd.py trace --phase verify --junit`, every NFR verification, mutation testing on changed modules (class L; surviving mutants in AC code are `major`), and exploratory testing for UI or public APIs, then writes the evidence pack `specs/<f>/evidence/README.md` and the traceability report (`sdd.py trace --phase verify --junit … --report evidence/traceability.md`). product-lead's acceptance review judges the evidence pack, not just test results. **Flaky tests block Verify**; re-runs are for diagnosis only.
 
+**Fixing Verify findings:** tech-lead (`revise`) turns the blocking findings into fix tasks appended to `tasks.md` (new `T-nn`, each with a regression test inside the task); they run through the normal Build loop (task branch, review, integrate). Then test-engineer re-runs `verify`, and the other Verify reviewers re-check only their own findings. Verify rounds count against the review-round cap.
+
 ## Operate
 
-`/sdd incident <description>` (or an alert routed by the human) opens `.sdd/incidents/INC-nnn-<slug>.md`. incident-responder (`triage`) classifies and returns a **fast-path mitigation decision**; the hub presents it immediately (not batched). The human executes or approves the mitigation. Then `investigate` → `postmortem` (in the same incident file) → action items routed into the workflow (new T/S features via `/sdd new`, change requests to owners of requirements, design, tests, runbooks or docs) → `follow-up`.
+`/sdd incident <description>` (or an alert routed by the human) creates `sdd/INC-nnn-<slug>` from the fetched main branch and opens `.sdd/incidents/INC-nnn-<slug>.md` there. incident-responder (`triage`) classifies and returns a **fast-path mitigation decision**; the hub presents it immediately (not batched). The human executes or approves the mitigation. Then `investigate` → `postmortem` (in the same incident file) → action items routed into the workflow (new T/S features via `/sdd new`, change requests to owners of requirements, design, tests, runbooks or docs) → `follow-up`.
 
 ## Evolve
 
-After G3 (and after abandoned features), knowledge goes to its canonical home — there is no separate knowledge base. (User-facing docs were already updated by librarian `docs` during Release, so they merge with the feature.)
-- architect `evolve`: `architecture.md` (structure, conventions, debt), ADRs superseded, `stack.yaml`;
-- product-lead `evolve`: the brief's Outcome and `product.md` (scope, glossary, personas);
-- librarian `retro`: what to keep and change, routed as findings to the owners of the canonical documents, and **methodology proposals** listed for the human in `decisions.md` (accepted ones change the constitution, the config, or the plugin).
+Knowledge goes to its canonical home — there is no separate knowledge base.
+- **Before G3 (Release, so it merges with the feature):** librarian `docs` (README and `docs/` from the docs-impact list) and architect `evolve` (`architecture.md` structure, conventions and debt from the design's Architecture updates; superseded ADRs; `stack.yaml`).
+- **After release, on `sdd/F<NNN>-followup`:** platform-engineer records the deploy and watch window in `release.md`; product-lead `evolve` after the watch window (the brief's Outcome, `product.md` scope, glossary, personas); librarian `retro` (what to keep and change, routed as findings to the owners of the canonical documents, and **methodology proposals** listed for the human in `decisions.md`; accepted ones change the constitution, the config, or the plugin). The hub opens a docs-only draft PR; the feature is `done` when you merge it.
+- Abandoned features skip straight to the retro, on their own branch.
 
-## Existing codebases
+## Foundation and existing codebases
 
-`/sdd adopt` runs the foundation feature (`specs/000-foundation/`) for an existing codebase: cartographer `investigate` writes research notes on how the system works today, and the owners turn them into `architecture.md` and `stack.yaml` (architect, with `decided-by: existing`), `product.md` (product-lead), characterization-test tasks (test-engineer) and CI gaps (platform-engineer). For every later feature on existing code, triage dispatches cartographer `investigate` for the affected area.
+`/sdd init` and `/sdd adopt` run the **foundation feature** (`specs/000-foundation/`, branch `sdd/F000-foundation`, class L) through the normal phases, so `/sdd` resumes it like any feature:
+
+| Phase | Greenfield (`init`) | Existing codebase (`adopt`) |
+|---|---|---|
+| Discover | product-lead `init` → `product.md` (researcher `domain` if needed); challenger reviews | cartographer `adopt` → research notes; product-lead `init` → `product.md` and behavior baseline |
+| Design | researcher `options` → architect `init`: G2 entries → challenger fairness review → **G2**; then ADRs, `stack.yaml` (entries, skills, commands), `architecture.md`; ux-designer `init` (UI); platform-engineer `env-plan` (D3) | architect `init`: `architecture.md`, `stack.yaml` with `decided-by: existing` (G2 only for changes); ux-designer `init` (UI) |
+| Plan | tech-lead: walking-skeleton tasks | tech-lead: characterization-test and CI-gap tasks |
+| Build | platform-engineer `scaffold` and tasks | test-engineer and platform-engineer tasks |
+| Verify | the skeleton's CI proven to pass and fail | characterization tests green in CI |
+| Release | platform-engineer `release` (lite): **G3** entry | same |
+
+For every later feature on existing code, triage dispatches cartographer `investigate` for the affected area.
 
 ## External sync
 
@@ -142,12 +177,13 @@ A finding routed upstream reopens **only the affected artifact**. The owner revi
 | Phase | Mechanical check | Plus |
 |---|---|---|
 | Specify | `sdd.py trace --phase specify` clean; every Q has a default | no open blocking findings |
-| Design | `sdd.py trace --phase design` clean; ADR for every D1+ architectural choice; design's Security section covers every external interface (security lens); service levels stated for new journeys (reliability lens) | no open blocking findings |
-| Plan | `sdd.py trace --phase plan` clean | no open blocking findings |
-| Build | lint, types, unit tests green (hooks) | per-task code review approved |
+| Design | `sdd.py trace --phase design` clean; ADR for every D1+ architectural choice; design's Security section covers every external interface (security lens); service levels stated for new journeys (reliability lens); a security-engineer verdict for every runtime dependency in the design; the human's decision on any `env-plan` (new resources or spend) | no open blocking findings; no pending G2 |
+| Plan | `sdd.py trace --phase plan` clean; `test-plan.md` reviewed (M, L) | no open blocking findings |
+| Build | lint, types, tests green except `sdd.py expected-failing` (none left at the end of Build) | per-task code review approved |
 | Verify | `sdd.py trace --phase verify --junit …` clean | all lens reviews and the product-lead acceptance review approve |
 | Release | rollback rehearsed and recorded in `release.md`; runbook updated; reliability release-review approves | G3 approved |
-| Evolve | docs, architecture.md and product.md updated; retro findings routed | — |
+| Release (docs) | docs and `architecture.md` updated on the feature branch | — |
+| Evolve | outcome recorded, `product.md` updated, retro findings routed; follow-up PR open | you merge it |
 
 ## state.yaml
 
@@ -157,7 +193,7 @@ The hub writes the feature's `state.yaml` after every step — readable by a hum
 
 | Command | Does |
 |---|---|
-| `/sdd init` | Greenfield foundation (feature `000-foundation`): constitution → `product.md` (product-lead) → foundational technology decisions as G2 (architect) → challenger fairness review → human decides → ADRs, `stack.yaml`, `architecture.md` → walking skeleton (platform-engineer) |
+| `/sdd init` | Greenfield foundation (feature `000-foundation`; phases in Foundation and existing codebases): `product.md` → foundational technology decisions as G2 → ADRs, `stack.yaml`, `architecture.md` → walking skeleton → G3 |
 | `/sdd new <idea>` | Triage and create the spec folder |
 | `/sdd` | Read state and advance autonomously until a gate or blocker |
 | `/sdd status` | Where every feature stands |

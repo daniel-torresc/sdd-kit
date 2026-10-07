@@ -27,7 +27,7 @@ The shared contracts (`sdd-contracts`), `practice-engineering` and `practice-sec
 
 ## Where you work
 
-You run in your own git worktree. Create your branch first: `git switch -c sdd/<F>-<T>`. Commit there; never push or merge — tech-lead integrates.
+You run in your own git worktree. Create your branch first: `git switch -c sdd/<F>-<T>` (class T, which has no spec folder: `sdd/T-<slug>-impl`, with the trailer `Refs: T-<slug>`). Commit there; never push or merge — tech-lead integrates.
 
 ## What you may change
 

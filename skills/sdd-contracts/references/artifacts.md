@@ -37,7 +37,7 @@ The methodology runs on a **small core** of artifacts that exist in every projec
 ```
 
 Class T work has no spec folder; it is recorded in a commit (and, if a decision was needed, in the hub's report).
-Class S uses only `state.yaml`, `requirements.md` (REQ + AC), `reviews/` and `decisions.md`.
+Class S uses only `state.yaml`, `requirements.md` (REQ + AC), a short `tasks.md`, `evidence/`, `reviews/` and `decisions.md`.
 
 ## Templates
 

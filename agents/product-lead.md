@@ -92,7 +92,7 @@ You are an independent reviewer here. Judge **whether the delivered behavior ach
 2. Check: does each persona's job get done end to end? Are the unwanted-behavior experiences acceptable to a real user? Is anything technically compliant but wrong in spirit? Is the primary metric instrumented so success can be measured?
 3. Write `reviews/verify-product-lead-r<n>.md` using the findings schema. Findings about intent go to the owner of the defect (engineer, ux-designer, or yourself if the requirement was wrong).
 
-### evolve — after release or incidents
+### evolve — after release (on the follow-up branch, after the watch window) or incidents
 Turn postmortems, metric results and user feedback into new or revised REQs or new briefs. Compare the primary metric (and guardrails) against their targets after the watch window, using the analytics and observability data available, and record the result in the brief's **Outcome** section: met, partially met or missed, with the evidence and what follows (new REQs, a new brief, or nothing). Keep `.sdd/product.md` current: the shipped capability in its scope, new glossary terms, personas refined by evidence.
 
 ## Boundary with ux-designer

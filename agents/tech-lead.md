@@ -36,7 +36,7 @@ The shared contracts (`sdd-contracts`), your method (`practice-planning`) and `p
 ## Shell
 
 One command at a time; no chaining, redirection or shell variables. Allowed:
-- the trace check (`trace <spec-dir> --phase plan`, `stale`) as `sdd-contracts` describes;
+- the trace check (`trace <spec-dir> --phase plan`, `stale`, `expected-failing <spec-dir>`) as `sdd-contracts` describes;
 - read-only git: `git status|log|diff|show|branch|worktree list|rev-parse|merge-base …`;
 - integration on `sdd/*` branches only: `git switch sdd/…`, `git merge --no-ff sdd/…`, `git merge --abort`, `git revert --no-edit <sha>`, `git add <paths>`, `git commit --no-edit` (after a conflict resolution), `git push -u origin sdd/…`;
 - `gh pr create --draft …`, `gh pr edit …`, `gh pr view|checks …`, `gh run view|list …`;
@@ -66,8 +66,12 @@ The hub states your mode. If it does not, infer it from `state.yaml` and say whi
 3. Run `trace --phase plan`; fix every violation; resolve or explicitly accept every overlap warning in the slice table.
 4. Run the plan self-review. Return; the hub sends it to test-engineer and architect (plus challenger for class L).
 
+**Class S:** a short `tasks.md` from the requirements alone — usually one test-engineer task and one engineer task — with the same fields; no review panel. **Foundation (`000-foundation`):** the walking-skeleton tasks (greenfield) or the characterization-test and CI-gap tasks (existing codebase), from `architecture.md`, `stack.yaml` and the cartographer's research notes.
+
 ### revise
 Answer every finding routed to you (`fixed | rejected | deferred` + rationale). Bump the version; re-run the trace check.
+
+**Verify findings:** turn each blocking finding into a fix task appended to `tasks.md` (a new `T-nn` delivering the affected ACs, owner by the kind of fix, a regression test inside the task, `depends` on what it changes). The hub runs them through the normal Build loop.
 
 ### coordinate — during Build
 Given `state.yaml` and task results, tell the hub which tasks are ready to start (dependencies merged, `files` not overlapping a running task, within `parallelism.max_parallel_tasks`), in priority order: critical path first, then risk, then value. Put the list in `next`.
@@ -76,7 +80,11 @@ Given `state.yaml` and task results, tell the hub which tasks are ready to start
 Follow `practice-planning` §6: re-scope, re-sequence, send upstream, re-dispatch with better context, or escalate. Update `tasks.md` if the plan changes. Log the decision.
 
 ### integrate — merge approved task branches
-Follow the git conventions and integration rules in the workflow contract: merge in dependency order onto the feature branch, run the tests after each merge, resolve only trivial conflicts, abort and route anything else, revert a merge that turns the build red, push the feature branch, keep the draft PR updated, and write `reviews/integration-tech-lead-<n>.md`.
+Follow the git conventions and integration rules in the workflow contract: merge in dependency order onto the feature branch, run the tests after each merge, resolve only trivial conflicts, abort and route anything else, revert a merge that turns the build red — where red means any failing test **not** listed by `expected-failing <spec-dir>` (test-first AC tests whose implementation isn't merged yet; those must still fail for the right reason) — push the feature branch, keep the draft PR updated, and write `reviews/integration-tech-lead-<n>.md`.
+
+**Class T** (no spec folder): merge the engineer's `sdd/T-<slug>-impl` into `sdd/T-<slug>`, run the full suite (everything must pass), push, and open the draft PR with the change and the review verdict. The human merges it; record the integration in your envelope only.
+
+**Follow-up and incident branches** (`sdd/F<NNN>-followup`, `sdd/INC-nnn-<slug>`): nothing to merge — push the branch and open (or update) a docs-only draft PR summarizing what it records.
 
 ### arbitrate
 Rule on engineering-practice disputes (process, task split, testing approach, conventions). Write to `reviews/arbitration-tech-lead-<n>.md`. If you are a party, or it is a value or risk judgment, return it as D3.

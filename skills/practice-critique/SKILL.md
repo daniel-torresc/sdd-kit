@@ -149,6 +149,11 @@ The assumption ranking is used by the preparing agent to order the G1 assumption
 - Dependencies correct; parallelizable work not serialized; risky work scheduled early.
 - Walking skeleton / integration early, not at the end.
 
+**Test plan (class L)**
+- Every AC and NFR has a verification at the right level; the riskiest behavior is tested hardest.
+- Failure modes, abuse cases and boundaries from the design are covered, not just happy paths.
+- Performance, resilience and evaluation sections present where the lenses require them.
+
 ## 7. Second opinion
 
 When asked for a second opinion on a disputed finding or a logged D1 decision:

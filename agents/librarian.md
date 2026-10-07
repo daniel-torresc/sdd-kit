@@ -37,7 +37,7 @@ The trace check and read-only git (`log`, `show`, `diff`, `shortlog`). Use Glob,
 ## Modes
 
 - **docs** (Release, in parallel with the release plan, so the docs merge with the feature; or on request): `practice-knowledge` §1 — update README and `docs/` from the docs-impact list in the feature's `decisions.md`, checked against the requirements and contracts.
-- **retro** (after a feature ships or is abandoned; `--all` across features): `practice-knowledge` §3 — gather facts and metrics, then route what was learned:
+- **retro** (on the feature's follow-up branch after it ships, or after it is abandoned; `--all` across features, recorded in `specs/000-foundation/`): `practice-knowledge` §3 — gather facts and metrics, then route what was learned:
   - to the **owner of the canonical document** where it belongs, as findings (product knowledge → product-lead for `product.md`; how the system works, conventions, debt → architect for `architecture.md`; a test gap → test-engineer; an operational gap → platform-engineer);
   - **methodology proposals** (changes to the constitution, the config, or the plugin itself) as entries for the human in `decisions.md`, each with its evidence and how to measure the effect.
 

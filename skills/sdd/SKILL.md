@@ -49,10 +49,10 @@ Dispatch with the Agent tool, using the exact `subagent_type` shown in your avai
 
 Loop until a **stop condition**:
 
-1. Read `state.yaml` of the active feature — the one whose branch `sdd/F<NNN>-<slug>` is checked out. If the checkout is not a feature branch, list the open features (any phase not `done` or `skipped`) and ask which; then `git switch` to its branch.
+1. Find the work from the checked-out branch: `sdd/F<NNN>-<slug>` or `sdd/F<NNN>-followup` → that feature's `state.yaml`; `sdd/INC-nnn-<slug>` → the incident file (continue per **incident**); `sdd/T-<slug>` → the class T steps in **new**. Otherwise `git fetch`, list the open work (features with a phase not `done` or `skipped`, open incidents) and ask which; then `git switch` to its branch.
 2. Decide the next action from `phases`, `status`, the class flow and active lenses (workflow contract; dispatch table): draft → review panel → revise (≤ cap) → exit check (`sdd.py trace --phase <phase>`, plus verdicts) → gate or next phase.
-3. Build phase: tech-lead `coordinate` → test-engineer `test-task` / engineer `implement` / platform-engineer `task` → code-reviewer `test-review` / `task-review` (+ security-engineer `code-review` where the dispatch table says) → tech-lead `integrate` → clean up the agent worktree (`git worktree list`, `git worktree remove --force .claude/worktrees/agent-<id>`, `git branch -D worktree-agent-<id>`; the `sdd/<F>-<T>` branch stays) → after an exhausted fix loop tech-lead `unblock`.
-4. After G3 and deploy: run Evolve (architect `evolve`, product-lead `evolve` after the watch window, librarian `retro`), then mark the feature done.
+3. Build phase: tech-lead `coordinate` → test-engineer `test-task` / engineer `implement` / platform-engineer `task` → code-reviewer `test-review` / `task-review` (+ security-engineer `code-review` where the dispatch table says) → tech-lead `integrate` (green = everything passes except what `sdd.py expected-failing <spec-dir>` lists; at the end of Build that list must be empty) → clean up the agent worktree (`git worktree list`, `git worktree remove --force .claude/worktrees/agent-<id>`, `git branch -D worktree-agent-<id>`; the `sdd/<F>-<T>` branch stays) → after an exhausted fix loop tech-lead `unblock`.
+4. Release runs librarian `docs` and architect `evolve` in parallel with the release plan. After G3 is approved, stop until the human has merged: `git fetch` and check with `git branch -r --merged origin/<main>`. Then `git switch -c sdd/F<NNN>-followup origin/<main>`, and continue there: platform-engineer `deploy` (records the deploy and watch window), product-lead `evolve` after the watch window, librarian `retro`, `state.yaml` → done, tech-lead `integrate` to push it with a docs-only draft PR for the human to merge.
 5. Loop caps: review rounds per class; at the cap → challenger `second-opinion` (optional) → arbiter by category → human.
 6. Work that does not depend on a pending decision continues; only the blocked branch pauses.
 
@@ -62,32 +62,32 @@ Loop until a **stop condition**:
 
 ## new <idea>
 
-1. Next feature number = highest `specs/NNN-*` + 1; slug from the idea (kebab-case, ≤ 5 words).
-2. **Existing code**: if the repository has application code, dispatch cartographer `investigate` for the affected area first (a research note the definition agents read).
-3. **Triage** with `triage_signals` (any higher-class signal raises the class) and set lenses from `lens_triggers`. Class T: no spec folder — create `sdd/T-<slug>`, dispatch engineer `debug`/`implement` with the request as the task, then code-reviewer, then stop for G3 (merge). Otherwise:
-4. `git switch -c sdd/F<NNN>-<slug>` from the main branch; create `specs/NNN-<slug>/state.yaml` and `decisions.md` from the templates (class, lenses; `discover` skipped unless L); commit.
-5. Continue with **advance**.
+1. `git fetch`. Next feature number = highest `specs/NNN-*` on `origin/<main>` and on open `sdd/F*` branches + 1; slug from the idea (kebab-case, ≤ 5 words).
+2. **Triage** with `triage_signals` (any higher-class signal raises the class) and set lenses from `lens_triggers`.
+3. **Class T** (no spec folder, no feature number): `git switch -c sdd/T-<slug> origin/<main>`; engineer `implement` (or `debug` for a bug) with the request as the task; code-reviewer `task-review`; tech-lead `integrate` (merges the engineer's branch, pushes, opens the draft PR). Stop: the human merges the PR. Done.
+4. **S/M/L**: `git switch -c sdd/F<NNN>-<slug> origin/<main>`; create `specs/NNN-<slug>/state.yaml` and `decisions.md` from the templates (class, lenses; phases per class from the workflow contract); commit.
+5. **Existing code**: if the repository has application code, dispatch cartographer `investigate` for the affected area (a research note in the feature's `research/` that the definition agents read); commit.
+6. Continue with **advance**.
 
-## init (greenfield)
+## init (greenfield) and adopt (existing codebase)
 
-The foundation is a feature like any other: `specs/000-foundation/` on branch `sdd/F000-foundation`.
-1. If `.sdd/` does not exist: `git switch -c sdd/F000-foundation <main>`; copy `constitution.md`, `config.yaml` and `stack.yaml` from the sdd-contracts templates into `.sdd/`, and `state.yaml` and `decisions.md` into `specs/000-foundation/`. Ask the human for the product idea if not given, and for any technologies they want to fix as constraints, with the skills to use for them if they know. Record those as `fixed: true`, `decided-by: human` entries in `stack.yaml`, in the human's words. Commit.
-2. product-lead `init` (`.sdd/product.md`: vision, personas, scope, glossary); researcher `domain` if the product context needs evidence → challenger review → revise.
-3. researcher `options` for each foundational decision → architect `init` (one G2 entry per one-way door in `decisions.md`, each linking its research note) → challenger G2 fairness review → revise → **G2 to the human** (stop).
-4. After the decisions: architect `init` again (ADRs, `.sdd/stack.yaml` entries and commands, `.sdd/architecture.md`); platform-engineer `env-plan` for the dev and staging environments on the chosen hosting (D3: you approve resources and spend); researcher `technology-reference` for each decided technology that is unfamiliar and lacks adequate guidance (the architect links it from the entry); researcher `skills` for entries without skills; security-engineer `dependency-review` for the baseline runtime dependencies; ux-designer `init` (`.sdd/design-system.md`) if the product has a UI.
-5. Walking skeleton: platform-engineer `scaffold` — first it proposes the project commands and the architect registers them in `stack.yaml` (committed before any task uses them); then the skeleton (repo, dev container, CI proven to pass and fail, image, protected production environment, the first CI-enforced architecture rules; a dev environment needs the human's D3 first) → code-review → integrate into `sdd/F000-foundation`. Then G3 (merge to main) and stop.
+The foundation is a feature like any other, class L: `specs/000-foundation/` on branch `sdd/F000-foundation`, running the normal phases (what each phase does for init and for adopt: workflow contract, "Foundation and existing codebases"). After setup, **advance** drives it and resumes it after every stop.
 
-## adopt (existing codebase)
+Setup (only if `.sdd/` does not exist):
+1. `git fetch`; `git switch -c sdd/F000-foundation origin/<main>` (or from the current branch in an empty repository).
+2. Copy `constitution.md`, `config.yaml` and `stack.yaml` from the sdd-contracts templates into `.sdd/`, and `state.yaml` and `decisions.md` into `specs/000-foundation/` (class L).
+3. **init:** ask the human for the product idea if not given, and for any technologies they want to fix as constraints, with the skills to use for them if they know; record those as `fixed: true`, `decided-by: human` entries in `stack.yaml`, in the human's words. **adopt:** nothing to ask; the cartographer's `adopt` investigation starts Discover.
+4. Commit, then continue with **advance**.
 
-Same foundation feature (`specs/000-foundation/`, branch `sdd/F000-foundation`). Copy the templates if missing (as in init step 1); dispatch cartographer `adopt`; route its research notes to architect `init` (`architecture.md` and `stack.yaml` entries and commands for what is already in use, with `decided-by: existing`), product-lead `init` (`product.md` and the behavior baseline), test-engineer (characterization-test tasks), platform-engineer (CI gaps), ux-designer `init` if there is a UI — as normal work; stop for any G2 the architect raises.
+Foundation specifics the dispatch table doesn't cover: after the G2 decisions, also dispatch researcher `technology-reference` for each decided technology that is unfamiliar and lacks adequate guidance, researcher `skills` for entries without skills, and security-engineer `dependency-review` for the baseline runtime dependencies. Commands are registered by the architect (proposed by platform-engineer `scaffold`) and committed before any task uses them. A dev environment needs the human's `env-plan` decision first.
 
 ## incident <description>
 
-Next `INC-nnn`; dispatch incident-responder `triage` with the description and any alert/links. Present its mitigation package **immediately** (fast path, not batched). After the human acts: `investigate` → `postmortem` (with reliability-engineer `post-incident`) → route action items (`/sdd new` for fixes; change requests and findings to the owners of the affected documents, including debt in `architecture.md`) → `follow-up`. Incidents run independently of the active feature.
+`git fetch`; next `INC-nnn`; `git switch -c sdd/INC-nnn-<slug> origin/<main>` (the incident record never lands on a feature branch); dispatch incident-responder `triage` with the description and any alert/links. Present its mitigation package **immediately** (fast path, not batched). After the human acts: `investigate` → `postmortem` (with reliability-engineer `post-incident`) → route action items (`/sdd new` for fixes; change requests and findings to the owners of the affected documents, including debt in `architecture.md`) → `follow-up` → tech-lead `integrate` pushes the branch with a docs-only draft PR for the human to merge. Incidents run independently of any feature; switch back to the feature's branch afterwards.
 
 ## retro [F | --all]
 
-Dispatch librarian `retro` for feature F (default: the active or last completed feature), or `retro --all` across features. Route its findings to their owners and present the methodology proposals it listed in `decisions.md` per [gates](references/gates.md).
+Retros normally run on the feature's follow-up branch (see **advance**). On demand: for feature F (default: the last completed feature) create or switch to `sdd/F<NNN>-followup`; for `--all`, to `sdd/retro-<date>` from `origin/<main>` (its review file and proposals go in `specs/000-foundation/`). Dispatch librarian `retro` (or `retro --all`); tech-lead `integrate` pushes it with a draft PR. Route its findings to their owners and present the methodology proposals it listed in `decisions.md` per [gates](references/gates.md).
 
 ## sync
 
@@ -95,7 +95,7 @@ List the pending `external-write` entries in every `specs/*/decisions.md` and as
 
 ## status
 
-For every `specs/*/state.yaml` (read from each `sdd/*` feature branch with `git show <branch>:<path>` when it isn't checked out, and from the main branch for merged features) and open `.sdd/incidents/*`: item, class/severity, `status`, tasks done/total, `waiting-for-human`, last history line. One line each, then details for the active feature. Read-only.
+`git fetch`, then for every feature — `state.yaml` read with `git show <branch>:<path>` from its newest branch (`sdd/F<NNN>-followup`, else `sdd/F<NNN>-<slug>`, else `origin/<main>`) — and every open incident (`sdd/INC-*` branches and `.sdd/incidents/*` on `origin/<main>`): item, class/severity, `status`, tasks done/total, `waiting-for-human`, last history line. One line each, then details for the active feature. Read-only.
 
 ## gates
 

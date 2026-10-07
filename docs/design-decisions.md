@@ -144,12 +144,33 @@ Consistency audit (mechanical): guard permissions aligned with agent instruction
 
 **Fixed during the reference sweep.** Librarian `docs` runs in Release (in parallel with the release plan) so the docs merge with the feature; it was listed in both Release and Evolve.
 
-## 7. Review backlog (before testing)
+## 7. End-to-end workflow review (agreed 2026-10-07)
+
+Every class (T, S, M, L) and path (init, adopt, feature, incident, retro) walked through the contracts, dispatch table and hub.
+
+| # | Problem found | Decision |
+|---|---|---|
+| 1 | Work after the merge to main (deploy record, outcome, retro, `done`) had no branch; incidents were committed onto unrelated feature branches | architect `evolve` moves into Release (with librarian `docs`), so both merge with the feature. Post-release work goes on `sdd/F<NNN>-followup`, incidents on `sdd/INC-nnn-<slug>`, both from `origin/<main>` with docs-only draft PRs the human merges. Nothing is committed to main directly |
+| 2 | Test-first tasks make the feature branch red by design, but integration reverted red merges | "Green" = all tests pass except those listed by the new `sdd.py expected-failing` (ACs whose implementation task has no `Refs:` commit on the branch yet); the list must be empty at the end of Build |
+| 3 | Class S had no tasks and no merge gate | Explicit phases-per-class matrix. S: REQ+AC → short `tasks.md` (no panel) → Build → test-engineer Verify → G3 (lite: no `release.md`). `sdd.py` now checks S plans |
+| 4 | Class T had nowhere to record its gate | T: `sdd/T-<slug>` → engineer (`sdd/T-<slug>-impl`) → code-review (in the envelope) → tech-lead pushes a draft PR → the human's PR merge is the gate |
+| 5 | Init/adopt couldn't be resumed by `/sdd` | The foundation runs as class L through the normal phases (Discover: product; Design: G2, stack, architecture; Plan/Build: skeleton or characterization tests and CI gaps; Release: G3 lite) |
+| 6 | The hub couldn't see the remote main | Hub may `git fetch`; branches start from `origin/<main>`; merges detected with `git branch -r --merged` |
+| 7 | Code investigation ran before triage, without a folder | Triage → open the feature → cartographer `investigate` (S/M/L only) |
+| 8 | Verify findings had no fix path | tech-lead turns them into fix tasks → Build loop → test-engineer re-verifies; reviewers re-check only their findings; review-round cap |
+| 9 | Design exit didn't require dependency verdicts or the env-plan decision | Added to the Design exit check, plus no pending G2 |
+| 10 | `test-plan.md` was unreviewed | Written first in Plan; reviewed by architect (and challenger for L) in the plan panel |
+| 11 | Lens findings for the test plan arrived before it existed | The hub holds them and passes them to `test-plan` |
+| 12 | G2 listed only for class L | G2 applies to any class when a one-way door appears |
+
+Also fixed: `sdd.py` matched skip-directories against the absolute path, so projects under a `build`/`dist`/`.claude` folder had all tests ignored.
+
+## 8. Review backlog (before testing)
 
 From the human's instructions for the review phase:
 
 1. ~~Reuse existing skills~~: done as the skills review (§4). Selecting external stack skills is a separate, later step.
-2. **End-to-end workflow review.** Walk every class (T, S, M, L) and every path (greenfield init, adopt, feature, incident, retro) through the dispatch table and contracts. Look for missing handoffs, ownership gaps, circular waits and duplicated reviews.
+2. ~~End-to-end workflow review~~: done (§7).
 3. ~~Agent review~~: done (§5).
 4. ~~Assets review~~: done (§6).
 5. **Capability and dependency gaps** across the whole system. Known candidates:

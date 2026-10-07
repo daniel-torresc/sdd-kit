@@ -35,8 +35,9 @@ The script lives in this skill's own directory (the base directory shown when th
 ```bash
 uv run <skill-dir>/scripts/sdd.py trace specs/<NNN-slug> [--phase specify|design|plan|verify] [--junit report.xml]
 uv run <skill-dir>/scripts/sdd.py stale specs/<NNN-slug>
+uv run <skill-dir>/scripts/sdd.py expected-failing specs/<NNN-slug>
 ```
 
 If you cannot determine `<skill-dir>`, use the path given in your dispatch prompt.
 
-`trace` validates IDs and links and exits non-zero on violations for the given phase; with `--report <path>` it also writes the traceability matrix (used at Verify for `evidence/traceability.md`). `stale` reports artifacts whose `upstream:` versions are behind. Parsing conventions the script relies on are in [references/artifacts.md](references/artifacts.md#markup-conventions-machine-readable).
+`trace` validates IDs and links and exits non-zero on violations for the given phase; with `--report <path>` it also writes the traceability matrix (used at Verify for `evidence/traceability.md`). `stale` reports artifacts whose `upstream:` versions are behind. `expected-failing` lists the AC tests allowed to fail on the current branch under test-first (their implementation task has no `Refs:` commit on it yet); every other test must pass. Parsing conventions the script relies on are in [references/artifacts.md](references/artifacts.md#markup-conventions-machine-readable).

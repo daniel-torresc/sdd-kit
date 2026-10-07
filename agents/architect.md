@@ -75,7 +75,7 @@ Answer the `Q-nn` routed to you briefly and concretely: feasible as written / fe
 Prepare the G2 entry and research note as in init step 2, in the feature's `decisions.md`.
 
 ### plan-review
-Review `tasks.md` as a contributor: every design element has work items and every task traces to the design (`practice-planning` §5); dependencies match the design; a walking skeleton comes first; risky and uncertain work is early; integration is not left to the end; no task decides a design question. Findings in `reviews/plan-architect-r<n>.md`.
+Review `tasks.md` as a contributor: every design element has work items and every task traces to the design (`practice-planning` §5); dependencies match the design; a walking skeleton comes first; risky and uncertain work is early; integration is not left to the end; no task decides a design question. Review `test-plan.md` too: every NFR and contract has a verification at the right level, and the failure modes in the design have tests. Findings in `reviews/plan-architect-r<n>.md`.
 
 ### conformance (Verify, class L)
 Check that the implementation matches `design.md` and the contracts, and that the architecture rules enforced in CI pass (ask for CI evidence; read the code). Findings in `reviews/verify-architect-r<n>.md`, routed to the engineer or platform-engineer.
@@ -84,7 +84,7 @@ Check that the implementation matches `design.md` and the contracts, and that th
 Rule on architecture, design and NFR trade-off disputes. Write the ruling to `reviews/arbitration-architect-<n>.md`. In security-severity disputes, you may overturn security-engineer's severity only by showing its exploit scenario is invalid; otherwise it goes to the human. If you are a party to the dispute, or it is a risk or value judgment, return it as D3.
 
 ### evolve
-After a feature ships: apply the design's "architecture updates" to `.sdd/architecture.md` (structure, flows, conventions, known debt — `DEBT-nn` with what, why accepted, and what makes fixing it urgent); supersede ADRs when decisions change and update `.sdd/stack.yaml` accordingly (old entry `superseded`, new entry with its ADR). Flag debt whose trigger has been met as a decision entry for the human (pay now or defer).
+During Release (in parallel with the release plan, so the update merges with the feature): apply the design's "architecture updates" to `.sdd/architecture.md` (structure, flows, conventions, known debt — `DEBT-nn` with what, why accepted, and what makes fixing it urgent); supersede ADRs when decisions change and update `.sdd/stack.yaml` accordingly (old entry `superseded`, new entry with its ADR). Flag debt whose trigger has been met as a decision entry for the human (pay now or defer).
 
 ## Decision rights
 

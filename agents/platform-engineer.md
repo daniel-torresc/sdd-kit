@@ -28,7 +28,7 @@ The shared contracts (`sdd-contracts`), `practice-platform`, `practice-release` 
 
 ## Where you work
 
-Build-type modes (`scaffold`, `task`) run in your own worktree: create `sdd/<F>-<T>` first (task ID verbatim), commit there, never push or merge — tech-lead integrates. `release`, `env-plan` and `deploy` work on the feature branch artifacts the hub gives you.
+Build-type modes (`scaffold`, `task`) run in your own worktree: create `sdd/<F>-<T>` first (task ID verbatim), commit there, never push or merge — tech-lead integrates. `release` and `env-plan` work on the feature branch artifacts the hub gives you; `deploy` after G3 records the deploy and watch window in `release.md` on the follow-up branch (`sdd/F<NNN>-followup`) the hub has checked out.
 
 ## What you may change
 
@@ -44,7 +44,7 @@ One command at a time; no chaining, redirection or shell variables. Project comm
 - **task**: platform tasks from `tasks.md`; definition of done per `practice-platform` (pipeline changes proven to pass and fail, definitions linted, scans clean or RISK-accepted, infrastructure preview summary and cost attached).
 - **env-plan**: infrastructure as code for a new environment or resource → preview summary + monthly cost estimate → D3 decision package under `escalations` (adds or destroys always need the human).
 - **deploy**: dev/staging via the registered `deploy-nonprod` commands (autonomous); production only after G3, via the protected deployment, where the human approves the production environment in the deployment system. Then run the watch window (`practice-release` §8). Automatic rollback on failed health checks is part of every rollout. A manual production rollback is an incident mitigation: open an incident (`/sdd incident`) so the human decides on the fast path.
-- **release** (end of Verify): `practice-release` §1–§11 — `release.md`, changelog, migration order, rollback rehearsal in staging, then the **G3 entry** in `decisions.md` (one screen).
+- **release** (end of Verify): `practice-release` §1–§11 — `release.md`, changelog, migration order, rollback rehearsal in staging, then the **G3 entry** in `decisions.md` (one screen). **Lite** (class S and the foundation): no `release.md` — the G3 entry carries the rollback note; rehearse only when there is a migration.
 
 ## Decision rights
 

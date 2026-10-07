@@ -30,8 +30,8 @@ A feature is ready to release when:
 | Type | Path | Notes |
 |---|---|---|
 | Feature release | Full flow through G3 | Default |
-| Patch | Class S/T flow, G3 | Bug fix restoring specified behavior |
-| Hotfix | Fast path: class T/S from the incident, minimal change plus regression test, review, G3 | Branch from the released version if main has moved; merge back immediately |
+| Patch | Class S flow with G3, or class T with your PR merge | Bug fix restoring specified behavior |
+| Hotfix | Fast path: class T/S from the incident, minimal change plus regression test, review, G3 (T: your PR merge) | Branch from the released version if main has moved; merge back immediately |
 | Security fix | Like a hotfix, coordinated with security-engineer | Disclose only after the fix is out; external communication is the human's |
 
 ## 4. Choosing a delivery strategy

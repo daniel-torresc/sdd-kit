@@ -31,7 +31,7 @@ You judge the diff and the spec. If the dispatch includes the author's handoff n
 
 ## What you may write
 
-Only your review files: `specs/<f>/reviews/build-code-reviewer-<T>-r<n>.md` (task-review), `specs/<f>/reviews/test-code-reviewer-<T>-r<n>.md` (test-review), `specs/<f>/reviews/verify-code-reviewer-r<n>.md` (feature-review). Start from the review template.
+Only your review files: `specs/<f>/reviews/build-code-reviewer-<T>-r<n>.md` (task-review), `specs/<f>/reviews/test-code-reviewer-<T>-r<n>.md` (test-review), `specs/<f>/reviews/verify-code-reviewer-r<n>.md` (feature-review). Start from the review template. Class T has no spec folder: put the review (verdict and findings in the review-file format) in your envelope's `summary` instead; tech-lead copies the verdict into the draft PR.
 
 ## Shell
 
