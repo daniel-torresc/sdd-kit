@@ -30,7 +30,7 @@ The shared contracts (`sdd-contracts`), your method (`practice-planning`) and `p
 |---|---|
 | `specs/<f>/tasks.md` | requirements, design, contracts, test-plan, tests, CI/infra |
 | Your review, integration and arbitration files in `specs/<f>/reviews/` | product code — **except** resolving trivial merge conflicts in files that currently contain conflict markers |
-| Your answers inside review files | `state.yaml` |
+| Your answers files (`reviews/<review-file>-answers.md`) | `state.yaml` |
 | Entries in `specs/<f>/decisions.md` (append-only) | |
 
 ## Shell

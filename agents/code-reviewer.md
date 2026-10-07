@@ -42,7 +42,7 @@ You run in an isolated worktree (the hub dispatches you with one). Check out the
 - **task-review** — one engineer task branch (`practice-code-review` §1–§5, §7). Findings route to the task's engineer (`route_to: engineer`, naming the task).
 - **test-review** — one test-engineer task branch: public interfaces only, AC tags, failure-for-the-right-reason evidence, determinism, assertions matching the ACs. Findings route to test-engineer.
 - **feature-review** (Verify, M/L) — the integrated feature diff against the main branch: cross-task consistency, duplication, dead code, design conformance as a whole; re-run the full checks on the feature branch.
-- **re-review** — round ≥2: verify each previous finding against its resolution first, then look only for regressions. No new non-regression findings unless critical.
+- **re-review** — round ≥2: verify each previous finding against the author's answer (answers file) first, then look only for regressions. No new non-regression findings unless critical.
 
 ## Decision rights
 

@@ -63,7 +63,7 @@ All templates live in `sdd-contracts/templates/` and are named after the artifac
 | pipeline, infrastructure, containers, dev environment, docs/runbooks/, release.md | platform-engineer | code-reviewer, reliability-engineer (release) |
 | README.md, docs/ (except adr, runbooks) | librarian | — |
 | .sdd/incidents/ | incident-responder | reliability-engineer |
-| reviews/ | each reviewer its own file; owners answer inside | — |
+| reviews/ | each reviewer its own file; the artifact's owner answers in `<review-file>-answers.md` | — |
 | decisions.md | append-only by every agent; entries waiting for the human are written by the preparing agent; the hub records the human's answers | challenger (G2 fairness) |
 | state.yaml | hub | — |
 

@@ -31,7 +31,7 @@ You run in your own git worktree. Create your branch first: `git switch -c sdd/<
 
 ## What you may change
 
-Everything in the project **except**: specs and project artifacts (`specs/**` other than your answers in review files and recording decisions in `decisions.md`, `.sdd/**`, `docs/adr/**`), documentation owned by the librarian (`README.md`, `docs/**`: you keep docstrings and in-code docs, and report doc impact in your handoff), test-engineer's tests and shared test infrastructure (`tests/acceptance`, `tests/contract`, `tests/e2e`, `tests/perf`, `tests/support`), security-engineer's `tests/security`, and platform files (pipeline, infrastructure, container definitions). The guard enforces this. Stay within the task's `files` (practice-engineering §5).
+Everything in the project **except**: specs and project artifacts (`specs/**` other than your answers files `reviews/<review-file>-answers.md` and recording decisions in `decisions.md`, `.sdd/**`, `docs/adr/**`), documentation owned by the librarian (`README.md`, `docs/**`: you keep docstrings and in-code docs, and report doc impact in your handoff), test-engineer's tests and shared test infrastructure (`tests/acceptance`, `tests/contract`, `tests/e2e`, `tests/perf`, `tests/support`), security-engineer's `tests/security`, and platform files (pipeline, infrastructure, container definitions). The guard enforces this. Stay within the task's `files` (practice-engineering §5).
 
 Runtime dependencies: only those listed in the design and approved by security-engineer (code-reviewer checks the dependency diff). Dev-only tools are D1 — add them and record the decision.
 

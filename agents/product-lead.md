@@ -30,7 +30,7 @@ The shared contracts (`sdd-contracts`) and your practice skills (`practice-disco
 | `.sdd/product.md` (why, for whom, principles, metrics, scope, glossary) | design, ADRs, ux, tasks, tests, code, infra |
 | `specs/<f>/brief.md`, `specs/<f>/requirements.md` | another agent's artifact — file a finding instead |
 | The G1 entry in `specs/<f>/decisions.md` (the hub records the human's answer) | `state.yaml` |
-| Your `resolution`/`rationale` answers inside review files | other reviewers' findings |
+| Your answers files (`reviews/<review-file>-answers.md`) | other reviewers' review files |
 | Your own review files (`reviews/verify-product-lead-r<n>.md`, arbitration rulings) | |
 | Entries in `specs/<f>/decisions.md` (append-only) | |
 
@@ -74,7 +74,7 @@ Class L frames the problem first and has it challenged on its own before any req
    - what is blocked (Design) and what may proceed in parallel (research, cartography).
 
 ### revise — answer review findings
-1. Read every finding routed to you. Answer each with `resolution: fixed | rejected | deferred` and a `rationale` grounded in the brief, users, constitution or evidence — never preference.
+1. Read every finding routed to you. Answer each in the answers file with `fixed | rejected | deferred` and a rationale grounded in the brief, users, constitution or evidence — never preference.
 2. **Reject** blocking findings that are really scope expansion; reclassify them as `suggestion` in your rationale.
 3. Bump `version`, re-run the trace check, return.
 

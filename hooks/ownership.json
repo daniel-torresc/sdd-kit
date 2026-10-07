@@ -1,5 +1,5 @@
 {
-  "_doc": "Per-agent permissions enforced by scripts/guard.py. Agents not listed here are not restricted by this guard. 'write': glob patterns relative to the project root that the agent may write; 'write_except': globs it may never write ('!pattern' re-includes); 'write_if_conflicted': may edit files that contain merge-conflict markers; 'bash': regexes for SDD commands the agent may run (git, gh, the trace script, \u2026); 'project_commands': purposes from the `commands:` section of the project's committed .sdd/stack.yaml the agent may run (the registry follows the project's stack; a global denylist always applies); chaining and redirection are always denied; 'mcp': 'read-only' denies MCP tools whose name looks like a write. '__hub__' lists the main session's bookkeeping actions that are auto-approved; everything else in the main session keeps normal prompts. In-policy actions are auto-approved unless .sdd/config.yaml sets permissions.auto_approve: false.",
+  "_doc": "Per-agent permissions enforced by scripts/guard.py. Agents not listed here are not restricted by this guard. 'write': glob patterns relative to the project root that the agent may write; 'write_except': globs it may never write ('!pattern' re-includes); 'write_if_conflicted': may edit files that contain merge-conflict markers; 'bash': regexes for SDD commands the agent may run (git, gh, the trace script, …); 'project_commands': purposes from the `commands:` section of the project's committed .sdd/stack.yaml the agent may run (the registry follows the project's stack; a global denylist always applies); chaining and redirection are always denied; 'mcp': 'read-only' denies MCP tools whose name looks like a write. '__hub__' lists the main session's bookkeeping actions that are auto-approved; everything else in the main session keeps normal prompts. In-policy actions are auto-approved unless .sdd/config.yaml sets permissions.auto_approve: false.",
   "__hub__": {
     "write": [
       "specs/*/state.yaml",
@@ -27,7 +27,8 @@
       ".sdd/product.md",
       "specs/*/brief.md",
       "specs/*/requirements.md",
-      "specs/*/reviews/*.md",
+      "specs/*/reviews/*-product-lead-*.md",
+      "specs/*/reviews/*-answers.md",
       "specs/*/decisions.md"
     ],
     "bash": [
@@ -54,7 +55,8 @@
       "specs/*/design.md",
       "specs/*/contracts/*",
       "specs/*/research/*",
-      "specs/*/reviews/*.md",
+      "specs/*/reviews/*-architect-*.md",
+      "specs/*/reviews/*-answers.md",
       "specs/*/decisions.md"
     ],
     "bash": [
@@ -68,7 +70,8 @@
   "tech-lead": {
     "write": [
       "specs/*/tasks.md",
-      "specs/*/reviews/*.md",
+      "specs/*/reviews/*-tech-lead-*.md",
+      "specs/*/reviews/*-answers.md",
       "specs/*/decisions.md"
     ],
     "write_if_conflicted": true,
@@ -106,7 +109,8 @@
       "*tests/perf/*",
       "*tests/fixtures/*",
       "*tests/support/*",
-      "specs/*/reviews/*.md",
+      "specs/*/reviews/*-test-engineer-*.md",
+      "specs/*/reviews/*-answers.md",
       "specs/*/decisions.md"
     ],
     "bash": [
@@ -133,7 +137,7 @@
     ],
     "write_except": [
       "specs/*",
-      "!specs/*/reviews/*.md",
+      "!specs/*/reviews/*-answers.md",
       "!specs/*/decisions.md",
       ".sdd/*",
       "README.md",
@@ -208,7 +212,7 @@
     ],
     "write_except": [
       "specs/*",
-      "!specs/*/reviews/*.md",
+      "!specs/*/reviews/*-answers.md",
       "!specs/*/decisions.md",
       ".sdd/*",
       "README.md",
@@ -221,7 +225,7 @@
       "*tests/security/*",
       "!specs/*/release.md",
       "!docs/runbooks/*",
-      "src/*/*/*"
+      "src/*"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale|expected-failing)( [^<>$]*)?",
@@ -257,7 +261,8 @@
     "write": [
       "*tests/security/*",
       "specs/*/evidence/security/*",
-      "specs/*/reviews/*.md",
+      "specs/*/reviews/*-security-engineer-*.md",
+      "specs/*/reviews/*-answers.md",
       "specs/*/decisions.md"
     ],
     "bash": [
@@ -275,7 +280,8 @@
   "reliability-engineer": {
     "write": [
       "specs/*/evidence/reliability/*",
-      "specs/*/reviews/*.md",
+      "specs/*/reviews/*-reliability-engineer-*.md",
+      "specs/*/reviews/*-answers.md",
       "specs/*/decisions.md"
     ],
     "bash": [
@@ -296,7 +302,8 @@
       ".sdd/design-system.md",
       "specs/*/ux.md",
       "specs/*/prototypes/*",
-      "specs/*/reviews/*.md",
+      "specs/*/reviews/*-ux-designer-*.md",
+      "specs/*/reviews/*-answers.md",
       "specs/*/decisions.md"
     ],
     "bash": [
@@ -337,7 +344,8 @@
     "write": [
       "README.md",
       "docs/*",
-      "specs/*/reviews/*.md",
+      "specs/*/reviews/*-librarian-*.md",
+      "specs/*/reviews/*-answers.md",
       "specs/*/decisions.md"
     ],
     "write_except": [
@@ -353,7 +361,7 @@
   "incident-responder": {
     "write": [
       ".sdd/incidents/*",
-      "specs/*/reviews/*.md",
+      "specs/*/reviews/*-answers.md",
       "specs/*/decisions.md"
     ],
     "bash": [

@@ -46,7 +46,7 @@ Only your own review files: `specs/<f>/reviews/<phase>-challenger-r<n>.md`, `spe
 ### review
 1. Identify the target and its version, phase and round from the dispatch prompt. For class M in Specify, the target is the brief **and** the requirements together: review them against each other. If the hub included the author's summary or rationale, ignore it and say so in your envelope.
 2. Follow the `practice-critique` procedure: upstream first, read twice, mechanical check, techniques, artifact checklist.
-3. **Round 1:** full review. **Round ≥2:** first re-check every previous finding against the author's `resolution`/`rationale`:
+3. **Round 1:** full review. **Round ≥2:** first re-check every previous finding against the author's answer in the answers file:
    - fixed and correct → mark verified in notes;
    - `rejected` with a convincing rationale → withdraw or downgrade it and say why;
    - `rejected` unconvincingly → keep it blocking; the hub will send it to the arbiter;

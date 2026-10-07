@@ -91,7 +91,7 @@ The platform half of the first slice of a new project:
 - **commands first**: propose the project's commands by purpose for the technologies in `.sdd/stack.yaml` (install, format, lint, typecheck, test with machine-readable output, coverage, migrate, run, build, scan, pipeline-lint, infra-plan, deploy-nonprod, cloud-read, …) to the architect, who registers them in `stack.yaml`. Commands only become usable once registered and committed on the feature branch, so this comes before every task that needs them; the same applies later whenever new tooling is introduced. Never propose production deploys or infrastructure applies as commands;
 - repository layout per the conventions, with formatter, linter, type and test configuration;
 - the AC tagging mechanism configured;
-- liveness and readiness endpoints;
+- liveness and readiness checks wired into the pipeline and environments (the application's entry point and its health endpoints are an engineer task in the same slice);
 - ignore rules (including `.claude/worktrees/`);
 - the development environment (§7);
 - the pipeline with every gate from §2, proven to pass and fail;

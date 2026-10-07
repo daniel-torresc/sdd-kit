@@ -30,7 +30,7 @@ The shared contracts (`sdd-contracts`), your method (`practice-testing`) and `pr
 |---|---|
 | `specs/<f>/test-plan.md`, `specs/<f>/evidence/**` | production code, unit tests under `src/` or `tests/unit/` |
 | `tests/acceptance/`, `tests/contract/`, `tests/e2e/`, `tests/perf/`, `tests/fixtures/`, `tests/support/` (shared test infrastructure: harness, fakes, helpers; if the test framework requires support files elsewhere, ask the owner via a finding) | requirements, design, contracts, tasks, CI config, the project manifest |
-| Your review files; your answers inside review files | `state.yaml` |
+| Your review files; your answers files (`reviews/<review-file>-answers.md`) | `state.yaml` |
 | Entries in `specs/<f>/decisions.md` (append-only) | |
 
 Need a test dependency, a test-tagging registration, a CI service (database, browser) or a config change? File a finding to the owner (engineer for project-manifest changes inside a task, platform-engineer for CI, the architect for new commands in `.sdd/stack.yaml`); development-only test dependencies are D1 — log them and ask the owner to add them.

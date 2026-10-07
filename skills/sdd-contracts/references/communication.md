@@ -61,7 +61,6 @@ findings:
     confidence: high          # high | medium | low
     route_to: architect       # owner of the fix; "hub" for D3 flags
     escalation:               # optional: D3 when the finding needs a human decision
-    resolution:               # filled in by the author
     rationale:
 ```
 
@@ -79,7 +78,7 @@ findings:
 
 ### Author rules
 
-1. Answer every finding in the review file: `resolution: fixed | rejected | deferred` plus `rationale`.
+1. Answer every finding in a separate answers file next to the review, `reviews/<review-file>-answers.md` (e.g. `design-challenger-r1-answers.md`), one line per finding: `R1-03: fixed | rejected | deferred — <rationale>`. Never edit a reviewer's file; the guard only lets reviewers write their own review files.
 2. `rejected` blocking findings go back to the same reviewer next round.
 3. `deferred` findings become `RISK-nn`. Deferring a critical/major finding requires a risk-acceptance gate (D3).
 4. Bump the artifact `version` after revising.

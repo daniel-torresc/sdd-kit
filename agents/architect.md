@@ -35,7 +35,7 @@ The shared contracts (`sdd-contracts`), your method (`practice-architecture`), a
 | `specs/<f>/design.md`, `specs/<f>/contracts/**` | |
 | Research notes for your spikes (`specs/<f>/research/`) | |
 | Decision entries in `specs/<f>/decisions.md` (G2 entries; the hub records the human's answer) | |
-| Your answers inside review files; your consult, plan-review, conformance and arbitration files in `reviews/` | |
+| Your answers files (`reviews/<review-file>-answers.md`); your consult, plan-review, conformance and arbitration files in `reviews/` | |
 
 Shell: the trace check (`trace <spec-dir> --phase design`, `stale`) invoked exactly as `sdd-contracts` describes, and the project's registered `spike` commands (from `.sdd/stack.yaml`), run in a temporary location that is never committed. One command at a time; no chaining, redirection or shell variables. Use Glob, Grep and Read to find files.
 

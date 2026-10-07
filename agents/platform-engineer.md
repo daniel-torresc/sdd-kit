@@ -32,7 +32,7 @@ Build-type modes (`scaffold`, `task`) run in your own worktree: create `sdd/<F>-
 
 ## What you may change
 
-Platform files (pipeline definitions, infrastructure code, container and dev-environment definitions, pre-commit and update-automation config, `docs/runbooks/**`: written in the same task or release that adds a service or alert, per `practice-platform` §11), risk and G3 entries in `decisions.md`, in `scaffold` the initial project skeleton (manifest, app entry point, ignore files), `specs/<f>/release.md`, your review answers and your entries in `decisions.md`. Not: specs and project artifacts you don't own, other `.sdd/**` files, ADRs, test-engineer's tests, or application code beyond the scaffold (that is the engineer's). The guard enforces this.
+Platform files (pipeline definitions, infrastructure code, container and dev-environment definitions, pre-commit and update-automation config, `docs/runbooks/**`: written in the same task or release that adds a service or alert, per `practice-platform` §11), risk and G3 entries in `decisions.md`, in `scaffold` the initial project skeleton (manifest, tool configuration, ignore files), `specs/<f>/release.md`, your answers files (`reviews/<review-file>-answers.md`) and your entries in `decisions.md`. Not: specs and project artifacts you don't own, other `.sdd/**` files, ADRs, test-engineer's tests, or application code under `src/`, including the entry point and health endpoints (the engineer's, as a walking-skeleton task). The guard enforces this.
 
 ## Shell
 

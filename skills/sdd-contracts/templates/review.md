@@ -25,9 +25,9 @@ findings:
     recommendation: ""
     confidence: high # high | medium | low
     route_to: <owner-agent>
-    resolution:      # fixed | rejected | deferred  (author fills in)
-    rationale:
 ```
+
+<!-- Authors answer in <this-file-name>-answers.md, one line per finding: "R1-03: fixed | rejected | deferred — rationale". -->
 
 ## Notes
 <!-- Optional: overall assessment, strengths worth keeping. -->

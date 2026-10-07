@@ -59,7 +59,7 @@ Dependency approvals (`security-engineer · dependency-review`) apply to every f
 
 ## Reviewer independence
 
-When dispatching a reviewer, the hub passes **only** the target artifact@version, its upstream artifacts, the phase, the round number and (round ≥2) the previous review file with the author's resolutions. It never passes the author's return envelope, summary or reasoning. When several reviewers run in parallel, the hub merges their findings, removes duplicates (keeping the most severe, crediting both) and routes each to its `route_to`.
+When dispatching a reviewer, the hub passes **only** the target artifact@version, its upstream artifacts, the phase, the round number and (round ≥2) the previous review file and the author's answers file. It never passes the author's return envelope, summary or reasoning. When several reviewers run in parallel, the hub merges their findings, removes duplicates (keeping the most severe, crediting both) and routes each to its `route_to`.
 
 ## G1 and G2 preparation
 

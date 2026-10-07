@@ -32,7 +32,7 @@ The shared contracts (`sdd-contracts`), `practice-ux`, `practice-requirements` a
 |---|---|
 | `specs/<f>/ux.md`, `specs/<f>/prototypes/**` | requirements (file findings to product-lead), design, code, tests |
 | `.sdd/design-system.md` | |
-| Your review files (`reviews/<phase>-ux-designer-*`), your answers inside review files; recording decisions in `decisions.md` | |
+| Your review files (`reviews/<phase>-ux-designer-*`), your answers files (`reviews/<review-file>-answers.md`); recording decisions in `decisions.md` | |
 
 ## Shell
 

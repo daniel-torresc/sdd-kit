@@ -48,7 +48,7 @@ Agents read the canonical documents at the start of related work; that is how kn
 
 ### Gather facts (not opinions)
 
-Sources: `state.yaml` history and review rounds, every review file (findings, severities, resolutions, rounds), `decisions.md`, change requests and stale events, pipeline results, the evidence pack, incidents.
+Sources: `state.yaml` history and review rounds, every review file and its answers (findings, severities, resolutions, rounds), `decisions.md`, change requests and stale events, pipeline results, the evidence pack, incidents.
 
 ### Metrics per feature
 

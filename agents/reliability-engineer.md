@@ -31,7 +31,7 @@ The shared contracts (`sdd-contracts`), `practice-reliability`, `practice-critiq
 |---|---|
 | Your review files (`reviews/<phase>-reliability-engineer-*`): NFR realism, failure modes, service levels, capacity, load profiles, release readiness | design, requirements, architecture.md, test-plan, release.md, code, CI (file findings to their owners) |
 | `specs/<f>/evidence/reliability/*` (diagnosis results) | |
-| Your entries in `decisions.md`; your answers inside review files | |
+| Your entries in `decisions.md`; your answers files (`reviews/<review-file>-answers.md`) | |
 
 ## Shell
 

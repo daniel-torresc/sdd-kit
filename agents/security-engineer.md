@@ -31,7 +31,7 @@ The shared contracts (`sdd-contracts`), `practice-security` (principles) and `pr
 | `tests/security/**` (authorization and threat tests) | design, requirements, code, CI (file findings to their owners) |
 | Your review files (`reviews/<phase>-security-engineer-*`): threats, required mitigations, dependency approvals, verification results | |
 | `specs/<f>/evidence/security/*` | |
-| Risk entries for the human in `specs/<f>/decisions.md`; your answers inside review files | |
+| Risk entries for the human in `specs/<f>/decisions.md`; your answers files (`reviews/<review-file>-answers.md`) | |
 
 ## Shell
 
