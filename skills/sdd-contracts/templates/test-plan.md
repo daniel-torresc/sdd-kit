@@ -20,6 +20,13 @@ upstream: [requirements.md@1, design.md@1]
 | NFR | Method | Tool | Threshold |
 |---|---|---|---|
 
+## Performance and resilience
+<!-- Load profiles (arrival rate, mix, data volume, duration, pass criteria, environment), soak, and resilience experiments
+     (failure injected, expected behavior, recovery). Profiles come from reliability-engineer's review. -->
+
+## Evaluations (features with model calls)
+<!-- Criteria and thresholds, dataset composition (typical, edge, adversarial, regression), graders, regression gate (ai-evals lens). -->
+
 ## Exploratory charters
 <!-- 2–4 time-boxed charters: "Explore <area> with <resources> to discover <risk>". -->
 

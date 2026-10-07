@@ -26,7 +26,7 @@ Templates for every artifact are in [templates/](templates/). Always **Read** th
 6. **Assumption-first.** Missing information that is not a D3 decision becomes a documented `ASM-nn` with a default; keep working.
 7. **Reviewers are independent.** They judge artifacts, not the author's reasoning, and never edit what they review.
 8. **Evidence or it's minor.** A major/critical finding without evidence is downgraded.
-9. **`trace.md` is generated, never hand-edited.** Run the trace script (below).
+9. **Traceability is checked, not maintained by hand.** Run the trace script (below); at Verify it writes the traceability report into the evidence pack.
 
 ## Trace script
 
@@ -39,4 +39,4 @@ uv run <skill-dir>/scripts/sdd.py stale specs/<NNN-slug>
 
 If you cannot determine `<skill-dir>`, use the path given in your dispatch prompt.
 
-`trace` validates IDs and links, writes `trace.md`, and exits non-zero on violations for the given phase. `stale` reports artifacts whose `upstream:` versions are behind. Parsing conventions the script relies on are in [references/artifacts.md](references/artifacts.md#markup-conventions-machine-readable).
+`trace` validates IDs and links and exits non-zero on violations for the given phase; with `--report <path>` it also writes the traceability matrix (used at Verify for `evidence/traceability.md`). `stale` reports artifacts whose `upstream:` versions are behind. Parsing conventions the script relies on are in [references/artifacts.md](references/artifacts.md#markup-conventions-machine-readable).

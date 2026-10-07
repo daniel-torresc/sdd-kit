@@ -1,4 +1,4 @@
-# SDD configuration. Owned by the human; agents propose changes via the librarian.
+# SDD configuration. Owned by the human; agents propose changes as entries in a decisions.md.
 version: 1
 
 permissions:
@@ -11,11 +11,10 @@ permissions:
 notify: true                   # push notification when /sdd stops for a human decision or blocker
 
 sync:
-  # External writes are batched into an outbox and performed only after the human approves (/sdd sync, or at each stop).
+  # External writes are listed as pending entries in the feature's decisions.md and performed only after the human approves (/sdd sync, or at each stop).
   issue_tracker: none          # none | github | linear | jira — link specs/tasks to issues
   pr_review_comments: false    # mirror review findings as PR review comments
   release_notes: true          # publish GitHub release notes after G3
-  knowledge: none              # none | <name of an external knowledge base the human connected>
 
 environments:
   # Deploy autonomy. New resources or spend are always a human decision (D3).

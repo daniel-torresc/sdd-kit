@@ -19,7 +19,7 @@ For every new resource or service, list what it is billed on:
 
 ## 2. Estimate
 
-- Monthly cost at **expected** and **peak** scale, using the capacity estimates (`.sdd/operations/capacity.md`), with the pricing source and date.
+- Monthly cost at **expected** and **peak** scale, using the expected capacity (design NFRs and `architecture.md` → Deployment and operations), with the pricing source and date.
 - **Unit economics**: cost per active user, per request or per transaction. Does it fit the product's economics?
 - Compare against the budget in the constitution or config. If no budget is stated, record an `ASM` and flag it for the human.
 - State the uncertainty: which assumptions dominate the estimate.

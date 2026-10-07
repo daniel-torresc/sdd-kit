@@ -11,10 +11,12 @@ This file records every design decision behind the agent organization, so the co
 - Hub-and-spoke: the main session runs `/sdd` and dispatches agents. Agents communicate only through artifacts and a strict return envelope. Agents don't dispatch other agents (policy).
 - Contracts (`sdd-contracts`): artifacts and traceability IDs; findings schema and review rules; autonomy classes D0–D3; workflow with triage classes T/S/M/L, phase micro-cycle, loop caps (2 rounds for S/M, 3 for L; 3 fix attempts) and exit checks.
 - Human gates only for D3: G1 intent, G2 foundations (the architect presents every option; **the human decides**), G3 production, risk acceptance, scope change, legal, deadlock, constitution changes, spend, external writes.
-- Ownership guard (PreToolUse hook) enforces each agent's writes, shell commands and MCP access, and **auto-approves in-policy actions** (off switch: `permissions.auto_approve: false`). Runtime dependencies are enforced against `.sdd/dependencies.yaml`.
+- Ownership guard (PreToolUse hook) enforces each agent's writes, shell commands and MCP access, and **auto-approves in-policy actions** (off switch: `permissions.auto_approve: false`). Project commands come from the `commands:` section of the committed `.sdd/stack.yaml`; runtime dependencies are approved in the design's dependency review (§6).
 - Traceability script `sdd.py` (trace and stale checks).
 
 ## 2. Per-agent decisions
+
+> Paths and artifacts in §2–§5 are as decided at the time; §6 consolidated the asset set and supersedes them where they differ.
 
 | Agent | Agreed | Default (to review) |
 |---|---|---|
@@ -42,7 +44,7 @@ This file records every design decision behind the agent organization, so the co
 | `/sdd` runs autonomously until a human decision or blocker; push notification on stop; gates as one-screen summary + AskUserQuestion; artifacts committed after every step; agent worktree cleanup after integration | Agreed |
 | Subcommands `adopt`, `incident`, `retro`, `sync`; Evolve runs automatically after deploy | Default |
 | Lens activation from `lens_triggers`; class L activates every plausible lens; new triggers found mid-flight add lenses and can raise the class | Default |
-| External writes go through an outbox with one batched human approval per stop; only `sdd/*` pushes and draft PRs stay autonomous | Default |
+| External writes need one batched human approval per stop (now `external-write` entries in `decisions.md`, §6); only `sdd/*` pushes and draft PRs stay autonomous | Default |
 | Fallbacks for missing agents removed; every role now has its agent | Default (follows the complete-system principle) |
 
 ## 4. Skills review (agreed 2026-10-06)
@@ -107,19 +109,54 @@ Consistency audit (mechanical): guard permissions aligned with agent instruction
 | Command registry integrity | The guard reads `.sdd/commands.yaml` from the main checkout (feature branch), so registry changes take effect only after architect review and integration; new tooling is registered in its own task before use |
 | New modes and triggers | architect `review-commands`; researcher `skills`; env-plan after hosting decisions and for designs that need resources; risk packages for deferred critical/major findings; cartographer `impact`; product-lead `evolve` with an Outcome section in the brief |
 
-## 6. Review backlog (before testing)
+## 6. Asset consolidation (agreed 2026-10-07)
+
+**Principle:** start from a small, well-defined set of core assets and expand only when a real need appears. Knowledge lives in canonical documents, never in a separate knowledge base. Templates went from 38 to 20.
+
+**Project assets (`.sdd/`)**
+
+| Asset | Owner | Replaces |
+|---|---|---|
+| `constitution.md` | human | — (technology constraints moved to `stack.yaml`) |
+| `config.yaml` | human | — |
+| `stack.yaml` | architect (human's `fixed` entries) | also absorbs `commands.yaml` (a `commands:` section) and `dependencies.yaml` (approvals live in the design's dependency review) |
+| `product.md` | product-lead | `.sdd/product/` (vision, personas, glossary) |
+| `architecture.md` | architect | `.sdd/architecture/` (overview, conventions, fitness functions, debt), `.sdd/operations/` (service levels, capacity), `.sdd/map/` |
+| `docs/adr/` | architect | — |
+| `design-system.md`, `incidents/` | ux-designer, incident-responder | on demand; postmortem is a section of the incident file |
+
+**Foundation and state.** `/sdd init` and `/sdd adopt` run the foundation as a feature, `specs/000-foundation/` on `sdd/F000-foundation`. No project-level state: the active feature is the checked-out `sdd/*` branch (no `.sdd/state.yaml`, no `.sdd/active`).
+
+**Feature assets (`specs/NNN-slug/`).** `state.yaml` (simplified: status, waiting-for-human, next, phases, lenses, review-rounds, tasks, stale, history), `brief.md`, `requirements.md`, `ux.md`, `research/`, `design.md`, `contracts/`, `tasks.md`, `test-plan.md`, `evidence/`, `release.md`, `reviews/`, `decisions.md`.
+
+| Change | Replaces |
+|---|---|
+| **`decisions.md`** per feature: autonomous decisions, entries waiting for the human (G1–G3 and `H-nn`: risk, scope, legal, deadlock, external write, mitigation, methodology, spend, setup), the human's answers, docs impact | `gates/` (G1-intent, G2 packages, G2-brief, G3, risk-*), `log.md`, `.sdd/outbox.md`, MIPs |
+| **Research notes** (one rich template; kinds: question, technology-options, technology-reference, codebase-investigation, spike, domain) | stack briefs, spikes, cartographer `context.md` and `impact-*` |
+| Specialist input as **review findings** folded into the design's sections (Security, Data and privacy, Cost, failure modes) and the test plan (Performance and resilience, Evaluations) | threat model, `lens-<lens>.md`, `evals.md`, `perf-plan.md`, SLO/capacity files |
+| Traceability report written only on request (`sdd.py trace … --report evidence/traceability.md`) | `trace.md` |
+| Tasks use `delivers` (IDs) and `files` (paths) | `refs`, `touches` |
+| Retros route findings to the owners of canonical documents and list methodology proposals in `decisions.md` | knowledge base, `lessons`, `improvements`, `retro.md`, knowledge sync |
+
+**Mode changes.** cartographer `investigate`/`impact`/`adopt` (was `context`/`refresh`/…); librarian `docs`/`retro` only; researcher `technology-reference` (was `stack-brief`); security-engineer's threat analysis is part of `design-review`; reliability-engineer `perf-review` (was `slo`/`capacity`/`perf-plan`); architect `review-commands` removed (it registers commands proposed by platform-engineer or task owners as findings).
+
+**Guard.** Commands from the committed `stack.yaml`; dependency-approval checks removed; write policies rebuilt for the new paths; the hub may also write `.sdd/constitution.md` and `.sdd/config.yaml` (copied at init, later only human-approved changes).
+
+**Fixed during the reference sweep.** Librarian `docs` runs in Release (in parallel with the release plan) so the docs merge with the feature; it was listed in both Release and Evolve.
+
+## 7. Review backlog (before testing)
 
 From the human's instructions for the review phase:
 
 1. ~~Reuse existing skills~~: done as the skills review (§4). Selecting external stack skills is a separate, later step.
 2. **End-to-end workflow review.** Walk every class (T, S, M, L) and every path (greenfield init, adopt, feature, incident, retro) through the dispatch table and contracts. Look for missing handoffs, ownership gaps, circular waits and duplicated reviews.
 3. ~~Agent review~~: done (§5).
-4. **Assets review.** All templates, skills, prompts, the hub, the guard policies and `sdd.py`, for consistency of names, IDs, paths and modes.
+4. ~~Assets review~~: done (§6).
 5. **Capability and dependency gaps** across the whole system. Known candidates:
    - Frontend stack skills: `stack-typescript` and framework skills, possibly reused from existing skills.
    - Cloud stack skills, once a hosting platform is chosen.
    - Brain-vault integration for the librarian.
-   - Issue-tracker connectors for the sync outbox.
+   - Issue-tracker connectors for external-write entries.
    - Local platform tooling: actionlint, hadolint, trivy, syft, gitleaks, OpenTofu, pre-commit, Docker.
    - Packaging: rename to sdd-kit, README, version, marketplace entry.
 6. **Then testing**, systematically and with the complete system.

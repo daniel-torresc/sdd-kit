@@ -1,16 +1,12 @@
 {
-  "_doc": "Per-agent permissions enforced by scripts/guard.py. Agents not listed here are not restricted by this guard. 'write': glob patterns relative to the project root that the agent may write; 'write_except': globs it may never write ('!pattern' re-includes); 'write_if_conflicted': may edit files that contain merge-conflict markers; 'bash': regexes for SDD commands the agent may run (git, gh, the trace script, \u2026); 'project_commands': purposes from the project's committed .sdd/commands.yaml the agent may run (the registry follows the project's stack; a global denylist always applies; runtime additions via 'deps-add' must be approved in .sdd/dependencies.yaml); chaining and redirection are always denied; 'mcp': 'read-only' denies MCP tools whose name looks like a write. '__hub__' lists the main session's bookkeeping actions that are auto-approved; everything else in the main session keeps normal prompts. In-policy actions are auto-approved unless .sdd/config.yaml sets permissions.auto_approve: false.",
+  "_doc": "Per-agent permissions enforced by scripts/guard.py. Agents not listed here are not restricted by this guard. 'write': glob patterns relative to the project root that the agent may write; 'write_except': globs it may never write ('!pattern' re-includes); 'write_if_conflicted': may edit files that contain merge-conflict markers; 'bash': regexes for SDD commands the agent may run (git, gh, the trace script, \u2026); 'project_commands': purposes from the `commands:` section of the project's committed .sdd/stack.yaml the agent may run (the registry follows the project's stack; a global denylist always applies); chaining and redirection are always denied; 'mcp': 'read-only' denies MCP tools whose name looks like a write. '__hub__' lists the main session's bookkeeping actions that are auto-approved; everything else in the main session keeps normal prompts. In-policy actions are auto-approved unless .sdd/config.yaml sets permissions.auto_approve: false.",
   "__hub__": {
     "write": [
       "specs/*/state.yaml",
-      "specs/*/gates/*",
-      "specs/*/log.md",
-      ".sdd/state.yaml",
-      ".sdd/gates/*",
-      ".sdd/log.md",
-      ".sdd/active",
-      ".sdd/outbox.md",
-      ".sdd/stack.yaml"
+      "specs/*/decisions.md",
+      ".sdd/stack.yaml",
+      ".sdd/constitution.md",
+      ".sdd/config.yaml"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -26,17 +22,11 @@
   },
   "product-lead": {
     "write": [
+      ".sdd/product.md",
       "specs/*/brief.md",
       "specs/*/requirements.md",
-      "specs/*/gates/G1-*.md",
-      "specs/*/log.md",
       "specs/*/reviews/*.md",
-      ".sdd/product/vision.md",
-      ".sdd/product/personas.md",
-      ".sdd/product/glossary.md",
-      ".sdd/log.md",
-      ".sdd/reviews/*.md",
-      "specs/*/gates/risk-*.md"
+      "specs/*/decisions.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?"
@@ -45,10 +35,9 @@
   },
   "challenger": {
     "write": [
-      "specs/*/reviews/*-challenger-r*.md",
+      "specs/*/reviews/*-challenger-*.md",
       "specs/*/reviews/second-opinion-challenger-*.md",
-      ".sdd/reviews/*-challenger-*.md",
-      ".sdd/log.md"
+      "specs/*/decisions.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?"
@@ -57,19 +46,14 @@
   },
   "architect": {
     "write": [
+      ".sdd/architecture.md",
+      ".sdd/stack.yaml",
+      "docs/adr/ADR-*.md",
       "specs/*/design.md",
       "specs/*/contracts/*",
-      "docs/adr/ADR-*.md",
-      "specs/*/gates/G2-*.md",
-      ".sdd/gates/G2-*.md",
-      ".sdd/architecture/*.md",
-      ".sdd/spikes/*",
+      "specs/*/research/*",
       "specs/*/reviews/*.md",
-      ".sdd/reviews/*.md",
-      "specs/*/log.md",
-      ".sdd/stack.yaml",
-      ".sdd/log.md",
-      "specs/*/gates/risk-*.md"
+      "specs/*/decisions.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?"
@@ -83,8 +67,7 @@
     "write": [
       "specs/*/tasks.md",
       "specs/*/reviews/*.md",
-      "specs/*/log.md",
-      ".sdd/log.md"
+      "specs/*/decisions.md"
     ],
     "write_if_conflicted": true,
     "bash": [
@@ -115,16 +98,14 @@
     "write": [
       "specs/*/test-plan.md",
       "specs/*/evidence/*",
-      "specs/*/reviews/*.md",
-      "specs/*/log.md",
       "*tests/acceptance/*",
       "*tests/contract/*",
       "*tests/e2e/*",
       "*tests/perf/*",
       "*tests/fixtures/*",
-      ".sdd/log.md",
-      "specs/*/gates/risk-*.md",
-      "*tests/support/*"
+      "*tests/support/*",
+      "specs/*/reviews/*.md",
+      "specs/*/decisions.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -150,25 +131,23 @@
     ],
     "write_except": [
       "specs/*",
-      "!specs/*/log.md",
+      "!specs/*/reviews/*.md",
+      "!specs/*/decisions.md",
       ".sdd/*",
-      "docs/adr/*",
+      "README.md",
+      "docs/*",
       "*tests/acceptance/*",
       "*tests/contract/*",
       "*tests/e2e/*",
       "*tests/perf/*",
+      "*tests/support/*",
+      "*tests/security/*",
       ".github/*",
       "infra/*",
       "Dockerfile*",
       "*/Dockerfile*",
       "docker-compose*",
-      "compose.y*ml",
-      "!specs/*/reviews/*.md",
-      "!.sdd/log.md",
-      "*tests/security/*",
-      "*tests/support/*",
-      "README.md",
-      "docs/*"
+      "compose.y*ml"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -199,7 +178,7 @@
       "specs/*/reviews/build-code-reviewer-*.md",
       "specs/*/reviews/test-code-reviewer-*.md",
       "specs/*/reviews/verify-code-reviewer-*.md",
-      ".sdd/log.md"
+      "specs/*/decisions.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -227,27 +206,20 @@
     ],
     "write_except": [
       "specs/*",
-      "!specs/*/release.md",
-      "!specs/*/gates/G3-*",
       "!specs/*/reviews/*.md",
-      "!specs/*/log.md",
+      "!specs/*/decisions.md",
       ".sdd/*",
-      "docs/adr/*",
+      "README.md",
+      "docs/*",
       "*tests/acceptance/*",
       "*tests/contract/*",
       "*tests/e2e/*",
       "*tests/perf/*",
-      "src/*/*/*",
-      "!.sdd/commands.yaml",
-      "!.sdd/log.md",
-      "!.sdd/reviews/*.md",
-      "!.sdd/gates/G3-*",
-      "!specs/*/gates/risk-*",
-      "*tests/security/*",
       "*tests/support/*",
-      "README.md",
-      "docs/*",
-      "!docs/runbooks/*"
+      "*tests/security/*",
+      "!specs/*/release.md",
+      "!docs/runbooks/*",
+      "src/*/*/*"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -281,15 +253,10 @@
   },
   "security-engineer": {
     "write": [
-      "specs/*/threat-model.md",
-      ".sdd/dependencies.yaml",
       "*tests/security/*",
-      "specs/*/reviews/*.md",
-      "specs/*/gates/risk-*.md",
-      "specs/*/log.md",
       "specs/*/evidence/security/*",
-      ".sdd/log.md",
-      ".sdd/reviews/*.md"
+      "specs/*/reviews/*.md",
+      "specs/*/decisions.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -305,13 +272,9 @@
   },
   "reliability-engineer": {
     "write": [
-      ".sdd/operations/*",
-      "specs/*/perf-plan.md",
-      "specs/*/reviews/*.md",
       "specs/*/evidence/reliability/*",
-      "specs/*/log.md",
-      ".sdd/log.md",
-      ".sdd/reviews/*.md"
+      "specs/*/reviews/*.md",
+      "specs/*/decisions.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -328,14 +291,11 @@
   },
   "ux-designer": {
     "write": [
+      ".sdd/design-system.md",
       "specs/*/ux.md",
       "specs/*/prototypes/*",
-      ".sdd/product/design-system.md",
       "specs/*/reviews/*.md",
-      "specs/*/log.md",
-      ".sdd/reviews/*-ux-designer-*.md",
-      ".sdd/log.md",
-      ".sdd/reviews/*.md"
+      "specs/*/decisions.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -351,11 +311,7 @@
   "researcher": {
     "write": [
       "specs/*/research/*",
-      ".sdd/research/*",
-      ".sdd/briefs/*",
-      "specs/*/log.md",
-      ".sdd/log.md",
-      ".sdd/reviews/*.md"
+      "specs/*/decisions.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -365,11 +321,8 @@
   },
   "cartographer": {
     "write": [
-      ".sdd/map/*",
-      "specs/*/context.md",
-      "specs/*/impact-*.md",
-      "specs/*/log.md",
-      ".sdd/log.md"
+      "specs/*/research/*",
+      "specs/*/decisions.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -382,17 +335,12 @@
     "write": [
       "README.md",
       "docs/*",
-      ".sdd/knowledge/*",
-      ".sdd/improvements.md",
-      "specs/*/retro.md",
-      "specs/*/log.md",
       "specs/*/reviews/*.md",
-      ".sdd/log.md",
-      ".sdd/reviews/*.md"
+      "specs/*/decisions.md"
     ],
     "write_except": [
-      "docs/runbooks/*",
-      "docs/adr/*"
+      "docs/adr/*",
+      "docs/runbooks/*"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -403,8 +351,8 @@
   "incident-responder": {
     "write": [
       ".sdd/incidents/*",
-      "specs/*/log.md",
-      ".sdd/log.md"
+      "specs/*/reviews/*.md",
+      "specs/*/decisions.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",
@@ -419,10 +367,7 @@
   "consultant": {
     "write": [
       "specs/*/reviews/*-consultant-*.md",
-      "specs/*/lens-*.md",
-      "specs/*/evals.md",
-      "specs/*/log.md",
-      ".sdd/log.md"
+      "specs/*/decisions.md"
     ],
     "bash": [
       "(rtk )?uv run (-q )?\"?/\\S+?/skills/sdd-contracts/scripts/sdd\\.py\"? (trace|stale)( [^<>$]*)?",

@@ -1,6 +1,6 @@
 ---
 name: practice-tech-selection
-description: How to choose technologies from context in SDD — deriving decision criteria from the requirements, NFRs and constraints of the specific product; identifying the reference option for each decision from context rather than defaults; finding every viable option; evaluating options with evidence (fit, maturity, ecosystem, operational cost, lock-in and reversal cost, license, security record, team capability, longevity); the novelty budget; reasoning about coupled decisions; and presenting a fair G2 package and one-page decision brief for the human to decide. Use when choosing a language, framework, datastore, hosting, identity provider, frontend approach or any significant component, and when preparing or reviewing G2 packages.
+description: How to choose technologies from context in SDD — deriving decision criteria from the requirements, NFRs and constraints of the specific product; identifying the reference option for each decision from context rather than defaults; finding every viable option; evaluating options with evidence (fit, maturity, ecosystem, operational cost, lock-in and reversal cost, license, security record, team capability, longevity); the novelty budget; reasoning about coupled decisions; and presenting fair one-screen G2 entries (and an overview entry when several are pending) for the human to decide. Use when choosing a language, framework, datastore, hosting, identity provider, frontend approach or any significant component, and when preparing or reviewing G2 entries.
 ---
 
 # Practice: Technology selection
@@ -54,9 +54,9 @@ Each project can afford only a little novelty. Every option that is new to the p
 
 Some decisions constrain each other (frontend rendering ↔ backend framework ↔ identity ↔ hosting). Identify the couplings, the **order** in which decisions should be made, and **coherent bundles**: combinations that fit together, each with total cost, novelty spent and reversal risk. State which combinations do not fit and why.
 
-## 7. G2 package (one-way doors)
+## 7. G2 entry (one-way doors)
 
-Write `gates/G2-<slug>.md` (feature) or `.sdd/gates/G2-<slug>.md` (project) from the gate template:
+Put the full analysis in a research note (kind `technology-options`), and write a one-screen **G2 entry** under "Waiting for the human" in `decisions.md` (the feature's, or the foundation feature's for project-level decisions) that links to it:
 1. The decision in one sentence, and why it is a one-way door.
 2. The decision criteria from §1, with their weights.
 3. Options (the reference option plus every viable alternative), each with **symmetric depth**: pros, cons, fit per criterion, reversal cost, operational cost, novelty spent, license.
@@ -64,14 +64,14 @@ Write `gates/G2-<slug>.md` (feature) or `.sdd/gates/G2-<slug>.md` (project) from
 5. A **non-binding recommendation** in its own section. The option descriptions must read the same with or without it.
 6. What is blocked until the human decides, and what can proceed.
 
-When several G2s are pending together, add `G2-brief.md`, one screen long:
+When several G2s are pending together, add an **overview entry** in `decisions.md`, one screen long:
 - the questions that would flip recommendations, listed first;
 - the decision order;
 - 2–3 coherent bundles;
 - one line per decision;
 - how to answer.
 
-The challenger reviews the packages and the brief for fairness before the human sees them. After the decision, the architect records an ADR with `decided-by: human` and the human's reasons, and updates `.sdd/stack.yaml`: the chosen technology, version, `decided-by: human-at-G2`, the ADR link, and the technology skills agents should load for it (agreed with the human; the researcher may propose candidates).
+The challenger reviews the G2 entries, their research notes and the overview entry for fairness before the human sees them. After the decision, the architect records an ADR with `decided-by: human` and the human's reasons, and updates `.sdd/stack.yaml`: the chosen technology, version, `decided-by: human-at-G2`, the ADR link, and the technology skills agents should load for it (agreed with the human; the researcher may propose candidates).
 
 ## 8. Smaller choices (two-way doors)
 

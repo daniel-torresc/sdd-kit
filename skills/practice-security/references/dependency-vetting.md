@@ -1,6 +1,6 @@
 # Dependency vetting (security-engineer, D2)
 
-For each requested runtime dependency, check and record in `.sdd/dependencies.yaml`:
+For each runtime dependency listed in the design (or requested during Build), check and record the result in your review:
 
 | Check | Pass condition |
 |---|---|
@@ -11,4 +11,4 @@ For each requested runtime dependency, check and record in `.sdd/dependencies.ya
 | Necessity | Not trivially replaceable by the standard library or an already approved dependency |
 | Footprint | Transitive dependencies reasonable; no install-time scripts doing unexpected things |
 
-Decision: `approved` (with a version range), `rejected` (with the reason and an alternative), or D3 (license or legal). Record who checked and when.
+Decision per dependency: `approved` (with a version range), `rejected` (with the reason and an alternative), or D3 (license or legal, as a decision entry for the human). code-reviewer checks dependency diffs against your approvals.

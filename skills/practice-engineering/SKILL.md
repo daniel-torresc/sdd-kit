@@ -8,11 +8,11 @@ description: How an SDD engineer approaches implementation work, independent of 
 ## 1. Understand before changing
 
 Before writing anything, read in this order:
-1. the task (`refs`, `touches`, `done-when`, `depends`);
+1. the task (`delivers`, `files`, `done-when`, `depends`, Goal and Notes);
 2. its ACs;
 3. the relevant design sections and ADRs;
 4. the contracts;
-5. the project conventions (`.sdd/architecture/conventions.md`) and stack (`.sdd/stack.yaml`);
+5. the project's conventions (`.sdd/architecture.md`) and stack (`.sdd/stack.yaml`);
 6. the acceptance tests for your ACs;
 7. the code you will touch, and its callers.
 
@@ -44,7 +44,7 @@ None of these is a later task.
 
 ## 5. Scope discipline
 
-- Change what the task's `touches` covers.
+- Change what the task's `files` covers.
 - Inside that scope, improve freely while tests are green.
 - Outside it, make only mechanical changes (rename, import, call-site update), and declare each one in the handoff.
 - Anything larger outside scope: don't do it. Propose it as debt or as an enabler task.
@@ -53,17 +53,17 @@ None of these is a later task.
 
 ## 6. Dependencies
 
-Only runtime dependencies approved in `.sdd/dependencies.yaml`. If you need a new one, return `blocked` with an escalation to security-engineer: name, version, purpose, license, alternatives. Development-only tools are your decision, and you log them.
+Only runtime dependencies listed in the design and approved by security-engineer. If you need a new one, return `blocked` with an escalation to security-engineer: name, version, purpose, license, alternatives. Development-only tools are your decision, and you log them.
 
 ## 7. Local definition of done
 
-Before handoff, run the project's checks (the registered commands in `.sdd/commands.yaml`) and pass all of them:
+Before handoff, run the project's checks (the commands registered in `.sdd/stack.yaml`) and pass all of them:
 - formatting and linting;
 - type checking (where the stack has it);
 - the **full** test suite, not just your tests;
 - diff coverage at or above the configured minimum, measured **after committing**;
 - migrations up and down, if you added any;
-- architecture rules (fitness functions).
+- architecture rules enforced in CI.
 
 No new suppressions without an inline reason, no debug output, no commented-out code, and no TODO without a debt entry.
 
@@ -87,7 +87,7 @@ At most the configured number of attempts per failing check. Each attempt reads 
 Follow the commit conventions in the workflow contract. Your return envelope's `summary` is the handoff note:
 - **Changed**: what, where.
 - **Verified**: each check and its result; the acceptance tests passing, by ID.
-- **Outside touches**: the mechanical changes, if any.
+- **Outside `files`**: the mechanical changes, if any.
 - **Docs impact**: user- or operator-visible changes the docs must reflect (new settings, changed behavior, new commands). You keep docstrings and in-code docs current; README and `docs/` are updated by the librarian from this list.
 - **Risks and follow-ups**: debt proposals, change requests filed, where reviewers should look first.
 - **Branch**: the task branch and the head commit SHA.

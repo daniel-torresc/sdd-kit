@@ -29,7 +29,9 @@ refs: REQ-01, NFR-01
 <!-- Signature or schema, errors, idempotency, auth, versioning. -->
 
 ## Contracts
-<!-- Machine-readable contracts in contracts/ (required for external/public interfaces): OpenAPI 3.1, AsyncAPI, JSON Schema. -->
+<!-- One file per external or public interface in contracts/: operations, inputs, outputs, errors, guarantees and boundaries,
+     in clear markdown. Use a machine-readable format (e.g. OpenAPI, AsyncAPI, JSON Schema) only when something consumes it:
+     generated clients, contract-testing tools, external consumers. -->
 
 ## Runtime dependencies
 <!-- New runtime packages/services this design needs: name, version range, purpose, alternatives considered.
@@ -56,17 +58,21 @@ refs: REQ-01, NFR-01
 ## Observability
 <!-- Logs, metrics, traces, alerts per interface. -->
 
-## Security considerations
-<!-- Summary; details in threat-model.md when the security lens is active. -->
+## Security
+<!-- Threats per entry point and the mitigation for each (from security-engineer's design review when the security lens is active),
+     authorization model, data classification and handling. -->
+
+## Data and privacy
+<!-- Personal data handled, purpose, retention and deletion, processors (from the privacy lens when active). -->
+
+## Cost
+<!-- Cost drivers and monthly estimate when new resources or paid services are involved (from the FinOps lens when active). -->
 
 ## Decisions
-<!-- List ADRs created or relied on. One-way doors: G2 reference or why none. -->
+<!-- ADRs created or relied on; one-way doors (G2 entry in decisions.md) or why none; research notes (incl. spikes) relied on. -->
 
-## Spikes
-<!-- SPK-nn: question → conclusion. -->
-
-## Fitness functions and architecture updates
-<!-- New FF-nn to add to .sdd/architecture/fitness.md; changes to overview.md / conventions.md on ship. -->
+## Architecture updates
+<!-- What architecture.md must reflect once this ships (new modules, flows, conventions, debt), and architecture rules to enforce in CI. -->
 
 ## Alternatives considered
 

@@ -9,7 +9,7 @@ This file holds the **principles** every engineer, reviewer and platform enginee
 
 | Reference | Used for |
 |---|---|
-| [references/threat-modeling.md](references/threat-modeling.md) | Data classification, verification level, STRIDE threat models, design-level security patterns |
+| [references/threat-modeling.md](references/threat-modeling.md) | Data classification, verification level, STRIDE threat analysis delivered as review findings, design-level security patterns |
 | [references/dependency-vetting.md](references/dependency-vetting.md) | Approving or rejecting runtime dependencies |
 | [references/verification.md](references/verification.md) | Security review and security testing in Verify; severity |
 | [references/risk-acceptance.md](references/risk-acceptance.md) | Packages for consciously accepting security risk |

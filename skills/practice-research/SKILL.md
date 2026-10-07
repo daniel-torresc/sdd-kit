@@ -1,6 +1,6 @@
 ---
 name: practice-research
-description: Research practice for the SDD researcher — framing a research question, search strategy, source selection and credibility, current official documentation, triangulation, citing every claim, confidence levels, separating facts from inferences, technology option analyses that feed G2 packages, stack briefs for unfamiliar technologies, and domain/market/regulatory research. Use when answering a routed Q-nn, preparing technology options, or writing a stack brief.
+description: Research practice for the SDD researcher — framing a research question, search strategy, source selection and credibility, current official documentation, triangulation, citing every claim, confidence levels, separating facts from inferences, technology option analyses that feed G2 entries, technology reference notes for unfamiliar technologies, and domain/market/regulatory research. Use when answering a routed Q-nn, preparing technology options, or writing a technology reference.
 ---
 
 # Practice: Research
@@ -30,15 +30,15 @@ Prefer the newest authoritative source; record the retrieval date. Check version
 
 ## 4. Output: research note
 
-`specs/<f>/research/Q-nn-<slug>.md` (or `.sdd/research/` for project-level), from the template: question, decision informed, summary answer (3–5 lines), findings with confidence and sources, options table if applicable, implications for REQ/NFR/design, open questions, sources list.
+`specs/<f>/research/Q-nn-<slug>.md` (project-level research lives in the foundation feature, `specs/000-foundation/research/`), from the template: why (question, decision informed), how (approach), findings with confidence, options if a choice is being informed, conclusion, the decision taken (filled once decided), open questions and sources. The same template serves every kind: questions, technology options, technology references, codebase investigations, spikes and domain research.
 
 ## 5. Technology option analysis (feeds G2)
 
-Use `practice-tech-selection`: derive the decision criteria from the context, include the reference option (derived from context, with its reasoning) and every viable option, evidence per criterion (fit to named REQ/NFR IDs, maturity, ecosystem, operational cost with a sourced monthly estimate, lock-in and reversal cost, license, security record, team/hiring, longevity), and one-line exclusions for non-viable options. Present options symmetrically; your lean, if any, goes in a separate section. The architect builds the G2 package from it.
+Use `practice-tech-selection`: derive the decision criteria from the context, include the reference option (derived from context, with its reasoning) and every viable option, evidence per criterion (fit to named REQ/NFR IDs, maturity, ecosystem, operational cost with a sourced monthly estimate, lock-in and reversal cost, license, security record, team/hiring, longevity), and one-line exclusions for non-viable options. Present options symmetrically; your lean, if any, goes in a separate section. The architect writes the G2 entry from it.
 
-## 6. Stack brief
+## 6. Technology reference
 
-When a decided technology is unfamiliar to the team and no adequate guidance is available, write `.sdd/briefs/<technology>.md` from the stack-brief template, from current official documentation: version researched, idioms and project layout, tooling (formatting, linting, type checking, testing, packaging), testing patterns, security and performance pitfalls, common mistakes. It must be good enough for an engineer to work from. It is project knowledge, not a reusable skill; link it from the technology's entry in `.sdd/stack.yaml` (via the architect).
+When a decided technology is unfamiliar to the team and no adequate guidance is available, write a research note (kind `technology-reference`) from current official documentation: version researched, idioms and project layout, tooling (formatting, linting, type checking, testing, packaging), testing patterns, security and performance pitfalls, common mistakes. It must be good enough for an engineer to work from. It is project knowledge, not a reusable skill; the architect links it from the technology's entry in `.sdd/stack.yaml`.
 
 **Candidate skills.** When asked, propose technology-specific skills for a stack entry: what each covers, its source, maintenance, and fit for the decided version, so the human can choose which to install and list.
 

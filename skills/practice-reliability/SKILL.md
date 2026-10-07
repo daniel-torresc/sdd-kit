@@ -7,7 +7,7 @@ description: Reliability, performance and operations practice for SDD — SLIs, 
 
 ## 1. SLIs, SLOs, error budgets
 
-For every user-facing service or critical journey, define in `.sdd/operations/slos.md`:
+For every user-facing service or critical journey, define (as review findings; the architect records them in the design and, on ship, in `architecture.md` → Deployment and operations):
 - **SLI** — a ratio of good events to valid events, measured where users experience it (e.g. "requests to /checkout answered 2xx/3xx in < 800 ms").
 - **SLO** — target over a window (e.g. 99.5% over 28 days). Start realistic; tighten with data.
 - **Error budget** — 1 − SLO; the release policy when it's exhausted (freeze risky changes, prioritize reliability work).

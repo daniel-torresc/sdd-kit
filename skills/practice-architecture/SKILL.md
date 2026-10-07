@@ -1,19 +1,19 @@
 ---
 name: practice-architecture
-description: How to design production systems in SDD — turning NFRs into quality-attribute scenarios and budgets, component and interface design, API design rules (errors, idempotency, pagination, versioning), data modeling, failure-mode analysis, observability by design, the simplest-structure principle, fitness functions, ADR writing, spikes, and a design self-review. Use when writing or reviewing design.md, ADRs, contracts, project architecture docs, or answering feasibility questions.
+description: How to design production systems in SDD — turning NFRs into quality-attribute scenarios and budgets, component and interface design, API design rules (errors, idempotency, pagination, versioning), data modeling, failure-mode analysis, observability by design, the simplest-structure principle, architecture rules enforced in CI, ADR writing, spikes, and a design self-review. Use when writing or reviewing design.md, ADRs, contracts, project architecture docs, or answering feasibility questions.
 ---
 
 # Practice: Architecture
 
 ## 1. Method
 
-1. **Read everything upstream**: requirements (REQ/NFR/AC), ux, the constitution, `.sdd/architecture/*`, existing ADRs, and — for existing code — the actual structure (cite it).
+1. **Read everything upstream**: requirements (REQ/NFR/AC), ux, the constitution, `.sdd/architecture.md`, `.sdd/stack.yaml`, existing ADRs, and — for existing code — the cartographer's research notes and the actual structure (cite it).
 2. **Turn NFRs into quality-attribute scenarios** (§2) and allocate budgets.
 3. **Find the one-way doors** first (§8). Anything needing G2 is raised before detailed design.
 4. **Sketch the simplest design** that meets every REQ and scenario. Then steelman one real alternative and keep the better.
 5. **Detail** components, interfaces, data, failure modes, observability (§3–§6).
 6. **Record decisions** as ADRs (§9); write contracts for external/public interfaces (§4).
-7. **Define fitness functions** for new structural rules (§7).
+7. **Name the architecture rules to enforce in CI** for new structural constraints (§7).
 8. **Self-review** (§11) and run `sdd.py trace --phase design`.
 
 ## 2. Quality-attribute scenarios and budgets
@@ -28,7 +28,7 @@ Then **budget** the measure across the path (edge 20 ms, app 60 ms, DB 40 ms, em
 
 - One **responsibility** per component, stated in one sentence; it **owns** its data (no other component writes its tables).
 - Dependencies point toward stable, abstract modules; no cycles.
-- **Start from the simplest structure that meets the requirements**: one deployable with clear module boundaries (each module exposes an explicit public interface; others depend only on it), enforced by fitness functions. Distribution (separately deployed services, message brokers, additional datastores) must be justified in an ADR by a specific NFR or constraint: independent scaling, isolation of a failure domain, a different compliance boundary, or a different release cadence owned by a different team.
+- **Start from the simplest structure that meets the requirements**: one deployable with clear module boundaries (each module exposes an explicit public interface; others depend only on it), enforced in CI. Distribution (separately deployed services, message brokers, additional datastores) must be justified in an ADR by a specific NFR or constraint: independent scaling, isolation of a failure domain, a different compliance boundary, or a different release cadence owned by a different team.
 - Asynchronous work only where an NFR or failure mode needs it (slow or unreliable dependency, bursty load). Prefer the simplest mechanism the existing infrastructure already provides until volume demands more.
 
 ## 4. Interfaces and API design
@@ -71,14 +71,15 @@ Acceptance tests drive the system only through public interfaces, so the design 
 - **External systems**: every outbound dependency behind a port with a contract-faithful fake (SMTP capture, payment stub).
 - **Operability**: metrics and structured logs readable in tests, so NFR and "no PII in logs" checks don't reach into internals.
 
-## 7. Fitness functions
+## 7. Architecture rules enforced in CI
 
-Architecture rules that are automated and run in CI, recorded in `.sdd/architecture/fitness.md` as `FF-nn`:
-- **Dependency rules** — module A may not depend on module B (enforced by the stack's dependency-rule tooling).
-- **Contract conformance** — the implementation matches `contracts/` (contract tests generated from the contract; generated clients compile).
-- **Performance budgets** — load test thresholds from the NFR `verify:` lines.
+The few structural rules that must not erode are automated in CI rather than documented and hoped for:
+- **Dependency rules** — module A may not depend on module B (the stack's dependency-rule tooling).
+- **Contract conformance** — the implementation matches `contracts/` (contract tests; generated clients compile, where a machine-readable contract exists).
+- **Performance budgets** — load-test thresholds from the NFR `verify:` lines.
 - **Migration safety** — migrations apply and roll back on a copy of the schema.
-You define them; platform-engineer wires them into CI.
+
+Name them in the design and list them in one line each under `architecture.md` → Conventions; platform-engineer wires them into CI.
 
 ## 8. One-way doors (→ G2)
 
@@ -91,9 +92,9 @@ One decision per ADR, in `docs/adr/ADR-NNNN-<slug>.md` from the template. Contex
 ## 10. Spikes
 
 When feasibility is uncertain and cheap to test, run a spike instead of assuming:
-- Folder `.sdd/spikes/SPK-nn-<slug>/` with a `README.md` from the spike template: question, time box, method, result, decision it informs.
-- Throwaway: never imported by product code, never copied without review.
-- Record the result in the design or ADR that depended on it.
+- Time-box it and state the one question it answers.
+- The code is throwaway: run it in a temporary location that is never committed or imported by product code.
+- Record the question, method, result and conclusion as a **research note** (kind `spike`), and reference it from the design or ADR that depends on it.
 
 ## 11. Design self-review
 
@@ -106,7 +107,7 @@ When feasibility is uncertain and cheap to test, run a spike instead of assuming
 - [ ] Failure-mode table covers every external dependency and stateful operation
 - [ ] Observability and alerts specified per interface
 - [ ] Testability seams specified: clock, randomness, queue drain, observable outcomes, external fakes, readable metrics/logs
-- [ ] New structural rules captured as fitness functions
+- [ ] New structural rules named for enforcement in CI
 - [ ] ADR for every D1+ architectural choice; capability claims verified in current docs
 - [ ] New runtime dependencies listed for security-engineer's dependency-review
-- [ ] `.sdd/architecture/*` updates listed (applied when the feature ships)
+- [ ] `architecture.md` updates listed in the design (applied when the feature ships)

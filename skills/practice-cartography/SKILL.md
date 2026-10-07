@@ -1,55 +1,57 @@
 ---
 name: practice-cartography
-description: Codebase mapping for SDD in existing (brownfield) projects — project maps (structure, modules, entry points, data stores, integrations, build/run/test commands, conventions actually in use, test landscape, hotspots from git churn), feature context packs (relevant files, current behavior with file:line citations, callers, tests, conventions to follow), impact analysis for proposed changes, adoption of an existing codebase into SDD, and how to change existing code safely (characterization tests, seams, strangler, incremental change). Use when onboarding a codebase, before specifying or designing a change to existing code, or when assessing the blast radius of a change.
+description: Codebase investigation for SDD in existing (brownfield) projects — investigating a whole system or a feature's area (structure, behavior, data, integrations, commands that work, conventions in use, tests, hotspots) and recording it as cited research notes for the owners of the canonical documents, impact analysis for proposed changes, adoption of an existing codebase into SDD, and how to change existing code safely (characterization tests, seams, strangler, incremental change). Use when onboarding a codebase, before specifying or designing a change to existing code, or when assessing the blast radius of a change.
 ---
 
 # Practice: Cartography
 
 Describe **what is**, with citations (`path:line`), never what should be. Opinions go in a separate "Observations" section.
 
-## 1. Project map (`.sdd/map/`)
+## 1. Whole-system investigation (adopt)
 
-| File | Contents |
-|---|---|
-| `structure.md` | Top-level layout, languages and frameworks (with versions from lockfiles), deployables, modules/packages with one-line responsibilities, entry points (HTTP routes, CLIs, jobs, consumers) |
-| `data.md` | Datastores, schemas/models, migrations tooling, data ownership by module, external data flows |
-| `integrations.md` | External services and APIs called, how (client, auth, timeouts), configuration and secrets references (names only) |
-| `conventions.md` | Conventions **observed**: naming, error handling, logging, DI, test layout, formatting/linting config — with example locations |
-| `operations.md` | Build, run, test, lint commands that actually work; CI pipelines; deployment config found |
-| `tests.md` | Test frameworks, levels present, how to run, rough coverage signal, flaky or skipped areas |
-| `hotspots.md` | Files with highest churn (git log) × size/complexity; areas with no tests; TODO/FIXME clusters |
+When an existing codebase adopts SDD, investigate it as a whole and write research notes (kind `codebase-investigation`), each aimed at the owner who will turn it into a canonical document:
 
-Methods: read manifests/lockfiles first, then entry points, then follow calls; `git log --since=… --name-only` for churn; grep for routes, models, config keys. Verify commands by reading CI config, not by guessing.
+| Note | Covers | For |
+|---|---|---|
+| Structure and behavior | Layout, languages and frameworks (versions from lockfiles), deployables, modules and their responsibilities, entry points (routes, CLIs, jobs, consumers), key runtime flows | architect → `architecture.md` |
+| Data and integrations | Datastores, models, migrations tooling, data ownership, external services and how they are called (client, auth, timeouts), configuration and secret names | architect → `architecture.md` |
+| Technologies and commands | The stack in use and the build, run, test, lint commands that actually work (from CI and manifests) | architect → `stack.yaml` (`decided-by: existing`) |
+| Conventions in use | Naming, error handling, logging, dependency wiring, test layout, formatting and linting config — with example locations | architect → `architecture.md` (conventions) |
+| Capabilities and users | What the product does today, for whom, as observable from the code and UI | product-lead → `product.md` |
+| Tests and risk | Test frameworks and levels, how to run them, coverage signal, flaky or skipped areas, high-churn and untested hotspots | test-engineer (characterization tests), architect (debt) |
+| Delivery | CI pipelines, build artifacts, deployment configuration | platform-engineer |
 
-## 2. Feature context pack (`specs/<f>/context.md`)
+Methods: read manifests and lockfiles first, then entry points, then follow calls; use history (`git log`) for churn; search for routes, models and configuration keys. Verify commands from CI configuration, not by guessing.
 
-Before Specify/Design on existing code:
-- **Current behavior** of the area the request touches, cited.
-- **Relevant files** with roles; **callers and dependents** (who breaks if this changes).
-- **Existing tests** covering it, and gaps.
-- **Contracts in force** (public APIs, events, schemas) and their consumers if discoverable.
-- **Conventions to follow** in that area (from the map).
-- **Risks**: fragile code, hotspots, missing tests, data migration needs.
+## 2. Feature investigation
+
+Before Specify and Design on existing code, write one research note on the affected area:
+- **current behavior** of what the request touches, cited;
+- **relevant files** with their roles; **callers and dependents** (who breaks if this changes);
+- **existing tests** covering it, and gaps;
+- **contracts in force** (public APIs, events, schemas) and their consumers, if discoverable;
+- **conventions to follow** in that area;
+- **risks**: hotspots, fragile code, missing tests, data migration needs.
 
 ## 3. Impact analysis
 
-For a proposed change (from a design, a CR, or an incident fix): list affected modules, interfaces, data, tests and consumers; classify as compatible / breaking; estimate blast radius; suggest characterization tests to add before changing untested code.
+For a proposed change (from a design, a change request, or an incident fix), write a research note listing affected modules, interfaces, data, tests and consumers; classify the change as compatible or breaking; estimate the blast radius; and suggest characterization tests to add before changing untested code.
 
-## 4. Adoption (brownfield onboarding)
+## 4. Adoption handoffs
 
-When SDD is introduced to an existing project: produce the project map, then **propose** (as findings to the owners) an initial `.sdd/architecture/overview.md` and `conventions.md` (architect), a baseline of current behavior for critical journeys (product-lead), characterization-test targets (test-engineer), and CI/tooling gaps (platform-engineer). You don't write their artifacts.
+After the whole-system investigation (§1), the owners do the work: the architect writes `architecture.md` and the `stack.yaml` entries and commands; product-lead writes `product.md`; test-engineer plans characterization tests; platform-engineer closes CI gaps. You never write their documents.
 
-## 5. Keeping maps fresh
+## 5. Findings age
 
-Maps carry the commit SHA they describe. When a feature ships, update affected sections (or the hub dispatches a refresh); stale maps are worse than none.
+Every note records the commit SHA it describes. When a note is older than the code it describes in the affected area, re-investigate rather than rely on it — a stale description is worse than none.
 
 ## 6. Changing existing code safely
 
-Mapping is for understanding; changing existing code needs its own discipline. Agents use these rules when the work touches code they did not write. The cartographer recommends them in context packs and impact analyses.
+Investigation is for understanding; changing existing code needs its own discipline. Agents use these rules when the work touches code they did not write. The cartographer recommends them in its investigation and impact notes.
 
 1. **Understand → protect → change.** First understand the current behavior (§2). Then protect it with **characterization tests** that pin down what the code does today, even where that behavior is odd. Only then change it.
 2. **Find seams.** Look for places where behavior can be substituted without editing the logic: interfaces, injection points, configuration, module boundaries. Where none exists, a small preparatory refactoring that creates one is its own task.
 3. **Change incrementally.** Prefer the *strangler* approach: build the new path beside the old one, route traffic gradually, and remove the old path when nothing uses it. Avoid big-bang rewrites.
 4. **Keep it releasable.** Every step leaves the system working and deployable. Use feature flags or branch-by-abstraction for long transitions.
 5. **Preserve contracts.** External behavior and interfaces stay compatible unless a requirement says otherwise (see the api-compat lens).
-6. **Leave a trail.** Record unknowns, oddities and deliberately preserved quirks in the context pack and the debt register, so the next change starts from knowledge rather than archaeology.
+6. **Leave a trail.** Record unknowns, oddities and deliberately preserved quirks in the research notes and, as debt, in `architecture.md` (via the architect), so the next change starts from knowledge rather than archaeology.

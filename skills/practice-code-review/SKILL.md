@@ -66,7 +66,7 @@ A review exists to catch what would hurt users, operators or future maintainers,
 - Focus managed on navigation and dialogs.
 
 **Scope and hygiene.**
-- Changed files fall within the task's `touches` (plus any declared mechanical changes).
+- Changed files fall within the task's `files` (plus any declared mechanical changes).
 - Dependency changes add only approved runtime dependencies.
 - No debug leftovers, no TODOs without a debt entry, no secrets.
 

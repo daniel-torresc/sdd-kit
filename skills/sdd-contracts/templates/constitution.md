@@ -24,11 +24,6 @@
      There are no other defaults: every other choice is derived from context (practice-tech-selection). -->
 See `.sdd/stack.yaml`.
 
-## Definition of Done (feature)
-- [ ] `sdd.py trace --phase verify` is clean
-- [ ] Lint, formatter, type-checker and all tests green in CI
-- [ ] All active lens reviews approve; no open blocking findings
-- [ ] Every deferred finding is a RISK with an accepted gate
-- [ ] Observability in place for every new external interface (logs, metrics, traces)
-- [ ] User-facing and operational docs updated (README, runbook, API docs)
-- [ ] Release plan with rollback path
+## Definition of Done (project additions)
+<!-- The methodology's definition of done is the workflow exit checks (sdd-contracts). Add only what this project requires on top. -->
+- [ ] <project-specific item>

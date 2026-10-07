@@ -13,7 +13,7 @@ artifacts:              # everything you created or changed, with version
   - docs/adr/ADR-0007-session-storage.md@1
 summary: |              # ≤10 lines. Detail lives in the artifacts.
   ...
-decisions:              # D1 decisions you made (also appended to log.md)
+decisions:              # D1 decisions you made (also recorded in decisions.md)
   - "Chose argon2id over bcrypt (ADR-0007)"
 assumptions: [ASM-04]   # gaps filled with a documented default
 open_questions:         # each with a recommended default
@@ -54,7 +54,7 @@ findings:
     blocking: true
     category: security/authz
     location: "design.md#IF-02"      # or src/app/auth.py:42
-    refs: [REQ-04, THR-02]
+    refs: [REQ-04, NFR-03]
     claim: "Password reset token has no expiry"
     evidence: "IF-02 defines the token but no TTL; NFR-03 requires…"
     recommendation: "15-min TTL, single use, invalidate on password change"

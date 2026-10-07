@@ -23,7 +23,7 @@ A feature is ready to release when:
 
 - **Semantic versioning** for anything with consumers: a breaking contract change bumps the major version, a feature the minor, a fix the patch.
 - The changelog is generated from Conventional Commits, then edited for its readers: what changed for users and integrators, what they must do, and what was deprecated.
-- Releases are tagged and their notes published after G3 (external write, via the sync outbox).
+- Releases are tagged and their notes published after G3 (an external write the human approves in `decisions.md`).
 
 ## 3. Release types
 
@@ -70,12 +70,12 @@ Design the rollback before the rollout:
 
 - **Watch window**: compare SLIs, error rates, latency and business signals against the pre-release baseline for a defined period (24 h by default).
 - **Verification in production**: smoke checks of the critical journeys, and checks that the feature's metrics are flowing.
-- **Close the release**: record the outcome in `release.md`, remove completed flags (as tasks), and hand docs, knowledge and the retro to the librarian.
+- **Close the release**: record the outcome in `release.md`, remove completed flags (as tasks), and hand the retro to the librarian.
 - If users were harmed, open an incident.
 
 ## 9. Communication
 
-Release notes for users and integrators: what changed, why it matters, what they need to do. Internal notes for operators: what to watch and how to roll back. Deprecations are announced with dates. Everything external goes through the sync outbox and needs the human's approval.
+Release notes for users and integrators: what changed, why it matters, what they need to do. Internal notes for operators: what to watch and how to roll back. Deprecations are announced with dates. Everything external is listed in `decisions.md` and needs the human's approval.
 
 ## 10. `release.md`
 
@@ -92,7 +92,7 @@ Write it from the template, covering:
 
 ## 11. G3 package (one screen)
 
-`gates/G3-production.md`:
+The **G3 entry** in the feature's `decisions.md`:
 - **Decision**: release `<feature>` as version `<x.y.z>` to production?
 - **Evidence**: the Verify verdict and evidence pack, pipeline status of the release commit, staging soak, rollback rehearsal.
 - **Risk**: open `RISK-nn`, accepted exceptions, debt going live, migration risk, error-budget status.

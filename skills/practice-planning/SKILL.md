@@ -1,6 +1,6 @@
 ---
 name: practice-planning
-description: How to derive an implementation plan from an approved SDD design — inventorying the work the design implies (components, interfaces, contracts, data changes and migrations, NFR budgets, failure handling, observability, fitness functions, enablers), grouping it into vertical slices that each deliver observable acceptance criteria, sequencing slices (walking skeleton, riskiest, most valuable), turning slices into small task specifications with test-first pairing, and checking the plan against the design for completeness. Use when writing or reviewing tasks.md, and when re-planning during Build.
+description: How to derive an implementation plan from an approved SDD design — inventorying the work the design implies (components, interfaces, contracts, data changes and migrations, NFR budgets, failure handling, observability, architecture rules, enablers), grouping it into vertical slices that each deliver observable acceptance criteria, sequencing slices (walking skeleton, riskiest, most valuable), turning slices into small task specifications with test-first pairing, and checking the plan against the design for completeness. Use when writing or reviewing tasks.md, and when re-planning during Build.
 ---
 
 # Practice: Deriving the plan from the design
@@ -20,11 +20,11 @@ Walk the approved design and list every unit of work it implies, with its source
 | Failure-mode table | Timeouts, retries, degradation paths, recovery behavior |
 | Observability section | Logs, metrics, traces, alerts, dashboards |
 | Testability seams | Clock, ID generators, drainable workers, fakes for external systems |
-| Fitness functions | Wiring each new architecture rule into CI |
+| Architecture rules | Wiring each new architecture rule into CI |
 | Runtime dependencies | Introduction (after dependency review) |
-| Security mitigations (threat model) | Each control and its verification |
+| Security section (mitigations from security-engineer's review) | Each control and its verification |
 | UX states (ux.md) | Every state of every screen, not just the success path |
-| Enablers | Scaffolding, environments, CI, test infrastructure, data fixtures; registering new commands in `.sdd/commands.yaml` (its own task, before the tasks that use them) |
+| Enablers | Scaffolding, environments, CI, test infrastructure, data fixtures; new commands registered in `.sdd/stack.yaml` by the architect before the tasks that use them |
 
 Every inventory item must trace to a design element and, through it, to REQ/NFR IDs. An item that traces to nothing is scope creep. A design element with no work items is a gap in the plan.
 
@@ -49,22 +49,22 @@ Sequential constraints are real dependencies only: shared migrations, shared con
 
 Each task is one reviewable change: one concern, small enough to understand in one sitting. Split larger work by sub-behavior, by AC, or with a preparatory refactoring task ("make the change easy, then make the easy change").
 
-Every task specifies (machine-checked by `sdd.py trace --phase plan`):
+Every task has a short **Goal** (one or two sentences) and optional **Notes** pointing into the design and contracts, plus these fields (machine-checked by `sdd.py trace --phase plan`):
 
 | Field | Meaning |
 |---|---|
-| `refs` | REQ/AC IDs it delivers, or `enabler` |
+| `delivers` | AC/REQ IDs that become true when the task is done, or `enabler` |
 | `depends` | Tasks that must be integrated first |
-| `agent` | engineer, test-engineer or platform-engineer |
-| `surface`, `stack` | Where it lives and which technologies are involved (descriptive) |
-| `touches` | Paths or modules it will change, as precisely as possible, to detect conflicts between parallel tasks |
+| `owner` | engineer, test-engineer or platform-engineer |
+| `files` | Paths or modules it will change, as precisely as possible, to detect conflicts between parallel tasks |
+| `stack` | `stack.yaml` concerns involved (the hub loads their skills) |
 | `done-when` | Observable completion: named ACs passing, specific checks green |
 | `risk` | `high` for security-sensitive, concurrency, data-migration or riskiest-slice work |
 | `reviews` (optional) | Extra reviewers beyond code-reviewer: `ux` (first task delivering a new screen or flow), `security` (authentication, authorization, secrets, input handling, every `risk: high` task), or an active lens name (`privacy`, `data-migration`, `ai-evals`, `finops`, `api-compat`) for tasks in its scope |
 
 **Test-first pairing:** for every slice, a test-engineer task writes the acceptance tests for its ACs, and the engineer task depends on it. Tests for the next slice can be written while the current one is built.
 
-**Parallelism:** tasks without a dependency path may run in parallel if their `touches` don't overlap. Shared hotspots (registration and wiring files, migration heads, lockfiles) are sequenced or owned by a single task.
+**Parallelism:** tasks without a dependency path may run in parallel if their `files` don't overlap. Shared hotspots (registration and wiring files, migration heads, lockfiles) are sequenced or owned by a single task.
 
 ## 5. Check the plan against the design
 

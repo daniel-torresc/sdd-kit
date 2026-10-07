@@ -1,4 +1,4 @@
-# Threat modeling (security-engineer)
+# Threat analysis (security-engineer)
 
 ## Verification level
 
@@ -8,7 +8,7 @@
 | L, or any feature handling authentication, personal, financial or health data | ASVS Level 2 for the touched areas |
 | Regulated data (health, card data, …) | Level 2 + the regulation's controls → flag for D3 legal review |
 
-Record the target in the threat model.
+State the target in your design review; the architect records it in the design's Security section.
 
 ## Data classification
 
@@ -16,12 +16,12 @@ For every data element stored, processed or transmitted: `public`, `internal`, `
 
 ## Building the model
 
-Write `specs/<f>/threat-model.md` from the template, in parallel with the architect's design (read the draft design and contracts):
+Deliver the analysis in your **design review** (`reviews/design-security-engineer-r<n>.md`), working from the draft design and contracts. The architect folds the threats and required mitigations into the design's **Security** section:
 1. **Assets** with classification.
 2. **Trust boundaries and entry points** — every external `IF-nn` appears: users, other services, admin paths, jobs consuming external data, file uploads, webhooks, model inputs.
 3. **Threats per entry point with STRIDE** (Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege), plus abuse cases from the requirements' unwanted behaviors (enumeration, brute force, replay, mass assignment, object-level access, server-side requests, injection).
-4. For each `THR-nn`: likelihood, impact, **mitigation** (a design control, a REQ/NFR, or a test) and **verified-by** (test ID, review check, or automated tool).
-5. **Residual risks** → `RISK-nn`; high residual risk → risk acceptance (D3).
+4. For each threat (a finding): likelihood, impact, **required mitigation** (a design control, a REQ/NFR, or a test) and **verified-by** (test ID, review check, or automated tool).
+5. **Residual risks** → `RISK-nn` in the design's Security section; high residual risk → a risk entry for the human in `decisions.md` (D3).
 
 Mitigations needing design changes become findings to the architect; ones needing requirements, to product-lead.
 

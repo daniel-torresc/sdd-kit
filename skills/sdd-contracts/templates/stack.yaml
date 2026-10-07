@@ -12,8 +12,11 @@
 #   - The hub reads it at every dispatch and tells each agent which `skills` to load for the
 #     technologies its task involves (the task's `stack:` field names the concerns).
 #   - Skills listed here must be installed; if one is missing, the hub tells the human where it
-#     comes from (`skill-sources`). Until then agents rely on official docs and any stack brief.
-#   - Entries with `status: proposed` are pending decisions (see `gate`).
+#     comes from (`skill-sources`). Until then agents rely on official docs and any technology research note.
+#   - Entries with `status: proposed` are pending decisions (see `decision`).
+#   - `commands` lists the project's commands by purpose. The SDD guard lets each agent run only the
+#     purposes in its policy, reading the version committed on the feature branch; a global denylist
+#     always applies. The architect writes them; platform-engineer proposes changes through a finding.
 
 version: 1
 
@@ -26,8 +29,8 @@ technologies:
     fixed: true                        # true = human constraint; agents may not change it
     rationale: "<why>"
     adr: null                          # ADR-NNNN when decided through the architect
-    gate: null                         # gates/G2-<slug>.md while proposed
-    brief: null                        # .sdd/briefs/<technology>.md if one was written
+    decision: null                     # decisions.md entry (G2) while proposed
+    research: null                     # research note(s) about this technology (options analysis, technology reference)
     skills: []                         # technology-specific skills to load for this technology
 
   - concern: <concern>
@@ -35,10 +38,61 @@ technologies:
     status: proposed
     decided-by: null
     fixed: false
-    gate: .sdd/gates/G2-<slug>.md
+    decision: specs/000-foundation/decisions.md#G2-<slug>
     skills: []
 
 # Where listed skills come from (so the human can install missing ones).
 skill-sources:
   - skill: <skill-name>
     source: <marketplace/plugin or repository>
+
+# Project commands, by purpose. Format (parsed without a YAML library): one quoted prefix per line.
+# A prefix matches the whole command or the command followed by a space; a prefix ending in "/"
+# also matches any path below it (no ".."). Never list production deploys or infrastructure applies.
+commands:
+  install:            # install/sync dependencies from the lockfile
+    - "<command>"
+  deps-add:           # add a runtime dependency (must be approved in the design / security review)
+    - "<command>"
+  deps-add-dev:
+    - "<command>"
+  deps-remove:
+    - "<command>"
+  format:
+    - "<command>"
+  lint:
+    - "<command>"
+  typecheck:
+    - "<command>"
+  test:               # with a machine-readable (JUnit) output option
+    - "<command>"
+  coverage:           # diff coverage against a branch
+    - "<command>"
+  contract-test:
+    - "<command>"
+  e2e:
+    - "<command>"
+  mutation:
+    - "<command>"
+  perf:               # load / performance tests (local or staging only)
+    - "<command>"
+  profile:
+    - "<command>"
+  migrate:
+    - "<command>"
+  run:
+    - "<command>"
+  build:
+    - "<command>"
+  scan:               # dependency audit, secret scanning, bill of materials, artifact scan, static security analysis
+    - "<command>"
+  pipeline-lint:
+    - "<command>"
+  infra-plan:         # infrastructure previews only
+    - "<command>"
+  deploy-nonprod:     # dev / staging only
+    - "<command>"
+  cloud-read:         # read-only cloud inspection
+    - "<command>"
+  dast:               # dynamic scan against local / staging only
+    - "<command>"

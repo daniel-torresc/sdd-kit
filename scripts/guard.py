@@ -4,7 +4,7 @@
 Reads the hook input on stdin. If the call comes from an SDD agent listed in
 hooks/ownership.json, denies writes outside its owned paths, shell commands
 outside its allowlist, and (optionally) MCP tools that look like writes.
-Project commands come from the committed .sdd/commands.yaml (by purpose), so
+Project commands come from the `commands:` section of the committed .sdd/stack.yaml (by purpose), so
 agents' shell permissions follow each project's stack; a global denylist always
 applies. In-policy calls (owned writes, allowlisted commands) are approved outright so
 agents can work without permission prompts; set 'permissions: auto_approve:
@@ -81,13 +81,13 @@ def committed_file(cwd: Path, rel: str) -> str:
 
 
 def project_commands(cwd: Path) -> dict[str, list[str]]:
-    """Parse the committed .sdd/commands.yaml: {purpose: [prefix, …]} (restricted, stdlib-only format)."""
+    """Parse the `commands:` section of the committed .sdd/stack.yaml: {purpose: [prefix, …]} (restricted format)."""
     registry: dict[str, list[str]] = {}
     purpose = None
     in_commands = False
-    # Read from the main checkout (the feature branch), not an agent's worktree: registry changes made on a
-    # task branch only take effect after review and integration, so no agent can grant itself commands.
-    for line in committed_file(worktree_project_root(cwd), ".sdd/commands.yaml").splitlines():
+    # Read from the main checkout (the feature branch), not an agent's worktree: command changes made on a
+    # task branch only take effect once integrated, so no agent can grant itself commands.
+    for line in committed_file(worktree_project_root(cwd), ".sdd/stack.yaml").splitlines():
         if not line.strip() or line.lstrip().startswith("#"):
             continue
         if re.match(r"^commands\s*:", line):
@@ -118,31 +118,6 @@ def matched_purpose(cmd: str, purposes: list[str], registry: dict[str, list[str]
                 if best is None or len(prefix) > len(best[1]):
                     best = (purpose, prefix)
     return best
-
-
-def normalize_dep(token: str) -> str:
-    name = token.strip("'\"")
-    if name.startswith("@"):                      # scoped package: keep the scope, drop a version
-        at = name.find("@", 1)
-        name = name[:at] if at > 0 else name
-    else:
-        name = re.split(r"[\[<>=~!^;@ ]", name, maxsplit=1)[0]
-    return name.replace("_", "-").lower()
-
-
-def unapproved_runtime_deps(args: str, cwd: Path) -> list[str]:
-    """Packages in a deps-add command's arguments not approved in .sdd/dependencies.yaml."""
-    pkgs = [normalize_dep(t) for t in args.split() if not t.startswith("-")]
-    if not pkgs:
-        return []
-    text = committed_file(cwd, ".sdd/dependencies.yaml")
-    if not text:
-        try:
-            text = (worktree_project_root(cwd) / ".sdd" / "dependencies.yaml").read_text(encoding="utf-8")
-        except OSError:
-            text = ""
-    approved = {normalize_dep(n) for n in re.findall(r"^\s*-?\s*name\s*:\s*['\"]?([@\w./-]+)", text, re.M)}
-    return [p for p in pkgs if p not in approved]
 
 
 def project_rel(raw: str, cwd: Path) -> str:
@@ -275,17 +250,11 @@ def main() -> None:
         hit = matched_purpose(cmd, purposes, project_commands(cwd)) if purposes else None
         if hit is None:
             deny(f"{agent} is not allowed to run this command. It may run the SDD commands in its policy and the "
-                 f"project commands registered in the committed .sdd/commands.yaml for: {', '.join(purposes) or 'none'}. "
-                 "If the project needs a new command, ask platform-engineer to register it.")
+                 f"project commands registered in the committed .sdd/stack.yaml (commands) for: {', '.join(purposes) or 'none'}. "
+                 "If the project needs a new command, ask the architect (via a finding) to register it.")
         purpose, prefix = hit
         if DANGEROUS.search(cmd):
             deny(f"'{cmd}' contains an operation that is never allowed through the project command registry.")
-        if purpose == "deps-add":
-            unapproved = unapproved_runtime_deps(cmd[len(prefix):], cwd)
-            if unapproved:
-                deny(f"runtime dependencies not approved in .sdd/dependencies.yaml: {', '.join(unapproved)}. "
-                     "Return status 'blocked' with a D2 escalation to security-engineer "
-                     "(or use the deps-add-dev command if it is development-only).")
         grant(cwd, f"project command ({purpose}) for {agent}")
         return
 

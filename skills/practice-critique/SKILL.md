@@ -1,6 +1,6 @@
 ---
 name: practice-critique
-description: How to critically review SDD specifications and designs — adversarial techniques (two-engineers test, pre-mortem, inversion, boundary interrogation, assumption stress test, steelman-then-attack, simplest-thing, reversibility), a calibrated severity rubric, finding categories, a findings budget, and a checklist per artifact type (vision, brief, requirements, ux, design, ADR, G2 options package, tasks). Use when reviewing any spec or design artifact, giving a second opinion on a decision, or checking a decision package for bias.
+description: How to critically review SDD specifications and designs — adversarial techniques (two-engineers test, pre-mortem, inversion, boundary interrogation, assumption stress test, steelman-then-attack, simplest-thing, reversibility), a calibrated severity rubric, finding categories, a findings budget, and a checklist per artifact type (product context, brief, requirements, ux, design, ADR, G2 entries, tasks). Use when reviewing any spec or design artifact, giving a second opinion on a decision, or checking a decision package for bias.
 ---
 
 # Practice: Critique
@@ -9,7 +9,7 @@ A review exists to **change the outcome**: catch what would cause the wrong thin
 
 ## 1. Procedure
 
-1. **Read upstream first** (brief → requirements → ux → design), the constitution, `.sdd/product/*` and relevant ADRs. You judge the target *against these*, not against your taste.
+1. **Read upstream first** (brief → requirements → ux → design), the constitution, `.sdd/product.md`, `.sdd/architecture.md` and relevant ADRs. You judge the target *against these*, not against your taste.
 2. **Read the target twice**: once as its intended reader (can I build/decide from this?), once as an adversary.
 3. **Run the mechanical check** (`sdd.py trace` / `stale`) so you never spend a finding on something the script catches.
 4. **Apply the techniques** (§2) and the **artifact checklist** (§6).
@@ -130,7 +130,7 @@ The assumption ranking is used by the preparing agent to order the G1 assumption
 **ADR**
 - Context states the forces; options are real alternatives; consequences include the downsides.
 
-**G2 options package (fairness review)**
+**G2 entries and their research notes (fairness review)**
 - All viable options present? Name any credible option missing.
 - Pros and cons symmetric in depth and honesty for each option (no strawmen).
 - Fit matrix accurate against the actual REQs/NFRs; numbers sourced.
@@ -138,11 +138,11 @@ The assumption ranking is used by the preparing agent to order the G1 assumption
 - The recommendation is clearly separated and does not leak into option descriptions.
 - Verdict wording for G2: `approve` = fair and complete enough for the human to decide.
 
-**G2 decision brief** (when several G2s are pending)
+**G2 overview entry** (when several G2s are pending)
 - Fits on one screen; the human could decide from it alone.
 - Questions that flip recommendations are listed first; decision order is correct.
 - Bundles are genuinely coherent, include the reference option derived from context, and are presented symmetrically (costs, novelty spent, reversal risk for each).
-- One-liners match the packages (no lean stated more strongly than in the package).
+- One-liners match the G2 entries (no lean stated more strongly than in the entry).
 
 **Tasks (class L)**
 - Every AC covered; enablers justified; no task too large to review (split > ~1 day).

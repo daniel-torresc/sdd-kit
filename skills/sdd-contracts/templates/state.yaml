@@ -1,12 +1,26 @@
-# Written by the hub after every step. Do not edit by hand.
-feature: F000-slug
-class: M                 # T | S | M | L
-lenses: []               # e.g. [security, reliability, ux, privacy]
-phase: discover          # triage | discover | specify | design | plan | build | verify | release | operate | evolve | done
-phase_status: drafting   # drafting | in-review | revising | exit-check | gate-pending | done
-loops: {}                # { specify: 1, design: 2 }
-gates: {}                # { G1: approved@2026-09-30 }
-tasks: {}                # { T-01: done, T-02: in-progress@worktree-2, T-03: blocked(T-02) }
-stale: []                # artifacts awaiting re-validation
-pending_human: []        # gate files awaiting a decision
-history: []              # [ "2026-09-30 specify: G1 approved" ]
+# Feature state — written by the hub after every step, readable by anyone. Do not edit by hand.
+feature: F000 <title>
+class: M                      # T | S | M | L
+status: "<phase> — <one-line summary of where things stand>"
+waiting-for-human: nothing    # or: "<decision> (decisions.md#<id>)"
+next: "<the next step the hub will take>"
+
+phases:                       # not started | in progress | done | skipped
+  discover: skipped           # L only
+  specify: not started
+  design: not started
+  plan: not started
+  build: not started
+  verify: not started
+  release: not started
+  evolve: not started
+
+lenses: []                    # active review lenses, e.g. [security, ux, privacy]
+
+review-rounds: {}             # e.g. { specify: 1, design: 2 } — counts against the loop caps
+
+tasks: {}                     # e.g. { "T-01 Acceptance tests for reset": integrated, "T-02 Reset flow": "in review (round 1)" }
+
+stale: []                     # artifacts that must be re-validated because an upstream artifact changed
+
+history: []                   # one line per step, newest last: "YYYY-MM-DD <what happened>"

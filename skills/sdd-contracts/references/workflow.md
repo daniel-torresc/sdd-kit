@@ -11,22 +11,22 @@ Assigned at intake from the signals in `.sdd/config.yaml`. **Any single signal o
 | **T** Trivial | typo, config value, patch dependency bump, docs | build → code-review → done | none |
 | **S** Small | localized; no new interface, data model or dependency, and no change existing callers can observe | mini-spec (REQ+AC) → test-first build → code-review → verify | none (G1 only if ambiguous) |
 | **M** Standard | new capability, new interface or data model | full flow, with brief and requirements written and reviewed together in Specify; lenses only when triggered | G1, G3 |
-| **L** Critical | auth, money, PII, destructive migration, public API, greenfield, hard to reverse | full flow with a separate Discover (brief challenged before requirements); all assurance lenses; threat model | G1, G2, G3 |
+| **L** Critical | auth, money, PII, destructive migration, public API, greenfield, hard to reverse | full flow with a separate Discover (brief challenged before requirements); all assurance lenses | G1, G2, G3 |
 
 ## Phases
 
 | # | Phase | Owner | Contributors | Reviewers | Human gate |
 |---|---|---|---|---|---|
-| 0 | Triage | hub | cartographer (`context`, existing code) | — | — |
+| 0 | Triage | hub | cartographer (`investigate`, existing code → research note) | — | — |
 | 1 | Discover (L only) | product-lead | researcher (`domain`, `question`), cartographer | challenger | — |
 | 2 | Specify | product-lead | ux-designer (`flows`, UI features), architect (`consult`), researcher | challenger, test-engineer (`testability-review`), reliability-engineer (`nfr-review`, reliability lens), consultants (`specify-review`, active lenses) | **G1 intent** (M, L) |
-| 3 | Design | architect | security-engineer (`threat-model`, security lens), reliability-engineer (`slo`, `capacity`), researcher (`options`), consultants (`analysis`) | challenger, security-engineer (`design-review`), reliability-engineer (`design-review`), consultants (`design-review`) | **G2 foundations** (one-way doors) |
-| 4 | Plan | tech-lead | architect, reliability-engineer (`perf-plan`), test-engineer (`test-plan`) | test-engineer, architect (`plan-review`), challenger (L), consultants (`plan-review`) | — |
+| 3 | Design | architect | researcher (`options`), architect spikes (research notes); security, reliability and lens input arrives as review findings the architect folds into the design | challenger, security-engineer (`design-review`), reliability-engineer (`design-review`), consultants (`design-review`) | **G2 foundations** (one-way doors) |
+| 4 | Plan | tech-lead | architect, test-engineer (`test-plan`, incl. performance profiles from reliability-engineer's review) | test-engineer, architect (`plan-review`), challenger (L), consultants (`plan-review`) | — |
 | 5 | Build | engineer ×N, platform-engineer, test-engineer (tests first) | security-engineer (`dependency-review`, `secret-review` on request) | code-reviewer (`test-review`, `task-review`) plus the reviewers each task declares in `reviews:` (ux-designer, security-engineer, consultant lenses) | — |
 | 6 | Verify | test-engineer | engineer (fixes) | code-reviewer (`feature-review`), security-engineer (`verify`), ux-designer (`ux-review`), consultants (`verify`), product-lead (`accept`: M, L), architect (`conformance`: L) | — |
 | 7 | Release | platform-engineer (`release`) | librarian (`docs`) | reliability-engineer (`release-review`) | **G3 production** |
 | 8 | Operate | incident-responder | reliability-engineer, platform-engineer, engineer (`debug`) | — | mitigation execution (fast-path D3) |
-| 9 | Evolve | librarian (`docs`, `knowledge`, `retro`) | architect (`evolve`), cartographer (`refresh`), reliability-engineer (SLO review) | — | constitution and gate changes (MIPs) |
+| 9 | Evolve | librarian (`retro`) | architect (`evolve`: architecture.md, ADRs, debt), product-lead (`evolve`: outcome, product.md) | — | constitution, config and methodology changes |
 
 ## Lens activation
 
@@ -34,10 +34,10 @@ At triage (and whenever new information appears) the hub matches `lens_triggers`
 
 | Lens | Agent | Phases |
 |---|---|---|
-| security | security-engineer | Design (threat model + review), Build (code review of security-relevant tasks), Verify |
-| reliability | reliability-engineer | Specify (NFRs), Design, Plan (perf plan), Release |
+| security | security-engineer | Design (threats and mitigations, as review findings), Build (tasks with `reviews: [security]`), Verify |
+| reliability | reliability-engineer | Specify (NFRs), Design (failure modes, SLOs, capacity, as findings), Plan (performance section of the test plan), Release |
 | ux (includes accessibility) | ux-designer | Specify (flows), Verify (ux-review) |
-| privacy, data-migration, ai-evals, finops, api-compat | consultant + lens skill | Specify through Verify, as the lens skill describes |
+| privacy, data-migration, ai-evals, finops, api-compat | consultant + lens skill | Specify through Verify, as review findings; the owners fold the results into requirements, design and test plan |
 
 Dependency approvals (`security-engineer · dependency-review`) apply to every feature, lens or not.
 
@@ -47,12 +47,12 @@ When dispatching a reviewer, the hub passes **only** the target artifact@version
 
 ## G1 and G2 preparation
 
-- **G1:** the challenger's "assumptions ranked by risk" (from its specify review) sets the order of the assumptions table in `gates/G1-intent.md`; the riskiest come first and are marked for the human's attention.
-- **G2:** the architect's options package is reviewed by the challenger for **fairness and completeness** (all viable options, symmetric pros/cons, accurate fit matrix, recommendation separated) before the hub presents it to the human.
+- **G1:** the challenger's "assumptions ranked by risk" (from its specify review) sets the order of the assumptions in the G1 entry of `decisions.md`; the riskiest come first and are marked for the human's attention.
+- **G2:** the architect's G2 entry in `decisions.md` (one screen) and the research note with the full option analysis are reviewed by the challenger for **fairness and completeness** (all viable options, symmetric pros/cons, accurate fit matrix, recommendation separated) before the hub presents it to the human.
 
 ## Second opinion
 
-The hub may dispatch the challenger in `second-opinion` mode (a) on any disputed blocking finding before sending it to an arbiter, and (b) on any D1 decision in `log.md` of a class L feature at the phase exit. The second opinion informs the arbiter or the human; it does not decide.
+The hub may dispatch the challenger in `second-opinion` mode (a) on any disputed blocking finding before sending it to an arbiter, and (b) on any D1 decision in `decisions.md` of a class L feature at the phase exit. The second opinion informs the arbiter or the human; it does not decide.
 
 ## Intent questions (hybrid)
 
@@ -75,11 +75,11 @@ drafting ──► in-review ──► revising ──(≤ cap)──► exit-ch
 
 ## Artifacts live on the feature branch
 
-Worktrees branch from the **committed** feature branch, so uncommitted artifacts are invisible to them. After every agent step that changes artifacts (specs, reviews, gates, log, `.sdd/*`), the hub commits them to the feature branch: `chore(sdd): <agent> <mode> <artifact>` with a `Refs:` trailer. Before a feature branch exists (Discover/Specify), the hub commits on `sdd/<F>-<slug>` created at intake.
+Worktrees branch from the **committed** feature branch, so uncommitted artifacts are invisible to them. After every agent step that changes artifacts (specs, reviews, decisions, `.sdd/*`, docs), the hub commits them to the feature branch: `chore(sdd): <agent> <mode> <artifact>` with a `Refs:` trailer. Before a feature branch exists (Discover/Specify), the hub commits on `sdd/<F>-<slug>` created at intake.
 
 ## Build execution
 
-1. The hub asks tech-lead (`coordinate`) which tasks are ready: dependencies merged, `touches` not overlapping a running task, at most `parallelism.max_parallel_tasks` running.
+1. The hub asks tech-lead (`coordinate`) which tasks are ready: dependencies merged, `files` not overlapping a running task, at most `parallelism.max_parallel_tasks` running.
 2. Each task runs in its own worktree on `sdd/<F>-<T>` branched from the feature branch (the engineer agent declares `isolation: worktree`; for test-engineer `test-task` dispatches the hub passes `isolation: "worktree"` on the Agent call; the hub keeps the feature branch checked out when dispatching). Branch names use the task ID verbatim: `sdd/F003-T-04`. Test-engineer tasks come before the engineer tasks that depend on them.
 3. Each finished task gets a code review: `test-review` for test-engineer tasks (before engineers build against them) and `task-review` for engineer tasks. When it is approved, tech-lead (`integrate`) merges it into the feature branch, runs the tests, and pushes. The draft PR is kept updated.
 4. After 3 failed fix attempts on a task, tech-lead (`unblock`) re-scopes, re-sequences, routes upstream, or escalates.
@@ -103,23 +103,26 @@ Integrate each task as soon as its review approves — never in batches at the e
 
 ## Verify
 
-code-reviewer runs a `feature-review` of the integrated diff (M/L). test-engineer (`verify`) runs the full suite, `sdd.py trace --phase verify --junit`, every NFR verification, mutation testing on changed modules (class L; surviving mutants in AC code are `major`), and exploratory testing for UI or public APIs, then writes the evidence pack `specs/<f>/evidence/README.md`. product-lead's acceptance review judges the evidence pack, not just test results. **Flaky tests block Verify**; re-runs are for diagnosis only.
+code-reviewer runs a `feature-review` of the integrated diff (M/L). test-engineer (`verify`) runs the full suite, `sdd.py trace --phase verify --junit`, every NFR verification, mutation testing on changed modules (class L; surviving mutants in AC code are `major`), and exploratory testing for UI or public APIs, then writes the evidence pack `specs/<f>/evidence/README.md` and the traceability report (`sdd.py trace --phase verify --junit … --report evidence/traceability.md`). product-lead's acceptance review judges the evidence pack, not just test results. **Flaky tests block Verify**; re-runs are for diagnosis only.
 
 ## Operate
 
-`/sdd incident <description>` (or an alert routed by the human) opens `.sdd/incidents/INC-nnn-*`. incident-responder (`triage`) classifies and returns a **fast-path mitigation package**; the hub presents it immediately (no batching with other gates). The human executes or approves the mitigation. Then `investigate` → `postmortem` → action items routed into the workflow (new T/S features via `/sdd new`, change requests, debt, alerting, tests, runbooks, lessons) → `follow-up`.
+`/sdd incident <description>` (or an alert routed by the human) opens `.sdd/incidents/INC-nnn-<slug>.md`. incident-responder (`triage`) classifies and returns a **fast-path mitigation decision**; the hub presents it immediately (not batched). The human executes or approves the mitigation. Then `investigate` → `postmortem` (in the same incident file) → action items routed into the workflow (new T/S features via `/sdd new`, change requests to owners of requirements, design, tests, runbooks or docs) → `follow-up`.
 
 ## Evolve
 
-After G3 (and after abandoned features): librarian `docs` and `knowledge`; architect `evolve` (architecture overview, conventions, debt); cartographer `refresh` of affected map sections (existing code); librarian `retro` → lessons and methodology improvement proposals (`.sdd/improvements.md`). Periodically (`/sdd retro --all`), librarian `cross-retro`. MIPs are decided by their named decider; constitution and gate changes are D3.
+After G3 (and after abandoned features), knowledge goes to its canonical home — there is no separate knowledge base. (User-facing docs were already updated by librarian `docs` during Release, so they merge with the feature.)
+- architect `evolve`: `architecture.md` (structure, conventions, debt), ADRs superseded, `stack.yaml`;
+- product-lead `evolve`: the brief's Outcome and `product.md` (scope, glossary, personas);
+- librarian `retro`: what to keep and change, routed as findings to the owners of the canonical documents, and **methodology proposals** listed for the human in `decisions.md` (accepted ones change the constitution, the config, or the plugin).
 
 ## Existing codebases
 
-`/sdd adopt` runs cartographer `adopt` (project map + proposals to architect, product-lead, test-engineer, platform-engineer), then the owners create `.sdd/architecture/*`, `.sdd/product/*`, characterization tests and CI gaps as normal work. For every feature on existing code, triage dispatches cartographer `context` before Discover.
+`/sdd adopt` runs the foundation feature (`specs/000-foundation/`) for an existing codebase: cartographer `investigate` writes research notes on how the system works today, and the owners turn them into `architecture.md` and `stack.yaml` (architect, with `decided-by: existing`), `product.md` (product-lead), characterization-test tasks (test-engineer) and CI gaps (platform-engineer). For every later feature on existing code, triage dispatches cartographer `investigate` for the affected area.
 
 ## External sync
 
-Writes to systems outside the repository — issue trackers, PR review comments, release notes, knowledge bases, design tools — are prepared by the owning agent or the hub as an **outbox** and performed by the hub only after the human approves them (one batched approval per stop, configured in `.sdd/config.yaml` `sync`). Pushing `sdd/*` branches and updating draft PRs remain autonomous.
+Writes to systems outside the repository — issue trackers, PR review comments, release notes, design tools — are listed as pending `external-write` entries in the feature's `decisions.md` and performed by the hub only after the human approves them (one batched approval per stop, configured in `.sdd/config.yaml` `sync`). Pushing `sdd/*` branches and updating draft PRs remain autonomous.
 
 ## Model per mode
 
@@ -139,40 +142,39 @@ A finding routed upstream reopens **only the affected artifact**. The owner revi
 | Phase | Mechanical check | Plus |
 |---|---|---|
 | Specify | `sdd.py trace --phase specify` clean; every Q has a default | no open blocking findings |
-| Design | `sdd.py trace --phase design` clean; ADR for every D1+ architectural choice; threat model covers every external IF (security lens); SLOs exist for new journeys (reliability lens) | no open blocking findings |
-| Plan | `sdd.py trace --phase plan` clean; every task has `surface` and `stack` | no open blocking findings |
+| Design | `sdd.py trace --phase design` clean; ADR for every D1+ architectural choice; design's Security section covers every external interface (security lens); service levels stated for new journeys (reliability lens) | no open blocking findings |
+| Plan | `sdd.py trace --phase plan` clean | no open blocking findings |
 | Build | lint, types, unit tests green (hooks) | per-task code review approved |
 | Verify | `sdd.py trace --phase verify --junit …` clean | all lens reviews and the product-lead acceptance review approve |
 | Release | rollback rehearsed and recorded in `release.md`; runbook updated; reliability release-review approves | G3 approved |
-| Evolve | docs updated; retro written | — |
+| Evolve | docs, architecture.md and product.md updated; retro findings routed | — |
 
 ## state.yaml
 
-The hub writes it after every step so work can resume in any session. See `templates/state.yaml`.
+The hub writes the feature's `state.yaml` after every step — readable by a human, and enough to resume in any session. There is no project-level state: the active feature is the current `sdd/*` branch; the project foundation is feature `000-foundation`.
 
 ## Commands (hub entry points)
 
 | Command | Does |
 |---|---|
-| `/sdd init` | Greenfield bootstrap: constitution → product context (product-lead) → foundational technology decisions as G2 packages (architect) → challenger fairness review → human decides → ADRs, `.sdd/architecture/*` → scaffold, CI, fitness functions, deployable walking skeleton (platform-engineer) |
+| `/sdd init` | Greenfield foundation (feature `000-foundation`): constitution → `product.md` (product-lead) → foundational technology decisions as G2 (architect) → challenger fairness review → human decides → ADRs, `stack.yaml`, `architecture.md` → walking skeleton (platform-engineer) |
 | `/sdd new <idea>` | Triage and create the spec folder |
 | `/sdd` | Read state and advance autonomously until a gate or blocker |
 | `/sdd status` | Where every feature stands |
-| `/sdd gates` | Pending decision packages |
-| `/sdd adopt` | Bring an existing codebase into SDD (cartographer map + proposals) |
+| `/sdd gates` | Decisions waiting for the human (across features) |
+| `/sdd adopt` | Foundation for an existing codebase (feature `000-foundation`) |
 | `/sdd incident <description>` | Open and drive an incident |
 | `/sdd retro [F \| --all]` | Retrospective for a feature, or across features |
-| `/sdd sync` | Review and approve the external-sync outbox |
-| `/sdd feature <F>` | Switch the active feature |
+| `/sdd sync` | Approve pending external writes |
+| `/sdd feature <F>` | Switch to a feature (checks out its branch) |
 
 ## Technology context
 
 The methodology skills describe *how to work*; technology-specific knowledge comes from technology skills declared per project.
 
-- **`.sdd/stack.yaml`** is the single place that declares the project's technologies: one entry per concern (language, frameworks, datastore, testing, pipeline, infrastructure, cloud, frontend, …), each with its version, status, who decided it, its ADR or pending gate, and the **skills** to load for it.
+- **`.sdd/stack.yaml`** is the single place that declares the project's technologies (one entry per concern, with version, status, who decided it, its ADR or pending decision, related research notes, and the **skills** to load) and the project's **commands** by purpose.
   - The **human** may write entries at any time; `fixed: true` entries are constraints that agents never change and every technology decision must respect.
-  - The **architect** records decisions: G2 outcomes (`decided-by: human-at-G2`) and smaller reversible choices (`decided-by: architect`, logged), always with an ADR when significant.
-  - The **researcher** may propose candidate skills for a technology in a research note; the human chooses.
-- **Skill loading:** at every dispatch the hub resolves the technologies the task involves (the task's `stack:` concerns, or the agent's area for non-task work) to their `skills` in `stack.yaml` and names them in the dispatch; agents load them before working. If a listed skill isn't installed, the hub asks the human to install it (from `skill-sources`); meanwhile agents rely on official documentation and any stack brief.
-- **Stack briefs:** when a decided technology is unfamiliar and no adequate skill exists, the researcher writes `.sdd/briefs/<technology>.md` from current official documentation and links it from the entry.
-- **`.sdd/commands.yaml`** is the project's command registry by purpose (install, test, lint, build, migrate, scan, deploy-nonprod, …), written by platform-engineer when tooling is introduced and reviewed by the architect. The guard lets each agent run only the registered commands for the purposes in its policy, read from the **committed** file, with a global denylist.
+  - The **architect** records decisions (G2 outcomes as `decided-by: human-at-G2`, smaller reversible choices as `decided-by: architect`) and the commands; platform-engineer proposes command changes through a finding.
+  - The **researcher** proposes candidate skills and writes technology reference notes (research) for unfamiliar technologies.
+- **Skill loading:** at every dispatch the hub resolves the technologies the task involves (the task's `stack:` concerns, or the agent's area for non-task work) to their `skills` and names them in the dispatch; agents load them before working. If a listed skill isn't installed, the hub asks the human to install it (from `skill-sources`); meanwhile agents rely on official documentation and the technology's research notes.
+- **Commands:** the guard lets each agent run only the commands registered for the purposes in its policy, read from `stack.yaml` as committed on the feature branch, with a global denylist. New tooling is registered (by the architect) before the tasks that use it.

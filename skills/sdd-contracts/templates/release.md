@@ -27,6 +27,6 @@ upstream: [design.md@1, tasks.md@1]
 <!-- Dashboards, alerts, what "healthy" looks like for 24h after release. -->
 ## Runbook updates
 ## Communication
-<!-- release notes (external, via sync outbox), operator notes, deprecations -->
+<!-- release notes (external write, approved in decisions.md), operator notes, deprecations -->
 ## Outcome
 <!-- filled after the watch window -->

@@ -10,7 +10,7 @@ Good UX comes from **decisions**, not decoration: what the user is trying to do,
 ## 1. Understand: evidence before opinions
 
 Build the picture from:
-- personas (`.sdd/product/personas.md`);
+- personas (`.sdd/product.md`);
 - the brief's jobs and pains;
 - whatever evidence the human provides (interviews, analytics, support tickets, recordings).
 
@@ -108,7 +108,7 @@ When accessibility would block a journey for assistive-technology users, that is
 
 ## 10. Design system
 
-`.sdd/product/design-system.md`:
+`.sdd/design-system.md` (products with a UI):
 - **principles**;
 - **tokens**: color with contrast pairs, typography, spacing, radii, elevation, motion;
 - **components**: purpose, variants, states, accessibility notes;

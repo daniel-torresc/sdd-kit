@@ -27,7 +27,7 @@ Every change to an `sdd/*` branch or pull request runs the gates the contracts d
 | Full test suite with real dependencies; machine-readable results and coverage | The definition of done; evidence for Verify | Yes |
 | Diff coverage vs the base branch | `engineering.diff_coverage_min` | Yes |
 | Contract tests against the built system | Contracts are the source of truth | Yes |
-| Fitness functions (every `FF-nn`) | The architecture | Yes |
+| Architecture rules (listed in `architecture.md`) | The architecture | Yes |
 | Supply chain: dependency audit, secret scanning, software bill of materials, artifact scanning | `supply_chain.block_on` | Critical vulnerabilities and any secret block, unless an accepted `RISK-nn` lists the issue |
 | Traceability (`sdd.py trace`) | Spec ↔ test ↔ result links | From Verify |
 
@@ -69,7 +69,7 @@ Every project gets a reproducible development environment (a dev container or eq
 
 ## 8. Observability as code
 
-From the design's failure modes and the SLO catalog, wire:
+From the design's failure modes and the service levels in `architecture.md`, wire:
 - instrumentation and collection (logs, metrics, traces, correlation);
 - dashboards per service (SLIs, rate/errors/duration, saturation, dependencies);
 - **alerts as code** on SLO burn rate and user-visible symptoms, each linked to a runbook section.
@@ -88,7 +88,7 @@ Keep the system current so security fixes are cheap:
 ## 10. Walking skeleton (scaffold)
 
 The platform half of the first slice of a new project:
-- **`.sdd/commands.yaml` first, as its own task**: register the project's commands by purpose for the technologies in `.sdd/stack.yaml` (install, format, lint, typecheck, test with machine-readable output, coverage, migrate, run, build, scan, pipeline-lint, infra-plan, deploy-nonprod, cloud-read, …). Commands only become usable after the architect's review and integration (the guard reads the registry from the feature branch), so this task comes before every task that needs them. The same rule applies later: new tooling is registered in a small task before the tasks that use it. Never register production deploys or infrastructure applies;
+- **commands first**: propose the project's commands by purpose for the technologies in `.sdd/stack.yaml` (install, format, lint, typecheck, test with machine-readable output, coverage, migrate, run, build, scan, pipeline-lint, infra-plan, deploy-nonprod, cloud-read, …) to the architect, who registers them in `stack.yaml`. Commands only become usable once registered and committed on the feature branch, so this comes before every task that needs them; the same applies later whenever new tooling is introduced. Never propose production deploys or infrastructure applies as commands;
 - repository layout per the conventions, with formatter, linter, type and test configuration;
 - the AC tagging mechanism configured;
 - liveness and readiness endpoints;
@@ -97,7 +97,7 @@ The platform half of the first slice of a new project:
 - the pipeline with every gate from §2, proven to pass and fail;
 - the build artifact;
 - the protected production environment;
-- the first fitness function;
+- the first architecture rule enforced in CI;
 - a deploy to dev, if a dev environment has been approved.
 
 ## 11. Runbooks

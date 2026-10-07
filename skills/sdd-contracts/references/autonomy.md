@@ -7,7 +7,7 @@ The organization runs autonomously. Humans are interrupted only for decisions th
 | Class | Covers | Action |
 |---|---|---|
 | **D0 Routine** | Reversible, in approved scope: implementation detail, test design, refactor, review fixes | Act. The commit is the record. |
-| **D1 Notable** | Choice within constraints: library inside the chosen stack, internal API shape, trade-off inside an NFR budget | Act, then append to `log.md` with rationale. Write an ADR if architecturally significant. |
+| **D1 Notable** | Choice within constraints: library inside the chosen stack, internal API shape, trade-off inside an NFR budget | Act, then record it in `decisions.md` ("Decided by agents") with the reason. Write an ADR if architecturally significant. |
 | **D2 Peer-gated** | Changing an approved artifact; adding a runtime dependency; changing a public contract, schema or event; touching another owner's artifact | Get sign-off from the owner or arbiter agent (new dependency → security-engineer checks license, CVEs, maintenance health). No human. |
 | **D3 Human** | The list below | The hub pauses only that branch, continues independent work, and writes a decision package. |
 
@@ -36,7 +36,7 @@ When information is missing and the decision is not D3: record `ASM-nn` in the a
 
 ## Decision packages
 
-Every D3 item is a file in `specs/<feature>/gates/` (or `.sdd/gates/` for project-level decisions) started from `templates/gate.md`. The **preparing agent** writes it (G1 product-lead, G2 architect, G3 platform-engineer); the hub only records the human's answer (`status`, `decided-by`, `decided-on`, Decision section). A package contains:
+Every D3 item is an entry under "Waiting for the human" in the feature's `decisions.md` (project-level decisions live in the foundation feature, `specs/000-foundation/decisions.md`). The **preparing agent** writes it (G1 product-lead, G2 architect, G3 platform-engineer, risk entries the deferring owner, mitigations incident-responder); the hub only records the human's answer (status and the Decision line). A package contains:
 
 - the decision, in one sentence;
 - context — one screen maximum;
@@ -47,7 +47,7 @@ Every D3 item is a file in `specs/<feature>/gates/` (or `.sdd/gates/` for projec
 
 ### G2 — foundational decisions
 
-For G2 the architect must present **every viable option** (not just a preferred one), each with pros, cons, a fit matrix against the requirements, reversal cost, and operational cost. **The human decides.** The architect records the human's choice and reasons as an ADR with `decided-by: human`.
+For G2 the architect must present **every viable option** (not just a preferred one), each with pros, cons, a fit matrix against the requirements, reversal cost, and operational cost. The `decisions.md` entry stays one screen; the full option analysis lives in a research note it links to. **The human decides.** The architect records the human's choice and reasons as an ADR with `decided-by: human` and updates `stack.yaml`.
 
 ## Escalation ladder
 

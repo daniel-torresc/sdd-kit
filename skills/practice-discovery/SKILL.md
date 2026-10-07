@@ -20,7 +20,7 @@ Requests usually arrive as solutions ("add a cache", "build a dashboard", "integ
 
 ## 2. Users and jobs
 
-- Identify **who** experiences the problem. Use `PER-nn` from `.sdd/product/personas.md`; propose a new persona only when none fits.
+- Identify **who** experiences the problem. Use `PER-nn` from `.sdd/product.md`; propose a new persona only when none fits.
 - Express needs as jobs: **When** `<situation>`, **I want to** `<motivation>`, **so I can** `<outcome>`.
 - Look for **other affected parties**: operators, support staff, admins, auditors, downstream systems. They generate NFRs (observability, audit, admin tooling) that are easy to miss.
 
