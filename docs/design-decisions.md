@@ -173,11 +173,12 @@ From the human's instructions for the review phase:
 2. ~~End-to-end workflow review~~: done (§7).
 3. ~~Agent review~~: done (§5).
 4. ~~Assets review~~: done (§6).
-5. **Capability and dependency gaps** across the whole system. Known candidates:
-   - Frontend stack skills: `stack-typescript` and framework skills, possibly reused from existing skills.
-   - Cloud stack skills, once a hosting platform is chosen.
-   - Brain-vault integration for the librarian.
-   - Issue-tracker connectors for external-write entries.
-   - Local platform tooling: actionlint, hadolint, trivy, syft, gitleaks, OpenTofu, pre-commit, Docker.
-   - Packaging: rename to sdd-kit, README, version, marketplace entry.
-6. **Then testing**, systematically and with the complete system.
+5. ~~Capability and dependency gaps~~: closed 2026-10-07.
+   - Brain-vault integration: **dropped** (no separate knowledge base; knowledge lives in the repository).
+   - Issue tracker: **none for now** (`sync.issue_tracker: none`); any tracker works later through its connector as approved external writes.
+   - Local platform tooling: per-project commands in `stack.yaml`, installed by the human per test stage; nothing ships with the plugin.
+   - Stack skills: external, declared per project in `stack.yaml`.
+   - Hub re-read: added local-only projects (no `origin`), empty-repository init, follow-up `done` state, feature switch to the follow-up branch.
+   - Packaging (rename to sdd-kit, README, version, marketplace): after testing.
+6. **Testing**, cheap to expensive: (1) guard policies and `sdd.py` against a fixture; (2) class T and S on a small local-only fixture; (3) class M with a GitHub remote, through the follow-up branch; (4) `/sdd init` greenfield.
+7. **Packaging**, after testing.
