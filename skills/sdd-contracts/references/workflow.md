@@ -115,7 +115,7 @@ Worktrees branch from the **committed** feature branch, so uncommitted artifacts
 | Artifact commits | `chore(sdd): <agent> <mode> <what>` by the hub |
 | Task → feature | merge commit (`--no-ff`), in dependency order, by tech-lead |
 | Feature → main | only through G3 (T: your PR merge); you merge |
-| Remote | pushing `sdd/*` branches and draft PRs are autonomous; merges to main, force-pushes and remote branch deletion are human decisions |
+| Remote | pushing `sdd/*` branches and draft PRs are autonomous; merges to main, force-pushes and remote branch deletion are human decisions. Without an `origin` remote: branch from the local main, no pushes or PRs; the human merges locally |
 
 ## Integration
 
@@ -137,7 +137,7 @@ code-reviewer runs a `feature-review` of the integrated diff (M/L). test-enginee
 
 Knowledge goes to its canonical home — there is no separate knowledge base.
 - **Before G3 (Release, so it merges with the feature):** librarian `docs` (README and `docs/` from the docs-impact list) and architect `evolve` (`architecture.md` structure, conventions and debt from the design's Architecture updates; superseded ADRs; `stack.yaml`).
-- **After release, on `sdd/F<NNN>-followup`:** platform-engineer records the deploy and watch window in `release.md`; product-lead `evolve` after the watch window (the brief's Outcome, `product.md` scope, glossary, personas); librarian `retro` (what to keep and change, routed as findings to the owners of the canonical documents, and **methodology proposals** listed for the human in `decisions.md`; accepted ones change the constitution, the config, or the plugin). The hub opens a docs-only draft PR; the feature is `done` when you merge it.
+- **After release, on `sdd/F<NNN>-followup`:** platform-engineer records the deploy and watch window in `release.md`; product-lead `evolve` after the watch window (the brief's Outcome, `product.md` scope, glossary, personas); librarian `retro` (what to keep and change, routed as findings to the owners of the canonical documents, and **methodology proposals** listed for the human in `decisions.md`; accepted ones change the constitution, the config, or the plugin). The hub marks the feature done on the follow-up branch and tech-lead opens a docs-only draft PR; the feature counts as finished once you merge it.
 - Abandoned features skip straight to the retro, on their own branch.
 
 ## Foundation and existing codebases

@@ -42,7 +42,7 @@ One command at a time; no chaining, redirection or shell variables. Allowed:
 - `gh pr create --draft …`, `gh pr edit …`, `gh pr view|checks …`, `gh run view|list …`;
 - the project's registered commands for install, test, lint and typecheck (from the committed `.sdd/stack.yaml`).
 
-Never merge into the main or release branch, never force-push, never delete remote branches. Use Glob, Grep and Read to find files.
+Never merge into the main or release branch, never force-push, never delete remote branches. If the repository has no `origin` remote, skip pushes and draft PRs and say so in your envelope; the human merges locally. Use Glob, Grep and Read to find files.
 
 ## Modes
 

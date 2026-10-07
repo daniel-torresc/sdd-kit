@@ -12,6 +12,8 @@ First load the contracts: invoke the `sdd-contracts` skill (and read its `refere
 
 Parse `$ARGUMENTS`: the first word selects the subcommand; no arguments means **advance**.
 
+**Local-only projects:** if `git remote` shows no `origin`, skip `git fetch`, branch from the local main branch instead of `origin/<main>`, and check merges with `git branch --merged <main>`; tech-lead skips push and draft PRs, and the human merges locally.
+
 ## The organization
 
 Dispatch with the Agent tool, using the exact `subagent_type` shown in your available agents list (plugin agents carry the plugin prefix).
@@ -32,7 +34,7 @@ Dispatch with the Agent tool, using the exact `subagent_type` shown in your avai
 4. **Reviewers get artifacts only** — never the author's envelope, summary or reasoning.
 5. Run independent dispatches **in parallel** (review panels; ready build tasks up to `parallelism.max_parallel_tasks`).
 6. Include every **active lens** from `state.yaml` in the panels the dispatch table assigns it to.
-7. **Technology skills**: resolve the technologies the work involves (the task's `stack:` concerns; for non-task work, the concerns of the agent's area) to their `skills` in `.sdd/stack.yaml`, and name them in the prompt: "Load these skills first: …". Check them against your available skills. For any that are missing, add an `H-nn` entry (type `setup`: "install skill X from <source in `skill-sources`>") to the feature's `decisions.md` and still dispatch, telling the agent which skills are unavailable.
+7. **Technology skills**: resolve the technologies the work involves (the task's `stack:` concerns; for non-task work, the concerns of the agent's area) to their `skills` in `.sdd/stack.yaml`, and name them in the prompt: "Load these skills first: …". Check them against your available skills. For any that are missing, add an `H-nn` entry (type `setup`: "install skill X from <source in `skill-sources`>") to the feature's `decisions.md` (class T: list it in your stop summary) and still dispatch, telling the agent which skills are unavailable.
 
 ## After every return
 
@@ -52,7 +54,7 @@ Loop until a **stop condition**:
 1. Find the work from the checked-out branch: `sdd/F<NNN>-<slug>` or `sdd/F<NNN>-followup` → that feature's `state.yaml`; `sdd/INC-nnn-<slug>` → the incident file (continue per **incident**); `sdd/T-<slug>` → the class T steps in **new**. Otherwise `git fetch`, list the open work (features with a phase not `done` or `skipped`, open incidents) and ask which; then `git switch` to its branch.
 2. Decide the next action from `phases`, `status`, the class flow and active lenses (workflow contract; dispatch table): draft → review panel → revise (≤ cap) → exit check (`sdd.py trace --phase <phase>`, plus verdicts) → gate or next phase.
 3. Build phase: tech-lead `coordinate` → test-engineer `test-task` / engineer `implement` / platform-engineer `task` → code-reviewer `test-review` / `task-review` (+ security-engineer `code-review` where the dispatch table says) → tech-lead `integrate` (green = everything passes except what `sdd.py expected-failing <spec-dir>` lists; at the end of Build that list must be empty) → clean up the agent worktree (`git worktree list`, `git worktree remove --force .claude/worktrees/agent-<id>`, `git branch -D worktree-agent-<id>`; the `sdd/<F>-<T>` branch stays) → after an exhausted fix loop tech-lead `unblock`.
-4. Release runs librarian `docs` and architect `evolve` in parallel with the release plan. After G3 is approved, stop until the human has merged: `git fetch` and check with `git branch -r --merged origin/<main>`. Then `git switch -c sdd/F<NNN>-followup origin/<main>`, and continue there: platform-engineer `deploy` (records the deploy and watch window), product-lead `evolve` after the watch window, librarian `retro`, `state.yaml` → done, tech-lead `integrate` to push it with a docs-only draft PR for the human to merge.
+4. Release runs librarian `docs` and architect `evolve` in parallel with the release plan. After G3 is approved, stop until the human has merged: `git fetch` and check with `git branch -r --merged origin/<main>`. Then `git switch -c sdd/F<NNN>-followup origin/<main>`, and continue there: platform-engineer `deploy` (records the deploy and watch window), product-lead `evolve` after the watch window, librarian `retro`, then `state.yaml` `evolve: done` with status "done — follow-up PR waiting for your merge", and tech-lead `integrate` to push it with a docs-only draft PR. The feature counts as finished once the human merges that PR.
 5. Loop caps: review rounds per class; at the cap → challenger `second-opinion` (optional) → arbiter by category → human.
 6. Work that does not depend on a pending decision continues; only the blocked branch pauses.
 
@@ -74,7 +76,7 @@ Loop until a **stop condition**:
 The foundation is a feature like any other, class L: `specs/000-foundation/` on branch `sdd/F000-foundation`, running the normal phases (what each phase does for init and for adopt: workflow contract, "Foundation and existing codebases"). After setup, **advance** drives it and resumes it after every stop.
 
 Setup (only if `.sdd/` does not exist):
-1. `git fetch`; `git switch -c sdd/F000-foundation origin/<main>` (or from the current branch in an empty repository).
+1. The main branch must have at least one commit (G3 merges the foundation into it). In an empty repository, ask the human to create it (`git commit --allow-empty -m "chore: initial commit"` on the main branch) — you don't commit to main. Then `git fetch`; `git switch -c sdd/F000-foundation origin/<main>`.
 2. Copy `constitution.md`, `config.yaml` and `stack.yaml` from the sdd-contracts templates into `.sdd/`, and `state.yaml` and `decisions.md` into `specs/000-foundation/` (class L).
 3. **init:** ask the human for the product idea if not given, and for any technologies they want to fix as constraints, with the skills to use for them if they know; record those as `fixed: true`, `decided-by: human` entries in `stack.yaml`, in the human's words. **adopt:** nothing to ask; the cartographer's `adopt` investigation starts Discover.
 4. Commit, then continue with **advance**.
@@ -103,7 +105,7 @@ List every entry with `status: pending` under **Waiting for the human** in every
 
 ## feature <F>
 
-`git switch` to the feature's branch (`sdd/F<NNN>-<slug>`) and show its status.
+`git switch` to the feature's newest open branch (`sdd/F<NNN>-followup` if it exists and isn't merged, else `sdd/F<NNN>-<slug>`) and show its status.
 
 ## Never
 
