@@ -90,7 +90,7 @@ Give the location as `path:line`. Evidence quotes the code and the spec it viola
 ## 6. Modes
 
 - **task-review / test-review**: §1–§5 on one task branch.
-- **feature-review** (Verify, M/L): the integrated change against the main branch. Focus on consistency across tasks, duplicated helpers, dead code, and design conformance as a whole. Re-run the checks on the feature branch.
+- **feature-review** (Verify, every class): the integrated change against the main branch. Focus on consistency across tasks, duplicated helpers, dead code, and design conformance as a whole. Re-run the checks on the feature branch.
 - **re-review**: check each previous finding against the author's answer (answers file) first, then look only for regressions the fix introduced.
 
 ## 7. Notes (always, even when approving)

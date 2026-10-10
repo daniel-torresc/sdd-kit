@@ -2,11 +2,15 @@
 version: 1
 
 permissions:
-  # true: the SDD guard approves each agent's in-policy actions (owned writes, allowlisted
-  # commands such as tests, lint and spikes) without prompting. Those commands run project
-  # code with your user's rights, so run autonomous sessions in Claude Code's sandbox or a
-  # dev container. false: normal permission prompts.
+  # true: the SDD guard approves agents' calls (and the hub's bookkeeping) without prompting.
+  # Agents run project code with your user's rights, so run autonomous sessions in Claude Code's
+  # sandbox or a dev container. false: normal permission prompts. Either way, the guard denies
+  # what is irreversible or yours to decide: commits, merges and pushes to main, force-pushes,
+  # remote branch deletion, merging or publishing PRs and releases, production deploys and
+  # infrastructure applies, destructive deletes and data operations, writes to outside systems.
   auto_approve: true
+  deny_commands:               # extra command prefixes this project never lets agents run
+    # - "./scripts/deploy/prod.sh"
 
 notify: true                   # push notification when /sdd stops for a human decision or blocker
 
@@ -43,8 +47,7 @@ git:
 
 engineering:
   diff_coverage_min: 85        # % of changed lines covered (diff-cover), part of the task definition of done
-  fix_attempts: 3              # per failing check; attempts 2–3 on opus
-  opus_for_risk: [high]        # task risk levels that run on opus
+  fix_attempts: 3              # per failing check
 
 verify:
   mutation_testing: [L]        # classes that run mutation testing on changed modules
@@ -52,7 +55,8 @@ verify:
   flaky_tests: block           # zero tolerance; re-runs only for diagnosis
 
 loop_caps:
-  review_rounds: { S: 2, M: 2, L: 3 }
+  design_review_rounds: 3      # challenger (+ active lens reviewers) on the design
+  review_rounds: 1             # every other review: one round; a re-review only for a critical finding
   build_fix_attempts: 3
 
 # Any signal of a higher class raises the class.
@@ -78,9 +82,8 @@ triage_signals:
     - typo, copy change, config value, docs
     - patch-level dependency bump
 
-# Lens triggers: which reviewers/consultants join, and from which phase.
+# Lens triggers: which specialist joins the reviews, and where (workflow contract, "Lens activation").
 lens_triggers:
-  # Active lenses add their agent to the review panels (workflow contract, "Lens activation").
   security:
     when: [auth, sessions, secrets, user input, file upload, external calls, new dependency, personal data]
     agent: security-engineer

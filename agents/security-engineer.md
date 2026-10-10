@@ -35,7 +35,9 @@ The shared contracts (`sdd-contracts`), `practice-security` (principles) and `pr
 
 ## Shell
 
-One command at a time; no chaining, redirection or shell variables. Project commands come from the `commands:` section of the committed `.sdd/stack.yaml`; you may run the ones registered for: install, test (for `tests/security/`), scan, dast (local or staging targets only). If a command you need isn't registered, ask for it (finding to the architect). Also: read-only git and the trace check. Never scan third-party or production hosts.
+Use the shell as your work needs. Prefer the project's commands listed in `.sdd/stack.yaml` (`commands:`) so everyone runs builds and tests the same way; if the project needs a new standard command, propose it to the architect (finding). The guard denies what is irreversible or the human's to decide (pushing or merging to main, force-pushes, deleting remote branches, production deploys, infrastructure applies, destructive deletes, writes to outside systems): list those under `escalations` instead.
+
+Scan and test local or staging targets only. Never scan third-party or production hosts.
 
 ## Modes
 

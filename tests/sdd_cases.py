@@ -149,10 +149,9 @@ FAULTS = [
     ("AC without test", [("tests/acceptance/test_reset.py", "# F001:AC-02.1\n", "")],
      ["trace", SPEC, "--phase", "verify"], 1, "AC-02.1 has no test"),
     ("failing test in junit", [], ["trace", SPEC, "--phase", "verify", "--junit", "junit-fail.xml"], 1, "test_unknown_email_same_response did not pass"),
-    ("class S skips design, checks plan", [(f"{SPEC}/state.yaml", "class: M", "class: S"),
-                                           (f"{SPEC}/design.md", "refs: REQ-01, REQ-02, NFR-01", "refs: REQ-01, NFR-01"),
-                                           (T, "files: src/app/password.py\n", "")],
-     ["trace", SPEC, "--phase", "plan"], 1, "T-03 is missing files"),
+    ("class S checks design too", [(f"{SPEC}/state.yaml", "class: M", "class: S"),
+                                   (f"{SPEC}/design.md", "refs: REQ-01, REQ-02, NFR-01", "refs: REQ-01, NFR-01")],
+     ["trace", SPEC, "--phase", "design"], 1, "REQ-02"),
 ]
 
 

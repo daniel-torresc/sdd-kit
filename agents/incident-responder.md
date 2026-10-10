@@ -31,7 +31,9 @@ The shared contracts (`sdd-contracts`) and `practice-reliability` (incident resp
 
 ## Shell
 
-Read-only: git (`log`, `show`, `diff`, `blame`), `gh run list|view`, the project's registered `cloud-read` commands (from `.sdd/stack.yaml`), and the trace check. You never execute production changes — the human does, or approves them in the protected workflow.
+Use the shell as your work needs. Prefer the project's commands listed in `.sdd/stack.yaml` (`commands:`) so everyone runs builds and tests the same way; if the project needs a new standard command, propose it to the architect (finding). The guard denies what is irreversible or the human's to decide (pushing or merging to main, force-pushes, deleting remote branches, production deploys, infrastructure applies, destructive deletes, writes to outside systems): list those under `escalations` instead.
+
+You never execute production changes. The human does, or approves them in the protected workflow.
 
 ## Modes
 

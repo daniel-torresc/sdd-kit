@@ -23,17 +23,12 @@ escalations:            # D2/D3 items needing someone else; always this shape
     route_to: security-engineer   # an agent, or "hub" for D3
     item: "Approve new runtime dependency argon2-cffi (ASM-32)"
     blocks: [T-01]      # what cannot proceed until it is resolved; [] if nothing
-next: "review panel: challenger, security-engineer"
+next: "design review: challenger, security-engineer"
 ```
 
-- `needs-input` — you cannot proceed without a D2/D3 answer; list it under `escalations`, or under `intent_questions` for pre-draft intent questions:
+- `needs-input` — you cannot proceed without a D2/D3 answer; list it under `escalations`. In Discover, product-lead returns `needs-input` after writing its questions to **Discover questions** in `decisions.md` (no limit; every question whose answer would change the brief, each with why it matters and a recommended answer) and lists their IDs under `intent_questions`:
   ```yaml
-  intent_questions:        # max 3; only when interpretations differ materially
-    - id: Q-01
-      question: "Who is the primary user: admins or end customers?"
-      why: "Changes the problem, flows and success metric"
-      options: ["admins", "end customers", "both"]
-      default: "end customers"
+  intent_questions: [Q-01, Q-02, Q-03, Q-04]
   ```
 - `blocked` — an upstream artifact is wrong or stale; file a finding routed to its owner.
 - `failed` — you could not complete the task; explain why in `summary`.
@@ -71,14 +66,14 @@ findings:
 3. Anything that expands scope is a `suggestion`, never blocking, and routes to product-lead.
 4. Review the artifact against its upstream artifacts and the constitution — not against your personal preferences.
 5. `verdict` follows the findings: any open blocking finding → `changes-required`; the artifact cannot be evaluated (e.g. stale upstream) → `blocked`.
-6. In round n>1, re-check previous findings first, then look only for regressions introduced by the revision. Do not raise new non-regression findings after round 1 unless critical.
+6. Reviews are one round by default (Design: up to 3). In a later round, re-check previous findings first, then look only for regressions introduced by the revision. Do not raise new non-regression findings after round 1 unless critical.
 7. **Findings budget:** no cap on critical and major; at most 10 minor + nit per review, round 1 only. Further polish goes in the review notes, not as findings.
 8. **Stay in your lane.** An issue in another reviewer's territory gets one `minor` pointer (`category: pointer/<lens>`, `route_to: <that agent>`), not a full finding.
 9. **Settled decisions** (approved gates, accepted ADRs, human decisions) are challenged only with new evidence, as a D3 flag.
 
 ### Author rules
 
-1. Answer every finding in a separate answers file next to the review, `reviews/<review-file>-answers.md` (e.g. `design-challenger-r1-answers.md`), one line per finding: `R1-03: fixed | rejected | deferred — <rationale>`. Never edit a reviewer's file; the guard only lets reviewers write their own review files.
+1. Answer every finding in a separate answers file next to the review, `reviews/<review-file>-answers.md` (e.g. `design-challenger-r1-answers.md`), one line per finding: `R1-03: fixed | rejected | deferred — <rationale>`. Never edit a reviewer's file: each review file belongs to its reviewer.
 2. `rejected` blocking findings go back to the same reviewer next round.
 3. `deferred` findings become `RISK-nn`. Deferring a critical/major finding requires a risk-acceptance gate (D3).
 4. Bump the artifact `version` after revising.

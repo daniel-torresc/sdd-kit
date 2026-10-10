@@ -1,5 +1,5 @@
 {
-  "description": "SDD: enforce artifact ownership per agent and allow agents to read the plugin's own methodology files.",
+  "description": "SDD: approve agents' calls automatically, deny only irreversible actions and the human's decisions (denylist in scripts/guard.py), and allow reading the plugin's own methodology files.",
   "hooks": {
     "PreToolUse": [
       {

@@ -37,7 +37,7 @@ The methodology runs on a **small core** of artifacts that exist in every projec
 ```
 
 Class T work has no spec folder; it is recorded in a commit (and, if a decision was needed, in the hub's report).
-Class S uses only `state.yaml`, `requirements.md` (REQ + AC), a short `tasks.md`, `evidence/`, `reviews/` and `decisions.md`.
+Class S uses `state.yaml`, a short `brief.md`, `requirements.md` (REQ + AC), `design.md`, a short `tasks.md` (no `test-plan.md`), `evidence/`, `reviews/` and `decisions.md`; no `release.md`.
 
 ## Templates
 
@@ -49,25 +49,26 @@ All templates live in `sdd-contracts/templates/` and are named after the artifac
 |---|---|---|
 | constitution.md, config.yaml | human (agents propose changes as decisions) | — |
 | stack.yaml | architect; `fixed: true` entries only by the human (recorded by the hub) | challenger (G2 fairness), human (G2) |
-| product.md | product-lead | challenger |
+| product.md | product-lead | the human (approval) |
 | architecture.md, docs/adr/ | architect | challenger |
 | design-system.md | ux-designer | challenger |
-| brief.md, requirements.md | product-lead | challenger, test-engineer, reliability-engineer (NFRs), active lenses |
-| ux.md | ux-designer | challenger, test-engineer |
+| brief.md | product-lead | the human (brief approval) |
+| requirements.md | product-lead | the human (G1) |
+| ux.md | ux-designer | the human (G1) |
 | research/ | the investigating agent (researcher, cartographer, architect for spikes) | the asking agent |
-| design.md, contracts/ | architect | challenger, security-engineer, reliability-engineer, active lenses |
-| tasks.md | tech-lead | test-engineer, architect, challenger (L) |
-| test-plan.md, acceptance/contract/e2e/perf tests, tests/support/, evidence/ | test-engineer | code-reviewer, reliability-engineer (performance section) |
+| design.md, contracts/ | architect | challenger; security-engineer, reliability-engineer and consultants when their lens is active |
+| tasks.md | tech-lead | `sdd.py trace --phase plan` |
+| test-plan.md, acceptance/contract/e2e/perf tests, tests/support/, evidence/ | test-engineer | code-reviewer (tests); reliability-engineer (performance section, reliability lens) |
 | source code (incl. docstrings and in-code docs), unit/integration tests, migrations | engineer | code-reviewer, task `reviews:` |
 | tests/security/ | security-engineer | code-reviewer |
 | pipeline, infrastructure, containers, dev environment, docs/runbooks/, release.md | platform-engineer | code-reviewer, reliability-engineer (release) |
 | README.md, docs/ (except adr, runbooks) | librarian | — |
 | .sdd/incidents/ | incident-responder | reliability-engineer |
 | reviews/ | each reviewer its own file; the artifact's owner answers in `<review-file>-answers.md` | — |
-| decisions.md | append-only by every agent; entries waiting for the human are written by the preparing agent; the hub records the human's answers | challenger (G2 fairness) |
+| decisions.md | append-only by every agent; entries waiting for the human are written by the preparing agent; the hub records the human's answers (including the Discover answers, word for word) | challenger (G2 fairness) |
 | state.yaml | hub | — |
 
-Only the owner edits an artifact. Anyone else files a finding (communication contract) with `route_to: <owner>`.
+Only the owner edits an artifact. Anyone else files a finding (communication contract) with `route_to: <owner>`. The hub checks the changed files after every step.
 
 ## Frontmatter (every markdown artifact except decisions.md)
 
@@ -133,4 +134,4 @@ The trace script depends on these; follow them exactly.
 | Every AC (and NFR referenced by tests) has a passing test (with `--junit`) | verify |
 | No stale artifacts | all |
 
-The script prints its result; it writes a file only when asked (`--report evidence/traceability.md` at Verify).
+The checks are advisory: the hub routes each violation to the artifact's owner as a finding. The script prints its result; it writes a file only when asked (`--report evidence/traceability.md` at Verify).

@@ -32,7 +32,9 @@ The shared contracts (`sdd-contracts`), `practice-research` and `practice-tech-s
 
 ## Shell
 
-The trace check and read-only git only. Your tools are WebSearch, WebFetch and documentation lookups.
+Use the shell as your work needs. Prefer the project's commands listed in `.sdd/stack.yaml` (`commands:`) so everyone runs builds and tests the same way; if the project needs a new standard command, propose it to the architect (finding). The guard denies what is irreversible or the human's to decide (pushing or merging to main, force-pushes, deleting remote branches, production deploys, infrastructure applies, destructive deletes, writes to outside systems): list those under `escalations` instead.
+
+Your main tools are WebSearch, WebFetch and documentation lookups.
 
 ## Modes
 

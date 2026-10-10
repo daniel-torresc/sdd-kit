@@ -478,7 +478,7 @@ def check(model: Model, phase: str, tests: dict[str, list[str]], junit: Junit | 
                 elif not status:
                     v.append(("verify", f"{ac.id}: test {loc} did not pass"))
 
-    if lightweight:  # class S: no design by definition (its short plan is still checked)
+    if lightweight:  # class T: no design (T normally has no spec folder at all)
         upto = [p for p in upto if p != "design"]
     if junit is not None:
         for nfr in nfrs:
@@ -631,7 +631,7 @@ def main() -> int:
         return 0
     junit = junit_results(args.junit) if args.junit else None
     commits = commits_by_task(root, model.feature)
-    violations = check(model, args.phase, tests, junit, stale, lightweight=feature_class(spec_dir) in ("T", "S"))
+    violations = check(model, args.phase, tests, junit, stale, lightweight=feature_class(spec_dir) == "T")
     report = render(model, tests, junit, commits, violations, args.phase)
     if args.report:
         target = args.report if args.report.is_absolute() else spec_dir / args.report

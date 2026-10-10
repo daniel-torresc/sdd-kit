@@ -26,7 +26,7 @@ Templates for every artifact are in [templates/](templates/). Always **Read** th
 6. **Assumption-first.** Missing information that is not a D3 decision becomes a documented `ASM-nn` with a default; keep working.
 7. **Reviewers are independent.** They judge artifacts, not the author's reasoning, and never edit what they review.
 8. **Evidence or it's minor.** A major/critical finding without evidence is downgraded.
-9. **Traceability is checked, not maintained by hand.** Run the trace script (below); at Verify it writes the traceability report into the evidence pack.
+9. **Traceability is checked, not maintained by hand.** Run the trace script (below); at Verify it writes the traceability report into the evidence pack. Its results are advisory: each violation becomes a finding for the artifact's owner.
 
 ## Trace script
 

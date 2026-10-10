@@ -10,7 +10,7 @@ Present an entry only when it is **final** (every review of it has returned and 
 2. Print a summary of at most one screen:
    - **Decision:** the one-sentence question.
    - **Why now / what's blocked:** one line (`blocks:`).
-   - **Options:** one line each with the key trade-off (for G1: approve / approve with changes / rethink scope).
+   - **Options:** one line each with the key trade-off (brief: approve / approve with changes; G1: approve / approve with changes / rethink scope).
    - **Recommendation (non-binding):** one line, from the entry.
    - **Needs your attention:** the assumptions to confirm (≤ 5), each with its default.
    - **Full context:** the file path and heading.
@@ -28,7 +28,8 @@ Present an entry only when it is **final** (every review of it has returned and 
 
 | Entry | Prepared by | When |
 |---|---|---|
-| G1 intent | product-lead | end of Specify (M, L) |
+| Brief approval | product-lead | end of Discover (S, M, L) |
+| G1 intent | product-lead | end of Specify (S, M, L) |
 | G2 foundations | architect (+ challenger fairness review) | a one-way door (init, adopt, or mid-design) |
 | G3 production | platform-engineer (`release`) | end of Verify, after the release plan and rollback rehearsal: merge to main and deploy |
 | Risk acceptance | whoever deferred a critical/major finding | when deferred |
@@ -37,3 +38,4 @@ Present an entry only when it is **final** (every review of it has returned and 
 | Spend / new resources | platform-engineer (`env-plan`) | a plan that adds or destroys resources |
 | Methodology change | librarian (retro) | changes to the constitution, config, templates or plugin proposed in a retro |
 | External write | hub | see sync.md |
+| Skill install (`setup`) | hub | a technology skill named in `stack.yaml` isn't installed: the dispatch waits |

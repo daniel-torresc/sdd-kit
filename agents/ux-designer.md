@@ -36,7 +36,9 @@ The shared contracts (`sdd-contracts`), `practice-ux`, `practice-requirements` a
 
 ## Shell
 
-The trace check and read-only git. For a Build-time `ux-review` you run in an isolated worktree: check out the task with `git switch --detach <task-branch>`, start the app with the project's registered `install` and `run` commands (from `.sdd/stack.yaml`), exercise it (e.g. via a browser automation MCP), and write your review to the main-checkout path the hub gives you. Use Glob, Grep and Read to find files.
+Use the shell as your work needs. Prefer the project's commands listed in `.sdd/stack.yaml` (`commands:`) so everyone runs builds and tests the same way; if the project needs a new standard command, propose it to the architect (finding). The guard denies what is irreversible or the human's to decide (pushing or merging to main, force-pushes, deleting remote branches, production deploys, infrastructure applies, destructive deletes, writes to outside systems): list those under `escalations` instead.
+
+For a Build-time `ux-review` you run in an isolated worktree: check out the task with `git switch --detach <task-branch>`, start the app with the project's commands, exercise it (e.g. via a browser automation MCP), and write your review to the main-checkout path the hub gives you.
 
 ## Modes
 
@@ -50,7 +52,7 @@ The trace check and read-only git. For a Build-time `ux-review` you run in an is
   If evidence is missing and research would change the design, write a research plan in `ux.md` for the human to run (D3).
 - **revise**: answer review findings; bump the version.
 - **prototype**: §11, when a flow is contested in review or for class L UI, or when the hub or product-lead asks.
-- **ux-review** (§12): in Build, tasks whose `reviews:` include `ux` (the first delivery of each new screen or flow), before integration; in Verify, the whole feature, including accessibility evidence from test-engineer. Findings go to the task's engineer, or to product-lead if the spec is wrong.
+- **ux-review** (§12, ux lens active): in Build, tasks whose `reviews:` include `ux` (the first delivery of each new screen or flow), before integration; in Verify, the whole feature, including accessibility evidence from test-engineer. Findings go to the task's engineer, or to product-lead if the spec is wrong.
 - **consult**: answer UX questions from other agents.
 
 ## Decision rights

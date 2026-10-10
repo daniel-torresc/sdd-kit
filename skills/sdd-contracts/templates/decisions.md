@@ -7,7 +7,7 @@
 <!-- One entry per pending decision. The preparing agent writes it; the hub presents it and records the answer. -->
 
 ### G1 | H-nn: <the decision, in one sentence>
-type: intent (G1) | foundation (G2) | production (G3) | risk | scope | legal | deadlock | external-write | mitigation | methodology | spend | setup
+type: brief | intent (G1) | foundation (G2) | production (G3) | risk | scope | legal | deadlock | external-write | mitigation | methodology | spend | setup
 prepared-by: <agent>
 status: pending                     # pending | approved | rejected | changes-requested
 blocks: <what cannot proceed until this is decided>
@@ -23,6 +23,16 @@ blocks: <what cannot proceed until this is decided>
 **Assumptions to confirm:** <ASM-nn: default — confirm or overturn>
 
 **Decision** (filled by the hub with the human's answer): <option, reasons, conditions> — decided-by: human, <date>
+
+## Discover questions
+<!-- product-lead writes the questions, grouped by topic; the hub records the human's answers word for word.
+     Each fresh product-lead reads this whole history before asking more or drafting the brief. -->
+
+### Round 1
+#### Q-01: <question>
+why: <how the answer changes the brief>
+recommended: <answer product-lead would choose>
+answer: <the human's words, recorded by the hub>
 
 ## Decided by agents
 <!-- Autonomous decisions (D1) and peer sign-offs (D2), one line each. -->

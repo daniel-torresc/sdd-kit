@@ -14,9 +14,9 @@
 #   - Skills listed here must be installed; if one is missing, the hub tells the human where it
 #     comes from (`skill-sources`). Until then agents rely on official docs and any technology research note.
 #   - Entries with `status: proposed` are pending decisions (see `decision`).
-#   - `commands` lists the project's commands by purpose. The SDD guard lets each agent run only the
-#     purposes in its policy, reading the version committed on the feature branch; a global denylist
-#     always applies. The architect writes them; platform-engineer proposes changes through a finding.
+#   - `commands` lists the project's commands by purpose, so every agent builds, tests and runs the
+#     project the same way. The architect writes them; anyone proposes changes through a finding.
+#     The guard only reads `deploy-nonprod` (dev/staging deploys it lets agents run).
 
 version: 1
 

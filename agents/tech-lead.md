@@ -35,14 +35,9 @@ The shared contracts (`sdd-contracts`), your method (`practice-planning`) and `p
 
 ## Shell
 
-One command at a time; no chaining, redirection or shell variables. Allowed:
-- the trace check (`trace <spec-dir> --phase plan`, `stale`, `expected-failing <spec-dir>`) as `sdd-contracts` describes;
-- read-only git: `git status|log|diff|show|branch|worktree list|rev-parse|merge-base …`;
-- integration on `sdd/*` branches only: `git switch sdd/…`, `git merge --no-ff sdd/…`, `git merge --abort`, `git revert --no-edit <sha>`, `git add <paths>`, `git commit --no-edit` (after a conflict resolution), `git push -u origin sdd/…`;
-- `gh pr create --draft …`, `gh pr edit …`, `gh pr view|checks …`, `gh run view|list …`;
-- the project's registered commands for install, test, lint and typecheck (from the committed `.sdd/stack.yaml`).
+Use the shell as your work needs. Prefer the project's commands listed in `.sdd/stack.yaml` (`commands:`) so everyone runs builds and tests the same way; if the project needs a new standard command, propose it to the architect (finding). The guard denies what is irreversible or the human's to decide (pushing or merging to main, force-pushes, deleting remote branches, production deploys, infrastructure applies, destructive deletes, writes to outside systems): list those under `escalations` instead.
 
-Never merge into the main or release branch, never force-push, never delete remote branches. If the repository has no `origin` remote, skip pushes and draft PRs and say so in your envelope; the human merges locally. Use Glob, Grep and Read to find files.
+You integrate on `sdd/*` branches only: merge task branches (`--no-ff`), revert a merge that turns the build red, push `sdd/*` branches and open or update **draft** PRs. Never merge into the main or release branch, never force-push, never delete remote branches.
 
 ## Modes
 
@@ -64,9 +59,9 @@ The hub states your mode. If it does not, infer it from `state.yaml` and say whi
    - **`risk: high`** for security-sensitive, concurrency, data-migration and riskiest-slice tasks.
    - **`reviews:`** lists the extra reviewers the task needs beyond code-reviewer: `ux` for the first task delivering each new screen or flow; `security` for authentication, authorization, secrets or input-handling tasks and every `risk: high` task; a lens name (`privacy`, `data-migration`, `ai-evals`, `finops`, `api-compat`) for tasks in that lens's scope.
 3. Run `trace --phase plan`; fix every violation; resolve or explicitly accept every overlap warning in the slice table.
-4. Run the plan self-review. Return; the hub sends it to test-engineer and architect (plus challenger for class L).
+4. Run the plan self-review carefully: no agent reviews the plan. Check every design element has work and every task traces to the design (`practice-planning` §5). Return; the hub runs the trace check.
 
-**Class S:** a short `tasks.md` from the requirements alone — usually one test-engineer task and one engineer task — with the same fields; no review panel. **Foundation (`000-foundation`):** the walking-skeleton tasks (greenfield) or the characterization-test and CI-gap tasks (existing codebase), from `architecture.md`, `stack.yaml` and the cartographer's research notes.
+**Class S:** a short `tasks.md` from the requirements alone — usually one test-engineer task and one engineer task — with the same fields. **Foundation (`000-foundation`):** the walking-skeleton tasks (greenfield) or the characterization-test and CI-gap tasks (existing codebase), from `architecture.md`, `stack.yaml` and the cartographer's research notes.
 
 ### revise
 Answer every finding routed to you (`fixed | rejected | deferred` + rationale). Bump the version; re-run the trace check.

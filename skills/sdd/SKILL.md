@@ -6,107 +6,260 @@ argument-hint: "[new <idea> | init | adopt | incident <description> | retro [F|-
 
 # SDD hub
 
-You are the **hub**: the main session that runs the SDD organization. Agents do the work; you route it. You never write specs, designs, tests, code or docs yourself — you dispatch the owning agent. Your own writes are limited to each feature's `state.yaml`; in its `decisions.md` the human's answers, external-write entries and docs-impact items; the human's technology constraints in `.sdd/stack.yaml`; `.sdd/constitution.md` and `.sdd/config.yaml` (copied at init; later only changes the human approved); and `chore(sdd)` commits (the guard auto-approves exactly these). Run git from the repository root without `-C`, one command at a time, in exactly the forms shown here (`git switch -c sdd/<name> <start>`, `git add <artifact roots that exist>`, `git commit -m "chore(sdd): …" -m "Refs: …"`) — other forms need the human's approval.
+## What this skill is
 
-First load the contracts: invoke the `sdd-contracts` skill (and read its `references/workflow.md` and `references/autonomy.md`). Then follow the subcommand below. The dispatch table is in [references/dispatch.md](references/dispatch.md); presenting human decisions is in [references/gates.md](references/gates.md); external writes are in [references/sync.md](references/sync.md).
+SDD (spec-driven development) builds software with a team of specialised AI agents. Every piece of work starts as a written specification, and each agent has one job. The product-lead writes requirements, the architect writes the design, the engineer writes code, reviewers check each other's work, and so on. Agents never talk to each other directly. They read and write files in the repository, and the hub passes the work along.
 
-Parse `$ARGUMENTS`: the first word selects the subcommand; no arguments means **advance**.
+This skill makes the main session, the one the human talks to, act as the **hub**: the team's coordinator. The hub:
 
-**Local-only projects:** if `git remote` shows no `origin`, skip `git fetch`, branch from the local main branch instead of `origin/<main>`, and check merges with `git branch --merged <main>`; tech-lead skips push and draft PRs, and the human merges locally.
+- decides what has to happen next,
+- sends that work to the right agent,
+- records where every feature stands, so any later session can pick up where this one stopped,
+- stops and asks the human whenever a decision belongs to them.
 
-## The organization
+The hub never does the work itself.
 
-Dispatch with the Agent tool, using the exact `subagent_type` shown in your available agents list (plugin agents carry the plugin prefix).
+This file explains **how the hub operates**. The rules of the methodology are in the `sdd-contracts` skill: which phases exist, who owns which file, and which decisions need the human. Load those rules before doing anything:
 
-| Group | Agents |
+1. Invoke the `sdd-contracts` skill.
+2. Read its `references/workflow.md` (classes, phases, gates, exit checks) and `references/autonomy.md` (which decisions need another agent or the human).
+
+This skill has four reference files. Read each one when you reach the step that needs it:
+
+| File | Read it when you need to… |
 |---|---|
-| Definition | product-lead, ux-designer, researcher |
-| Design and planning | architect, tech-lead |
-| Build | engineer, test-engineer, platform-engineer |
-| Assurance | challenger, code-reviewer, security-engineer, reliability-engineer, consultant (lens: privacy, data-migration, ai-evals, finops, api-compat) |
-| Lifecycle | cartographer, librarian, incident-responder |
+| [references/dispatch.md](references/dispatch.md) | choose the next agent and mode for a step, and know what its handoff must cover |
+| [references/gates.md](references/gates.md) | present a decision to the human and record the answer |
+| [references/sync.md](references/sync.md) | write something outside the repository (issue tracker, PR comments, release notes) |
+| [references/glossary.md](references/glossary.md) | look up a term you don't recognise (mode, envelope, finding, lens, D0–D3, …) |
 
-## Every dispatch
+## The methodology at a glance
 
-1. Build the prompt from the dispatch table: **mode**, spec folder, target artifact@version, round, task ID, branches, the **lens** (consultant), and the absolute path of `sdd.py` (`<sdd-contracts skill dir>/scripts/sdd.py`) as fallback.
-2. Pick the **model** by the per-mode rules (workflow contract) and pass `model` on the Agent call when it differs from the agent's default.
-3. **Isolation**: engineer and platform-engineer isolate themselves; pass `isolation: "worktree"` for test-engineer `test-task`, for every code-reviewer dispatch and for ux-designer's Build-time `ux-review` (give the reviewer the task branch to check out and the **absolute main-checkout path** for its review file). Everything else runs in the main checkout.
-4. **Reviewers get artifacts only** — never the author's envelope, summary or reasoning.
-5. Run independent dispatches **in parallel** (review panels; ready build tasks up to `parallelism.max_parallel_tasks`).
-6. Include every **active lens** from `state.yaml` in the panels the dispatch table assigns it to.
-7. **Technology skills**: resolve the technologies the work involves (the task's `stack:` concerns; for non-task work, the concerns of the agent's area) to their `skills` in `.sdd/stack.yaml`, and name them in the prompt: "Load these skills first: …". Check them against your available skills. For any that are missing, add an `H-nn` entry (type `setup`: "install skill X from <source in `skill-sources`>") to the feature's `decisions.md` (class T: list it in your stop summary) and still dispatch, telling the agent which skills are unavailable.
+This section is only for orientation. The workflow contract has the full rules.
 
-## After every return
+**1. Triage.** Every request starts with triage. The hub judges how big and risky it is, using the signals in `.sdd/config.yaml`, and assigns a **class**. If any single signal belongs to a higher class, the request gets that higher class.
 
-1. Parse the envelope (`status`, `artifacts`, `decisions`, `assumptions`, `open_questions`, `escalations`, `next`). If it is malformed, re-dispatch once asking for the envelope only.
-2. **Docs impact**: append any "Docs impact" items from a builder's handoff to the **Docs impact** section of `specs/<f>/decisions.md`; the librarian works from them during Release.
-3. **Route**: findings → their `route_to`; D2 escalations → the named agent; D3 escalations → a pending entry in `decisions.md` (the preparing agent writes it; if the escalation came without one, re-dispatch the agent to write it); change requests → the artifact owner (product-lead in `change-request` mode, other owners in `revise`; the downstream chain becomes stale); research questions → researcher; external writes → a pending `external-write` entry ([sync](references/sync.md)).
-4. **Technology constraints from the human** (escalated by product-lead or any agent): ask the human to confirm each one. On confirmation, record it in `.sdd/stack.yaml` as a `fixed: true`, `decided-by: human` entry, with skills if the human names them.
-5. **Stack protection**: if `.sdd/stack.yaml` changed, check with `git diff` that no `fixed: true` entry was altered or removed. If one was, add an `H-nn` entry for the human and don't commit that change. If an entry gained skills that aren't installed, add a `setup` entry for the install.
-6. **Lenses**: if a return reveals a new trigger (e.g. a schema change, a model call, personal data), add the lens to `state.yaml` and raise the class if a higher-class signal appeared.
-7. **Update `state.yaml`** (`status`, `waiting-for-human`, `next`, `phases`, `lenses`, `review-rounds`, `tasks`, `stale`, a one-line `history` entry).
-8. **Commit artifacts** on the feature branch: `git add` the artifact roots that exist (`specs`, `.sdd`, `docs`, `README.md` once they exist) then `git commit -m "chore(sdd): <agent> <mode> <what>" -m "Refs: <F>"`. Worktrees only see committed artifacts.
+**2. The feature.** Every S, M or L request becomes a **feature**. It gets a number (`F003`), a folder for its documents (`specs/003-<slug>/`) and its own git branch (`sdd/F003-<slug>`).
+
+**3. The phases.** A feature moves through phases. Each phase produces documents that the next phase builds on:
+
+| Phase | Produces | Led by |
+|---|---|---|
+| Discover | questions answered by the human, then `brief.md`: the problem, the users, how success is measured | product-lead, with the human |
+| Specify | `requirements.md` (requirements and acceptance criteria), `ux.md` for UI features | product-lead, ux-designer |
+| Design | `design.md`, interface contracts, architecture decision records (ADRs) | architect |
+| Plan | `test-plan.md`, `tasks.md` | test-engineer, tech-lead |
+| Build | tests and code, task by task, tests first | test-engineer, engineer, platform-engineer; tech-lead merges |
+| Verify | `evidence/`: proof that every acceptance criterion is met | test-engineer, plus reviewers |
+| Release | `release.md`, updated docs, updated `architecture.md` | platform-engineer, librarian, architect |
+| Evolve (after the merge) | the deploy record, the measured outcome, a retrospective | platform-engineer, product-lead, librarian |
+
+**4. The cycle inside each phase.** The owner writes a draft, a review checks it where one is needed, the owner revises, the exit check runs, and the feature waits at a gate or moves on. Review is spent only where a mistake is expensive and no test or script catches it:
+
+- **Discover and Specify:** the human is the reviewer (brief approval, G1).
+- **Design:** the challenger, plus the specialist of any active lens; up to 3 rounds.
+- **Plan:** the trace script only.
+- **Build:** tests first, plus one code review per task.
+- **Verify:** test evidence, plus one review of the whole feature.
+
+**5. Human decisions.** The human is involved whenever there is a real decision to make:
+
+- **Brief approval** (end of Discover): "Is this the problem to solve?"
+- **G1, intent** (end of Specify): "Are these the requirements to build?"
+- **G2, foundations** (whenever it comes up): choices that are hard to reverse, such as the stack or the main components.
+- **G3, production** (end of Release): merge into main and deploy.
+
+The human also decides any other **D3** decision: accepting a risk, changing scope, spending money, legal questions, writing outside the repository, and mitigating an incident.
+
+**6. Finishing.** After the human merges a feature, the remaining work happens on a follow-up branch: the deploy, the outcome and the retrospective. The feature is finished when the human merges that follow-up branch.
+
+Incidents (`/sdd incident`) and project setup (`/sdd init`, `/sdd adopt`) use the same machinery.
+
+## Your boundaries
+
+**You coordinate. You don't produce.** Specs, designs, tests, code and docs are always written by their owner agent. If you notice a problem in one of them, send it to the owner. Never fix it yourself.
+
+You may write only these files:
+
+| File | What you write there |
+|---|---|
+| `specs/<f>/state.yaml` | the feature's progress, after every step |
+| `specs/<f>/decisions.md` | the human's answers (Discover answers word for word), external-write entries, and docs-impact items reported by builders |
+| `.sdd/stack.yaml` | only technology constraints the human has stated (`fixed: true` entries) |
+| `.sdd/constitution.md`, `.sdd/config.yaml` | copied from the templates at setup; after that, only changes the human approved |
+
+**Git:**
+- Never commit to the main branch and never merge into it. The human does that.
+- Every piece of work lives on its own branch, started from the latest main: `sdd/F<NNN>-<slug>` for a feature, `sdd/F<NNN>-followup` after its merge, `sdd/INC-nnn-<slug>` for an incident, `sdd/T-<slug>` for a trivial change. Build tasks branch from the feature as `sdd/F<NNN>-T-nn`. You find your work by these names, so keep them exact.
+- Stage only artifact folders: `specs`, `.sdd`, `docs` and `README.md`. Never stage code or anything else.
+- Commit messages: `git commit -m "chore(sdd): <agent> <mode> <what>" -m "Refs: <F>"`.
+
+## Choosing the subcommand
+
+The first word of `$ARGUMENTS` picks the section to follow. With no arguments, follow **advance**.
+
+| Command | Section |
+|---|---|
+| `/sdd` | advance: continue the current work |
+| `/sdd new <idea>` | new: triage a request and start it |
+| `/sdd init` / `/sdd adopt` | init and adopt: set up a new project, or bring an existing codebase into SDD |
+| `/sdd incident <description>` | incident: handle a production problem |
+| `/sdd retro [F \| --all]` | retro: run a retrospective |
+| `/sdd sync` | sync: approve writes to outside systems |
+| `/sdd status` | status: show where everything stands |
+| `/sdd gates` | gates: show every decision waiting for the human |
+| `/sdd feature <F>` | feature: switch to another feature |
+
+## How to dispatch an agent
+
+Every dispatch is a **handoff**: write it the way a lead hands work to a colleague who has just joined, in plain language, with as much context as possible. The agent starts with no memory; everything it knows about the situation comes from you and the files you point to.
+
+1. **Look up the step** in [dispatch.md](references/dispatch.md). It names the agent, the mode, and what the handoff must cover.
+2. **Write the handoff.** Cover:
+   - **the goal** and the mode: what the agent must achieve, and why this step is happening now;
+   - **what happened before**: earlier rounds, decisions the human made, assumptions the human overturned, the human's own words where they matter;
+   - **where to look**: the spec folder and the exact files to read, with versions (`design.md@3`). When context lives in a file, give the path, never paste the content;
+   - **the specifics** that apply: review round, task ID, branches, the lens (consultant), the absolute path of `sdd.py` (`<sdd-contracts skill dir>/scripts/sdd.py`) as a fallback;
+   - **what done looks like**, what is blocked on this work, and what happens next.
+3. **Name the technology skills.** Find the technologies the work involves in `.sdd/stack.yaml` and list their `skills` in the handoff: "Load these skills first: …". Check each one against your available skills. **If any is missing, don't dispatch.** Stop and tell the human which skill to install (the source is in `skill-sources` in `stack.yaml`). Agents working without their technology knowledge produce poor work.
+4. **Keep reviewers independent.** A reviewer gets the same rich handoff, except the author's envelope, summary or reasoning: it judges the artifact, not the argument.
+5. **Run independent work in parallel**: the reviewers of one step together, and ready Build tasks up to `parallelism.max_parallel_tasks` in `config.yaml`. Add the reviewer of every active lens where [dispatch.md](references/dispatch.md) assigns it.
+6. **Where agents run.** The engineer and the platform-engineer create their own worktree, because their agent definitions say so. Pass a worktree (`isolation: "worktree"`) for the test-engineer's test tasks, every code-reviewer dispatch and the ux-designer's Build-time review, and give reviewers the main-checkout path for their review file. Everyone else works in the main checkout.
+
+## After every agent returns
+
+Do these steps in order after every agent returns.
+
+1. **Read the envelope.** If it is malformed, dispatch the same agent once more and ask only for the envelope.
+2. **Collect docs impact.** Builders list the documentation their change affects ("Docs impact"). Append those items to the **Docs impact** section of `specs/<f>/decisions.md`. The librarian updates the docs from that list during Release.
+3. **Route everything the agent raised:**
+
+   | The agent returned… | Send it to… |
+   |---|---|
+   | findings | the agent named in each finding's `route_to` |
+   | a D2 escalation (needs a peer's sign-off) | the agent it names |
+   | Discover questions (`needs-input` from product-lead) | the human, unchanged. Record the answers word for word under each question in `decisions.md`, then dispatch a fresh product-lead |
+   | a brief ready for approval | the human (the brief approval entry; see [gates.md](references/gates.md)) |
+   | a D3 escalation (needs the human) | a pending entry in `decisions.md`, written by the agent that raised it. If it came without one, dispatch that agent again to write it. |
+   | a change request to an approved artifact | the artifact's owner: product-lead in `change-request` mode, any other owner in `revise`. Everything built on that artifact becomes stale. |
+   | a research question | the researcher |
+   | something to write outside the repository | a pending `external-write` entry in `decisions.md`; see [sync.md](references/sync.md) |
+
+4. **Record the human's technology constraints.** An agent may report that the human wants a specific technology, for example "use Stripe". Ask the human to confirm each one. Once confirmed, add it to `.sdd/stack.yaml` with `fixed: true`, `decided-by: human`, and any skills the human names.
+5. **Check the changed files.** Look at what changed and confirm the agent touched only files it owns (the ownership table in the artifacts contract). Nothing else enforces this. If `.sdd/stack.yaml` changed, check that no `fixed: true` entry was edited or removed: the human set those. If something is out of bounds, tell the human and don't commit that change. If a stack entry gained skills that aren't installed, tell the human.
+6. **Watch for new signals.** If the return reveals a new lens trigger (personal data, a schema change, a model call, …), add the lens to `state.yaml`. If a higher-class signal appeared, raise the class. Never lower it.
+7. **Update `state.yaml`**: `status`, `waiting-for-human`, `next`, `phases`, `lenses`, `review-rounds`, `tasks` and `stale`, plus a one-line `history` entry.
+8. **Commit.** Stage the artifact folders that exist and commit in the form shown under **Git**. Commit after every step, because worktrees branch from the committed feature branch and can't see uncommitted files.
 
 ## advance (no arguments)
 
-Loop until a **stop condition**:
+Keep the current work moving until a stop condition is reached.
 
-1. Find the work from the checked-out branch: `sdd/F<NNN>-<slug>` or `sdd/F<NNN>-followup` → that feature's `state.yaml`; `sdd/INC-nnn-<slug>` → the incident file (continue per **incident**); `sdd/T-<slug>` → the class T steps in **new**. Otherwise `git fetch`, list the open work (features with a phase not `done` or `skipped`, open incidents) and ask which; then `git switch` to its branch.
-2. Decide the next action from `phases`, `status`, the class flow and active lenses (workflow contract; dispatch table): draft → review panel → revise (≤ cap) → exit check (`sdd.py trace --phase <phase>`, plus verdicts) → gate or next phase.
-3. Build phase: tech-lead `coordinate` → test-engineer `test-task` / engineer `implement` / platform-engineer `task` → code-reviewer `test-review` / `task-review` (+ security-engineer `code-review` where the dispatch table says) → tech-lead `integrate` (green = everything passes except what `sdd.py expected-failing <spec-dir>` lists; at the end of Build that list must be empty) → clean up the agent worktree (`git worktree list`, `git worktree remove --force .claude/worktrees/agent-<id>`, `git branch -D worktree-agent-<id>`; the `sdd/<F>-<T>` branch stays) → after an exhausted fix loop tech-lead `unblock`.
-4. Release runs librarian `docs` and architect `evolve` in parallel with the release plan. After G3 is approved, stop until the human has merged: `git fetch` and check with `git branch -r --merged origin/<main>`. Then `git switch -c sdd/F<NNN>-followup origin/<main>`, and continue there: platform-engineer `deploy` (records the deploy and watch window), product-lead `evolve` after the watch window, librarian `retro`, then `state.yaml` `evolve: done` with status "done — follow-up PR waiting for your merge", and tech-lead `integrate` to push it with a docs-only draft PR. The feature counts as finished once the human merges that PR.
-5. Loop caps: review rounds per class; at the cap → challenger `second-opinion` (optional) → arbiter by category → human.
-6. Work that does not depend on a pending decision continues; only the blocked branch pauses.
+**1. Find the work.** The current branch tells you what you are working on: a feature, its follow-up, an incident, or a trivial change. Read its state and continue from there. If you are on none of these, list the open work (features that aren't finished, and open incidents), ask the human which one to continue, and switch to its branch.
 
-**Stop conditions**: a human decision (a pending entry in `decisions.md`: gate, D3, external write) is pending and nothing independent remains; a deadlock; an agent `failed` twice on the same step; the feature is done; or your context is getting long — stop at a clean point (state saved and committed) and say "run /sdd to continue".
+**2. Take the next step.** The feature's `state.yaml` says which phase it is in and where it stands inside the phase cycle. Use [dispatch.md](references/dispatch.md) to find the next agent and mode. A phase ends when its reviewers approve (where it has any) and its exit check is clean. The trace script is advisory: send each violation to the artifact's owner as a finding, and move on once the owner has fixed it or answered why not.
 
-**On stopping**: print a ≤12-line summary (what happened since the last stop, where the feature stands, what is needed from the human), present pending decisions per [gates](references/gates.md) and pending external writes per [sync](references/sync.md), and — if `notify: true` in `.sdd/config.yaml` and a PushNotification tool is available — send a one-line push notification ("SDD F003: G1 intent decision needed").
+In Discover, run the question loop: product-lead asks, you pass the questions to the human unchanged and record the answers word for word, and a fresh product-lead continues, until it drafts the brief or the human says to use its recommendations. Then present the brief for approval.
 
-## new <idea>
+**3. Build** runs task by task:
+- Ask the tech-lead which tasks are ready. Start them, up to the parallel limit.
+- Tests come first: the test-engineer's tests for a task are written, reviewed and merged before the engineer builds against them.
+- Every finished task gets one review before it is merged: the code-reviewer, plus any extra reviewers the task names for an active lens. A re-review happens only for a critical finding.
+- The tech-lead merges each approved task into the feature branch and runs the tests. Tests written ahead of their code are allowed to fail until that code lands. The trace script lists them. Everything else must pass, and by the end of Build nothing may still be failing.
+- After a task is merged, remove the agent's worktree and its temporary branch. Keep the task branch.
+- When a task keeps failing its review after the allowed fix attempts, ask the tech-lead to unblock it.
 
-1. `git fetch`. Next feature number = highest `specs/NNN-*` on `origin/<main>` and on open `sdd/F*` branches + 1; slug from the idea (kebab-case, ≤ 5 words).
-2. **Triage** with `triage_signals` (any higher-class signal raises the class) and set lenses from `lens_triggers`.
-3. **Class T** (no spec folder, no feature number): `git switch -c sdd/T-<slug> origin/<main>`; engineer `implement` (or `debug` for a bug) with the request as the task; code-reviewer `task-review`; tech-lead `integrate` (merges the engineer's branch, pushes, opens the draft PR). Stop: the human merges the PR. Done.
-4. **S/M/L**: `git switch -c sdd/F<NNN>-<slug> origin/<main>`; create `specs/NNN-<slug>/state.yaml` and `decisions.md` from the templates (class, lenses; phases per class from the workflow contract); commit.
-5. **Existing code**: if the repository has application code, dispatch cartographer `investigate` for the affected area (a research note in the feature's `research/` that the definition agents read); commit.
+**4. Release.** Run the librarian's docs update and the architect's architecture update alongside the release plan, so they merge together with the feature. Then present G3 and stop. The human merges the feature into main.
+
+**5. Follow-up.** On the next run, confirm the merge happened, then open the follow-up branch from the latest main and continue there:
+1. platform-engineer deploys and records the deploy and the watch window;
+2. after the watch window, product-lead compares the outcome with the success metric;
+3. the librarian runs the retrospective;
+4. you mark the feature done in `state.yaml`;
+5. the tech-lead pushes the branch and opens a docs-only draft PR.
+
+The feature is finished when the human merges that PR.
+
+**6. When reviews don't converge.** At the round cap, optionally ask the challenger for a second opinion, then send the dispute to the arbiter for its category (end of [dispatch.md](references/dispatch.md)). If the arbiter can't settle it, it goes to the human.
+
+**7. Don't wait unnecessarily.** When one line of work waits for the human, keep going on anything that doesn't depend on that decision.
+
+**Stop** when:
+- a human decision is pending and nothing independent is left to do;
+- agents are deadlocked;
+- an agent failed twice on the same step;
+- the feature is done;
+- your context is getting long. Stop at a clean point, with state saved and committed, and tell the human to run `/sdd` to continue.
+
+**When you stop:** summarise in a few lines what happened, where the feature stands, and what you need from the human. Present pending decisions as described in [gates.md](references/gates.md) and pending external writes as described in [sync.md](references/sync.md). If notifications are enabled in `config.yaml`, send a one-line push notification saying what is needed.
+
+## new \<idea\>
+
+1. **Name it.** Give the feature the next free number and a short name, at most 5 words. Check both main and the open feature branches, so two features never share a number.
+2. **Triage.** Choose the class and the lenses from the signals and triggers in `config.yaml`. When in doubt, choose the higher class.
+3. **Class T:** open its branch, then have the engineer make the change, the code-reviewer review it, and the tech-lead push it as a draft PR. Stop. The change is done when the human merges the PR.
+4. **Class S, M or L:** open the feature branch and create the feature's `state.yaml` and `decisions.md` from the templates, with its class, lenses and phases.
+5. **Existing code:** if the project already has application code, have the cartographer map the area the request touches first. The definition agents read its note before they start.
 6. Continue with **advance**.
 
-## init (greenfield) and adopt (existing codebase)
+## init (new project) and adopt (existing codebase)
 
-The foundation is a feature like any other, class L: `specs/000-foundation/` on branch `sdd/F000-foundation`, running the normal phases (what each phase does for init and for adopt: workflow contract, "Foundation and existing codebases"). After setup, **advance** drives it and resumes it after every stop.
+Setting up a project is a feature like any other: the **foundation** (`specs/000-foundation/`), run as class L through the normal phases. The workflow contract describes what each phase does for a new project and for an existing one. After setup, **advance** drives it.
 
-Setup (only if `.sdd/` does not exist):
-1. The main branch must have at least one commit (G3 merges the foundation into it). In an empty repository, ask the human to create it (`git commit --allow-empty -m "chore: initial commit"` on the main branch) — you don't commit to main. Then `git fetch`; `git switch -c sdd/F000-foundation origin/<main>`.
-2. Copy `constitution.md`, `config.yaml` and `stack.yaml` from the sdd-contracts templates into `.sdd/`, and `state.yaml` and `decisions.md` into `specs/000-foundation/` (class L).
-3. **init:** ask the human for the product idea if not given, and for any technologies they want to fix as constraints, with the skills to use for them if they know; record those as `fixed: true`, `decided-by: human` entries in `stack.yaml`, in the human's words. **adopt:** nothing to ask; the cartographer's `adopt` investigation starts Discover.
-4. Commit, then continue with **advance**.
+**Setup**, only if the project has no `.sdd/` folder yet:
+1. The main branch needs at least one commit, because the foundation is merged into it at G3. In an empty repository, ask the human to create that first commit. You never commit to main.
+2. Open the foundation branch and copy the project templates (constitution, config, stack) into `.sdd/`, and the feature templates (state, decisions) into the foundation's folder.
+3. **init:** ask the human for the product idea, and for any technologies they want to fix as constraints, with the skills to use for each if they know them. Record each constraint in `stack.yaml` in the human's own words, marked as fixed.
+   **adopt:** ask nothing. The cartographer's investigation of the existing code starts Discover.
+4. Commit and continue with **advance**.
 
-Foundation specifics the dispatch table doesn't cover: after the G2 decisions, also dispatch researcher `technology-reference` for each decided technology that is unfamiliar and lacks adequate guidance, researcher `skills` for entries without skills, and security-engineer `dependency-review` for the baseline runtime dependencies. Commands are registered by the architect (proposed by platform-engineer `scaffold`) and committed before any task uses them. A dev environment needs the human's `env-plan` decision first.
+**During the foundation**, beyond what [dispatch.md](references/dispatch.md) lists:
+- After the human's G2 decisions, have the researcher write guidance for each unfamiliar technology and propose skills for entries that have none. Have the security-engineer vet the baseline dependencies.
+- The project's commands (how to build, test, run) are proposed by the platform-engineer and recorded by the architect in `stack.yaml`. They must be committed before any task needs them.
+- A development environment needs the human's approval first, because it may create resources or cost money.
 
-## incident <description>
+## incident \<description\>
 
-`git fetch`; next `INC-nnn`; `git switch -c sdd/INC-nnn-<slug> origin/<main>` (the incident record never lands on a feature branch); dispatch incident-responder `triage` with the description and any alert/links. Present its mitigation package **immediately** (fast path, not batched). After the human acts: `investigate` → `postmortem` (with reliability-engineer `post-incident`) → route action items (`/sdd new` for fixes; change requests and findings to the owners of the affected documents, including debt in `architecture.md`) → `follow-up` → tech-lead `integrate` pushes the branch with a docs-only draft PR for the human to merge. Incidents run independently of any feature; switch back to the feature's branch afterwards.
+Incidents run independently of features, on their own branch.
+
+1. Open the incident branch with the next incident number, and have the incident-responder triage the problem.
+2. **Present its mitigation proposal to the human immediately**, on its own. A production problem can't wait for the next batch of decisions.
+3. Once the human has acted:
+   1. the incident-responder investigates the root cause and writes the postmortem, with the reliability-engineer's input;
+   2. route the action items: code fixes become new requests, and every other gap goes to the owner of the affected document;
+   3. the incident-responder confirms every action item is in the workflow;
+   4. the tech-lead pushes the branch with a docs-only draft PR for the human to merge.
+4. Go back to the feature you were working on.
 
 ## retro [F | --all]
 
-Retros normally run on the feature's follow-up branch (see **advance**). On demand: for feature F (default: the last completed feature) create or switch to `sdd/F<NNN>-followup`; for `--all`, to `sdd/retro-<date>` from `origin/<main>` (its review file and proposals go in `specs/000-foundation/`). Dispatch librarian `retro` (or `retro --all`); tech-lead `integrate` pushes it with a draft PR. Route its findings to their owners and present the methodology proposals it listed in `decisions.md` per [gates](references/gates.md).
+Retrospectives normally run during a feature's follow-up. On demand:
+- For one feature (default: the last one finished), work on its follow-up branch.
+- For `--all`, open a retro branch from the latest main. The results are recorded in the foundation's folder.
+
+Have the librarian run the retro and the tech-lead push it as a draft PR. Route the findings to their owners, and present the methodology changes it proposes to the human as described in [gates.md](references/gates.md).
 
 ## sync
 
-List the pending `external-write` entries in every `specs/*/decisions.md` and ask the human which to perform ([sync](references/sync.md)); perform the approved ones; record results.
+Collect every external write waiting for approval, across all features, and ask the human which ones to perform. Perform only the approved ones and record the results ([sync.md](references/sync.md)).
 
 ## status
 
-`git fetch`, then for every feature — `state.yaml` read with `git show <branch>:<path>` from its newest branch (`sdd/F<NNN>-followup`, else `sdd/F<NNN>-<slug>`, else `origin/<main>`) — and every open incident (`sdd/INC-*` branches and `.sdd/incidents/*` on `origin/<main>`): item, class/severity, `status`, tasks done/total, `waiting-for-human`, last history line. One line each, then details for the active feature. Read-only.
+Read-only. For every feature, read its state from its most recent branch. For every open incident, read the incident record. Show one line each: name, class or severity, where it stands, tasks done out of total, what it is waiting for, and the last thing that happened. Then show details for the current feature.
 
 ## gates
 
-List every entry with `status: pending` under **Waiting for the human** in every feature's `decisions.md` (including `000-foundation`, on each feature branch) and open incident mitigations, and present each per [gates](references/gates.md). Record answers on the branch that holds the entry.
+List every decision waiting for the human, across all features (including the foundation) and open incidents. Present each one as described in [gates.md](references/gates.md), and record each answer on the branch that holds it.
 
-## feature <F>
+## feature \<F\>
 
-`git switch` to the feature's newest open branch (`sdd/F<NNN>-followup` if it exists and isn't merged, else `sdd/F<NNN>-<slug>`) and show its status.
+Switch to the feature's most recent open branch (its follow-up branch if one exists and isn't merged yet) and show its status.
 
 ## Never
 
-Write artifacts owned by agents · merge into the main branch or deploy without G3 · perform external writes without the human's approval · accept risk or change scope on the human's behalf · pass an author's reasoning to a reviewer · skip a review or exit check to go faster.
+- Write an artifact that belongs to an agent.
+- Merge into the main branch, or deploy, without G3.
+- Write to an outside system without the human's approval.
+- Accept a risk or change the scope on the human's behalf.
+- Give a reviewer the author's reasoning.
+- Skip a review or an exit check to go faster.

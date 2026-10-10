@@ -6,7 +6,7 @@ waiting-for-human: nothing    # or: "<decision> (decisions.md#<id>)"
 next: "<the next step the hub will take>"
 
 phases:                       # not started | in progress | done | skipped
-  discover: skipped           # L only
+  discover: not started       # S, M, L: question loop with the human, then brief approval
   specify: not started
   design: not started
   plan: not started
@@ -17,7 +17,7 @@ phases:                       # not started | in progress | done | skipped
 
 lenses: []                    # active review lenses, e.g. [security, ux, privacy]
 
-review-rounds: {}             # e.g. { specify: 1, design: 2 } — counts against the loop caps
+review-rounds: {}             # e.g. { design: 2 } — counts against the loop caps
 
 tasks: {}                     # e.g. { "T-01 Acceptance tests for reset": integrated, "T-02 Reset flow": "in review (round 1)" }
 

@@ -182,3 +182,88 @@ From the human's instructions for the review phase:
    - Packaging (rename to sdd-kit, README, version, marketplace): after testing.
 6. **Testing**. Stage 1 done 2026-10-07: `tests/guard_cases.py` (229 cases + 4 controls) and `tests/sdd_cases.py` (28 checks), all passing. Two policy fixes from it: platform-engineer no longer writes anything under `src/` (the entry point and health endpoints are an engineer walking-skeleton task); authors answer reviews in a separate `<review-file>-answers.md`, so each reviewer's verdict can only be written by that reviewer. Stages, cheap to expensive: (1) guard policies and `sdd.py` against a fixture; (2) class T and S on a small local-only fixture; (3) class M with a GitHub remote, through the follow-up branch; (4) `/sdd init` greenfield.
 7. **Packaging**, after testing.
+
+## 9. Methodology simplification review (in progress, started 2026-10-09)
+
+The human is reviewing the whole methodology to make it simpler and cheaper in tokens. The decisions below were **applied on 2026-10-09** to the agents, skills, templates, guard and tests. The open questions at the end are still open.
+
+**Hub.** The hub stays a pure coordinator. `skills/sdd/SKILL.md` was rewritten for readability, with an overview of the methodology and a glossary. The human's simplifications are kept: no per-mode model choice, no local-only mode, and a missing technology skill stops the dispatch until the human installs it.
+
+**Discover runs for S, M and L, never for T.** This replaces "L only; for M the brief is written in Specify" (§5). Discover is led by the human through a question loop:
+
+1. The hub dispatches product-lead. It reads the request, the constitution, `product.md`, related specs and ADRs, and the cartographer's note.
+2. product-lead writes its questions to a file. There is **no limit** on the number of questions or rounds; this replaces "at most 3 intent questions, one round, only if ambiguous". The rule is: ask every question whose answer would change the brief, and never ask what you can find yourself (`product.md`, the code, the cartographer's note, the researcher). Each question has a recommended answer. Questions are batched and grouped by topic to keep rounds few.
+3. The hub passes the questions to the human unchanged and records the answers word for word in `decisions.md`. It does not re-explain the problem.
+4. A fresh product-lead reads the request and the full question-and-answer history from the files, and either asks more questions or drafts `brief.md`.
+5. The loop ends when product-lead has no open questions, or when the human says "use your recommendations for the rest".
+6. The human approves `brief.md`. This is a recorded decision entry in `decisions.md`. If changes are requested, product-lead revises and the human approves again. The challenger no longer reviews the brief.
+
+Kept from the current design: product-lead can route research questions to the researcher, escalates technology constraints for `stack.yaml`, and reports triage signals.
+
+**Human decisions: all kept, plus the new ones.** The human is involved whenever there is a real decision to make. Every existing point where the workflow waits for the human stays, and the brief approval and G1 acceptance above are added:
+
+- intent: brief approval (Discover) and G1 (Specify);
+- G2 foundations, for one-way doors in any class;
+- G3 production, then the human's merge of the feature;
+- spend or new resources (platform-engineer `env-plan`);
+- risk acceptance, when a critical or major finding is deferred;
+- scope changes beyond the approved spec, and legal questions (licenses, regulated data);
+- deadlock, when the review cap is exhausted with no neutral arbiter;
+- incident mitigation, presented immediately;
+- external writes (`/sdd sync`);
+- installing a missing technology skill (the dispatch waits);
+- confirming technology constraints the human stated, before they become `fixed: true` in `stack.yaml`;
+- methodology proposals from the retro;
+- merging the PRs for class T, follow-up branches and incidents.
+
+**Reviews: fewer reviewers and fewer rounds, and only where tests and `sdd.py trace` can't check.**
+
+| Phase | Decision |
+|---|---|
+| Discover | The human approves the brief (above) |
+| Specify | No agent review panel. The human accepts the requirements and acceptance criteria at G1. G1 gets lighter, because the brief was already agreed |
+| Design | The challenger reviews for S, M and L, up to 3 rounds. The security or reliability reviewer joins only when that lens is active. G2 stays for one-way doors |
+| Plan | No panel. `sdd.py trace --phase plan`, plus the test-engineer's own check while writing the test plan. Untestable acceptance criteria go back to product-lead as change requests |
+| Build | Tests first, plus one code review per task. Re-review only for a critical finding |
+| Verify | Test evidence, plus one review of the whole feature |
+
+**Guard and trace script: more freedom.**
+- `guard.py` stays a PreToolUse hook but flips from an allowlist to a short **denylist**. Every agent's calls are approved automatically, including any file, any command and chaining. The guard denies only what is irreversible or the human's to decide: committing to or merging into main, force-pushing, deleting remote branches, production deploys, infrastructure applies, destructive deletes, and writes to outside systems (those go through `/sdd sync`). Per-agent write ownership is no longer enforced mechanically; it stays a rule in the agents' instructions. The hub's "simple git forms" rule in `SKILL.md` can then be removed.
+- `sdd.py` stays (zero tokens; it replaces the Plan review panel; `expected-failing` defines "green" in test-first Build) but becomes **advisory**: violations become findings the owner fixes, not a hard block on the phase. Re-evaluate after testing.
+
+**Dispatches are real handoffs.** The hub writes each dispatch the way a lead hands work to a colleague: plain natural language with as much context as possible. That covers the goal, why this step is happening now, what happened just before (earlier rounds, decisions the human made, assumptions overturned), the human's own words where relevant, what is blocked on this work, what "done" looks like, and what happens next. The identifiers (mode, spec folder, artifact@version, round, task ID, branches, lens, technology skills) are woven into that text, not sent as a bare list. Two limits:
+- Context that lives in a file is passed as the file's path, never pasted in.
+- Reviewers get the same rich context except the author's envelope, summary or reasoning.
+
+`SKILL.md` ("How to dispatch an agent", step 2) and the "Pass" column of `dispatch.md` change to describe this.
+
+**After every return:**
+- Routing gains the Discover loop. When product-lead returns questions, the hub asks the human, records the answers word for word in `decisions.md`, and dispatches a fresh product-lead. When the brief is ready, the hub asks the human to approve it.
+- The stack check widens into a **changed-files check**. Before committing, the hub reviews the changed files (`git status`) and confirms the agent touched only files it owns, plus that no `fixed: true` entry in `stack.yaml` changed. It replaces the ownership enforcement the guard no longer does.
+- `communication.md` drops the "max 3" limit on intent questions.
+
+Consequences to apply later: remove the modes that only existed for the dropped panels (test-engineer `testability-review` and `plan-review`, reliability-engineer `nfr-review`, architect `plan-review`, consultant `specify-review` and `plan-review`), and shrink the arbiter, second-opinion and deadlock rules.
+
+**Open questions:**
+- What Discover covers.
+- Whether to merge S and M. With the decisions above they run the same phases and differ only in depth: brief length, a separate test plan, a lite or full release, and the follow-up outcome and retro.
+
+**Resolved when applying (2026-10-09):** the hub passes a worktree for test tasks, code reviews and the Build-time UX review again; the hub adds lenses and raises the class mid-flight; in Build and Verify, specialists review only when their lens is active, and product-lead's acceptance review and the architect's conformance check are dropped; model-per-mode marks and local-only support are removed everywhere (the stage 2 fixture gets a local bare repository as `origin`); the `setup` entry type stays for a missing technology skill; `hooks/ownership.json` is deleted.
+
+## 10. Rebuild from scratch: roster and capabilities (agreed 2026-10-10, not yet applied)
+
+The communication map showed too many conversations to scale. The methodology is rebuilt from the simplest version and grown one step at a time.
+
+**Roster: 16 agents → 7.** Kept: product-lead, ux-designer, researcher, architect, challenger, engineer, librarian.
+- Merged into **engineer**: test-engineer, code-reviewer, platform-engineer, security-engineer, reliability-engineer. Independence comes from separate dispatches, not separate personas: tests are written in a dispatch that never reads the implementation, and code is reviewed by a different dispatch than the one that wrote it, never seeing the author's reasoning.
+- **tech-lead** removed: the architect writes the task plan as the last part of the design; an engineer integrates; the hub schedules ready tasks.
+- Removed: cartographer (the architect reads existing code itself), consultant and all lens skills (later), incident-responder.
+- The reliability design concerns (service levels, capacity, failure modes) belong to the architect.
+
+**No agent modes.** Every agent is a generic persona: who it is, what it is responsible for, its boundaries, how it reports. How to do each job lives in skills; the hub's handoff names the skills to load for the job.
+
+**Agents communicate only through artifacts.** One agent reads another's files (e.g. the architect reads the product-lead's); nobody talks to another agent directly.
+
+**Commands:** only the core ones stay; `init`, `adopt`, `incident`, `retro`, `sync`, `gates` and `feature` are dropped for now.
+
+**Target flow (agreed 2026-10-10):** the full design is in `docs/rebuild-plan.md`. Key points: product-lead owns the brief and the requirements, both non-technical, each approved by the human (`ux.md` approved with the requirements); the architect writes the design with a full task list, the challenger reviews it (up to 3 rounds), then the architect writes a detailed per-task plan without code; the engineer follows strict TDD per task (write tests → review → implement → review → merge, each a separate dispatch with its own skill); after Verify the librarian updates all documentation, including the product and architecture overviews; the human merges. ADRs and the other useful files stay. Classes: T and standard. Commands: `/sdd new` and `/sdd`.

@@ -1,6 +1,6 @@
 # Evidence pack: <feature>
 
-> Written by test-engineer in Verify. product-lead's acceptance review judges this pack.
+> Written by test-engineer in Verify. The Verify reviewers and the human (at G3) judge this pack.
 
 - **Commit:** <sha> on `sdd/<F>-<slug>` · **Date:** YYYY-MM-DD
 - **Suite:** <passed>/<total> · JUnit: `junit.xml` · **Trace:** clean | <violations>

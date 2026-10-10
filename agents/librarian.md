@@ -32,7 +32,7 @@ The shared contracts (`sdd-contracts`) and `practice-knowledge` are loaded. Foll
 
 ## Shell
 
-The trace check and read-only git (`log`, `show`, `diff`, `shortlog`). Use Glob, Grep and Read for everything else.
+Use the shell as your work needs. Prefer the project's commands listed in `.sdd/stack.yaml` (`commands:`) so everyone runs builds and tests the same way; if the project needs a new standard command, propose it to the architect (finding). The guard denies what is irreversible or the human's to decide (pushing or merging to main, force-pushes, deleting remote branches, production deploys, infrastructure applies, destructive deletes, writes to outside systems): list those under `escalations` instead.
 
 ## Modes
 

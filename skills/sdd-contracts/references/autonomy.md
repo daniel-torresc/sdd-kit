@@ -13,7 +13,7 @@ The organization runs autonomously. Humans are interrupted only for decisions th
 
 ## D3 — the only reasons to interrupt the human
 
-1. **Intent** — confirming the spec (gate G1).
+1. **Intent** — approving the brief (Discover) and confirming the spec (gate G1).
 2. **Hard-to-reverse foundations** — greenfield stack, primary datastore, hosting platform, anything whose reversal would mean a rewrite (gate G2).
 3. **Irreversible or external actions** — production deploy (G3), merging into the main or release branch, force-pushing or deleting remote branches, destructive data operations, spending money or provisioning paid resources, publishing, sending anything outside the project. *Not D3:* pushing `sdd/*` branches and opening or updating **draft** PRs — these are autonomous so CI can run.
 4. **Risk acceptance** — deferring a critical/major finding; security exceptions.
@@ -24,7 +24,9 @@ The organization runs autonomously. Humans are interrupted only for decisions th
 
 ## Execution permissions
 
-The plugin's guard (`hooks/ownership.json`) is both a fence and a grant: each agent may write only the artifacts it owns and run only its allowlisted commands, and those in-policy actions are **approved without prompting** so work proceeds autonomously. Everything outside an agent's policy is denied; the main session keeps normal permission prompts. Allowlisted commands include tests and spikes, which execute project code with the user's rights — run autonomous sessions in Claude Code's sandbox or a dev container. `permissions.auto_approve: false` in `.sdd/config.yaml` restores prompts.
+The plugin's guard (`scripts/guard.py`, a PreToolUse hook) gives agents freedom: their calls are **approved without prompting**, except a short denylist of what is irreversible or the human's to decide — committing, merging or pushing to main, force-pushing, deleting remote branches, merging or publishing PRs and releases, production deploys and infrastructure applies, destructive deletes and data operations, and writes to outside systems. A denied action becomes an escalation. Projects can add prefixes in `.sdd/config.yaml` (`permissions.deny_commands`). The hub's bookkeeping is approved too; anything denylisted in the main session falls back to the normal prompt, so the human decides.
+
+Ownership ("only the owner edits an artifact") is a rule every agent follows, not something the guard enforces. The hub checks the changed files after every step, before committing. Agents run project code with the user's rights, so run autonomous sessions in Claude Code's sandbox or a dev container. `permissions.auto_approve: false` restores normal prompts; the denylist still applies.
 
 ## Fast path
 
@@ -36,7 +38,7 @@ When information is missing and the decision is not D3: record `ASM-nn` in the a
 
 ## Decision packages
 
-Every D3 item is an entry under "Waiting for the human" in the feature's `decisions.md` (project-level decisions live in the foundation feature, `specs/000-foundation/decisions.md`). The **preparing agent** writes it (G1 product-lead, G2 architect, G3 platform-engineer, risk entries the deferring owner, mitigations incident-responder); the hub only records the human's answer (status and the Decision line). A package contains:
+Every D3 item is an entry under "Waiting for the human" in the feature's `decisions.md` (project-level decisions live in the foundation feature, `specs/000-foundation/decisions.md`). The **preparing agent** writes it (brief approval and G1 product-lead, G2 architect, G3 platform-engineer, risk entries the deferring owner, mitigations incident-responder); the hub only records the human's answer (status and the Decision line). A package contains:
 
 - the decision, in one sentence;
 - context — one screen maximum;
