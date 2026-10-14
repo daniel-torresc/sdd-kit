@@ -8,8 +8,8 @@ name: sdd-onboarding
 # YAML parser reads it.
 description: "Onboards a project into SDD (spec-driven development). Through repository analysis and an interactive interview with the human, it establishes the project's foundational files, the project-wide context every later SDD activity builds on, from the templates in the sdd-contracts skill, validates them as a set, and reports whether the project is READY, READY WITH CAVEATS or NOT READY for SDD. Works for greenfield, brownfield and partially established projects, and for reviewing or updating foundational files that already exist. Use when the user invokes /sdd-onboarding, or asks to set up, adopt or onboard SDD in a project, or to create, review or update its foundational SDD files. Not for feature work."
 
-# Shown after the command name while the user types it. Whatever they pass is appended to this
-# skill as its starting context (see "Starting the workflow": use it, don't ask for it again).
+# Shown after the command name while the user types it. Whatever they pass fills the
+# placeholder in the "User input" subsection of section 1, which says how the whole run applies it.
 argument-hint: "[what the project is, or which foundational files to review]"
 
 # Pre-approves only what the brownfield inventory (Phase 2) runs often. Writing the foundational
@@ -40,6 +40,22 @@ Only then should you create or update the foundational files.
 The resulting files must provide a reliable foundation for subsequent SDD activities, including requirements discovery, specification writing, architectural decisions, implementation planning, coding, and verification.
 
 Your success is measured by the quality and reliability of the project's foundational understanding, not by how quickly you produce the files.
+
+### User input
+
+The user may have given input when invoking this skill:
+
+<user_input>
+$ARGUMENTS
+</user_input>
+
+Apply it throughout the whole workflow:
+
+- **It is an explicit user statement.** In the evidence order (section 2.1) it ranks above repository evidence and your inferences.
+- **It can set the scope of this run:** which foundational files, whether to create or to review or update them, hints about the starting scenario, constraints or decisions already made. Keep to that scope in every phase; every rule of this skill still applies within it.
+- **Don't ask again for what it already answers.** When you explain the process, say in one or two sentences how you read it, so the user can correct you.
+- **It is context, not authorization.** It doesn't authorize writing or overwriting files (section 9.3) unless it explicitly says so.
+- **If it is empty,** take the project context from the conversation, and ask for it if there is none.
 
 ## 2. Operating Principles
 
@@ -224,7 +240,7 @@ Do not advance merely because you have exhausted a list of questions. Advance wh
 
 Explain the process briefly to the user, then begin with Phase 1.
 
-If the user has already supplied substantial project information, use it as the starting point rather than asking them to repeat it.
+Start from the user input (section 1, "User input") and anything else the user has already said, rather than asking them to repeat it.
 
 If the user explicitly requests a review, draft, or update of existing files, adapt the workflow to that request while preserving the requirements for template compliance, evidence, and validation.
 
