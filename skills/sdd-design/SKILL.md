@@ -414,7 +414,7 @@ Within the approved scope and the stack, you decide the rest: how to structure c
 
 When the design depends on outside knowledge (how a technology behaves, how an external system works, the options for a choice), research it as the methodology reference describes ("Shared activities"), and record the result as a research note from its template.
 
-Run it independently of the design when you can: as the `sdd-research` skill describes, in a subagent that receives only the question, the decision it informs, and the criteria. If that skill is not available, do the research yourself, following the same rules: every viable option compared with the same depth, facts cited, inferences marked, confidence stated.
+Start it as the `sdd-research` skill describes in its section 8: in a subagent that receives only the question, the decision it informs, what "answered" means, the criteria and the constraints, never the option you lean towards. Only if that is not possible, do the research yourself, following the same skill's rules, and say in the note that it was not independent.
 
 Research informs a decision; it never makes one.
 

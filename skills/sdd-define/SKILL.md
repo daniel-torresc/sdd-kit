@@ -278,7 +278,7 @@ These are discovery topics, not a mandatory questionnaire.
 For each unknown, decide how it is resolved:
 
 1. **The project's files or the existing product answer it.** Look it up; don't ask.
-2. **It needs outside knowledge.** Research it, and record the result as a research note from its template.
+2. **It needs outside knowledge.** Research it as the `sdd-research` skill describes in its section 8, and cite the research note it writes.
 3. **It isn't the human's decision.** Choose a default and record it as an assumption (section 2.4).
 4. **Only the human can answer it.** It becomes a question.
 
