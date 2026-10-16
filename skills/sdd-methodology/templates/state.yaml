@@ -1,0 +1,25 @@
+# Where the feature stands: the first file read when the feature is resumed.
+#
+# Overwritten at every checkpoint, as the artifacts reference describes ("Running records").
+# It points to the other files and never holds their content: the reasons are in decisions.md,
+# the content is in the artifacts.
+
+feature: [feature ID]                    # e.g. F003
+title: "[Short feature name]"
+phase: define                            # define | design | build | verify | document | release | done
+step: "[The step in progress, or the last one finished]"
+status: in-progress                      # in-progress | waiting-for-human | blocked | done
+next: "[One sentence: what the next run must do]"
+
+waiting-for-human: []                    # IDs of open entries in decisions.md, e.g. [H-03, Q-07]
+blocked-by: []                           # anything else that stops the work, with where it is recorded,
+                                         # e.g. ["REQ-04 is untestable (reviews/cr-design-1.md)"]
+
+tasks: {}                                # filled in Design from plan.md, updated in Build,
+                                         # e.g. { T-01: merged, T-02: in-review, T-03: blocked, T-04: pending }
+
+stale: []                                # files to check again because a file they were built from changed,
+                                         # e.g. ["design.md: built from requirements.md@2, now @3"]
+
+history: []                              # one line per checkpoint, newest last,
+                                         # e.g. "2026-10-16 define/brief: brief.md@1 put to the human (H-01)"

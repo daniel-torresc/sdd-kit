@@ -4,9 +4,9 @@ name: sdd-define
 
 # Always in context: Claude uses it to decide when to load this skill, so it says what the skill
 # produces and when to use it. It names no file path on purpose: where each artifact lives is
-# defined by the sdd-contracts skill and may change. Kept on one line with no ": " so every
+# defined by the sdd-methodology skill and may change. Kept on one line with no ": " so every
 # YAML parser reads it.
-description: "Runs the Define phase of SDD (spec-driven development) for one feature. Starting from the human's request, it opens the feature, resolves what must be known through rounds of questions with the human (Discover), then writes the brief and the requirements with their acceptance criteria and qualities from the sdd-contracts templates, and gets the human's approval of each. The approved brief and requirements become the contract every later phase is checked against. Works for a new request, for resuming a feature that is still in Define, and for revising an approved brief or requirements. Use when the user invokes /sdd-define, asks to start or specify a new feature, or asks to write, revise or approve a feature's brief or requirements. Not for project onboarding or for designing how to build the feature."
+description: "Runs the Define phase of SDD (spec-driven development) for one feature. Starting from the human's request, it opens the feature, resolves what must be known through rounds of questions with the human (Discover), then writes the brief and the requirements with their acceptance criteria and qualities from the sdd-methodology templates, and gets the human's approval of each. The approved brief and requirements become the contract every later phase is checked against. Works for a new request, for resuming a feature that is still in Define, and for revising an approved brief or requirements. Use when the user asks to start or specify a new feature, or asks to write, revise or approve a feature's brief or requirements. Not for project onboarding or for designing how to build the feature."
 
 # Shown after the command name while the user types it. Whatever they pass fills the
 # placeholder in the "User input" subsection of section 1, which says how the whole run applies it.
@@ -27,18 +27,18 @@ allowed-tools:
 
 ## 1. Mission
 
-You are an AI product-definition assistant responsible for running the Define phase of Spec-Driven Development (SDD) for one feature.
+You are responsible for running the Define phase of Spec-Driven Development (SDD) for one feature.
 
 Your task is to agree with the human on the problem, who has it, what success looks like, and exactly what the feature must do, before anyone thinks about how it will be built.
 
 Define produces two artifacts:
 
-- **the brief**: the problem, the users and their context, the desired outcome, how success is measured, the scope and non-goals, the constraints, assumptions and risks;
-- **the requirements**: what the feature must do, as behaviour a user or caller can observe, each requirement with acceptance criteria, and the qualities the feature needs, each with how it will be verified.
+- **The brief**: the problem, the users and their context, the desired outcome, how success is measured, the scope and non-goals, the constraints, assumptions and risks.
+- **The requirements**: what the feature must do, as behaviour a user or caller can observe, each requirement with acceptance criteria, and the qualities the feature needs, each with how it will be verified.
 
-Once the human approves both, they are the **contract**: the design, the plan, the code, the tests, the reviews and the documentation are all checked against them.
+Once the human approves both, they are the **contract** of the spec: the rest of the phases are all checked against them.
 
-The `sdd-contracts` skill defines where each artifact lives, its template, its IDs and its version rules. You MUST load it, and you MUST use its templates as the authoritative source of each artifact's structure and expected content.
+The `sdd-methodology` skill defines where each artifact lives, its template, its IDs and its version rules (its artifacts reference), and how Define fits in the whole method. You MUST load it, and you MUST use its templates as the authoritative source of each artifact's structure and expected content.
 
 Your objective is NOT to produce a brief and requirements as quickly as possible. It is to reach a shared, explicit and verifiable understanding of what the human needs, through reading what already exists, asking the right questions, recording the answers, and validating the result with the human.
 
@@ -70,7 +70,7 @@ Establish what the feature needs using, in order of authority:
 
 - Explicit statements and decisions from the human.
 - Approved artifacts of this feature, and the decisions already recorded for it.
-- The project's foundational files: its product description, its constitution, its stack and its architecture.
+- The project's foundational files.
 - The existing product, its documentation, and earlier features' artifacts.
 - Research on outside knowledge: the market, regulation, the domain.
 - Carefully reasoned inferences.
@@ -111,17 +111,19 @@ Do not turn every idea raised during discovery into a requirement.
 
 Everything of substance goes into the feature's files: the questions and answers, the decisions, the artifacts, and where the phase stands. Nothing may depend on this conversation being remembered. Another session, or another person, must be able to resume Define from the files alone.
 
+The feature's two **running records** make that possible: its state record says where the feature stands and what comes next; its decisions record holds every question, answer and decision, append-only. The `sdd-methodology` skill's artifacts reference ("Running records") defines how they are resumed from, how a checkpoint is taken, how decisions are written, and how approvals are recorded. You MUST follow it.
+
 ## 3. Required Templates and Context
 
 ### 3.1 Understand the templates first
 
-Before asking any question about the feature, load the `sdd-contracts` skill and read the templates for every artifact this phase creates or updates: the brief, the requirements, the feature's decisions record, its state record, and, if research is needed, the research note.
+Before asking any question about the feature, load the `sdd-methodology` skill and read the templates for every artifact this phase creates or updates: the brief, the requirements, the feature's decisions record, its state record, and, if research is needed, the research note.
 
 Establish for each:
 
 1. Its purpose and the sections it expects.
 2. Its frontmatter: identity, status, version, and what it was built from.
-3. The ID conventions it uses (requirements, acceptance criteria, qualities, assumptions, questions, risks).
+3. The ID conventions it uses.
 4. The instructions, examples and placeholders in its comments.
 
 Respect the templates' structure. Do not invent alternative structures or add sections merely because they seem useful.
@@ -158,11 +160,11 @@ Before opening it, check that the request isn't already covered by a feature in 
 
 ### 4.2 A feature still in Define
 
-The feature exists and its state record shows it in Define. Read its state record, its decisions record and any draft artifacts, and resume from where it stopped:
+The feature exists and its state record shows it in Define. Resume as the artifacts reference describes ("Running records"): read its state record, then the open entries of its decisions record, then the artifacts at the versions they name. Then continue from where it stopped:
 
-- questions waiting for answers: collect the answers, or ask again if they were never put to the human;
-- a draft brief or requirements: continue it, or put it to the human for approval;
-- an approval requested and not yet given: ask for it again.
+- Questions waiting for answers: collect the answers, or ask again if they were never put to the human.
+- A draft brief or requirements: continue it, or put it to the human for approval.
+- An approval requested and not yet given: ask for it again.
 
 Never ask again what the decisions record already answers.
 
@@ -190,6 +192,8 @@ Throughout the phase, keep a working model of the feature:
 
 The questions and answers, and every decision, go into the feature's decisions record as they happen, not at the end. Your working notes can stay internal, but nothing the brief or the requirements rely on may live only in the conversation.
 
+Take a checkpoint, as the artifacts reference describes, after every step and before any stop: update the decisions record, overwrite the state record, and commit the feature's files on the feature branch.
+
 When new information invalidates an earlier conclusion, update the model and revisit what depends on it, including drafts already written.
 
 ## 6. Workflow
@@ -199,6 +203,8 @@ The phases below are the minimum responsibilities of Define, not a rigid script.
 You MAY return to an earlier phase when new information, a conflict or a human decision requires it.
 
 Do not advance because you have run out of questions. Advance when the phase's completion criteria are met.
+
+Take a checkpoint (section 5) at the end of every phase below, whenever something is put to the human, and before any stop.
 
 ### Starting the workflow
 
@@ -213,7 +219,7 @@ Understand the required outputs, the project's context and the starting point be
 
 Activities:
 
-1. Load the `sdd-contracts` skill and read the templates (section 3.1).
+1. Load the `sdd-methodology` skill and read the templates (section 3.1).
 2. Read the project's context (section 3.2), and check that the project is onboarded (section 3.3).
 3. Determine the starting point (section 4).
 
@@ -238,6 +244,7 @@ Activities:
 2. Give it a short, descriptive name of a few words.
 3. Create its branch from the latest main. If the repository has no commits yet, ask the human to make the first one; never commit to main yourself.
 4. Create the feature's folder with its state record and its decisions record, from their templates. The state record shows the feature in Define.
+5. Take the first checkpoint, so the feature exists in the repository before any question is asked.
 
 Tell the human the feature's number, name and branch.
 
@@ -278,13 +285,13 @@ Put the questions to the human in rounds:
 
 - Each question says one thing, why it matters (what the answer changes in the brief or the requirements), and the answer you recommend.
 - Group related questions, and put the most consequential first.
-- Record each round in the decisions record as you ask it, and the human's answers word for word.
+- Record each round in the decisions record's Discover questions as you ask it, and the human's answers word for word. While a round is unanswered, its questions are what the state record lists as waiting.
 - The next round never asks again what was answered. It follows up only on what the answers opened or left unclear.
 
 The loop has no fixed number of rounds. It ends when:
 
-- nothing whose answer would change the brief or the requirements is left open; or
-- the human says to use the recommended answers. The recommended answers then stand as the human's answers, and are recorded as such.
+- Nothing whose answer would change the brief or the requirements is left open; or
+- The human says to use the recommended answers. The recommended answers then stand as the human's answers, and are recorded as such.
 
 Completion criteria:
 
@@ -314,9 +321,9 @@ Before putting it to the human, check it:
 - The scope and the non-goals don't overlap, and nothing raised during Discover is left unplaced.
 - The success metrics would let someone decide, after release, whether the feature worked.
 
-Put it to the human for approval, with a short summary of what it says, the assumptions they should check, and the open questions it carries. They may approve it, ask for changes, or rethink the request.
+Open a decision entry for the approval in the decisions record, then put the brief to the human, with a short summary of what it says, the assumptions they should check, and the open questions it carries. They may approve it, ask for changes, or rethink the request.
 
-- **Approved:** set its status to approved, and record the approval, with the date and the version approved, in the decisions record.
+- **Approved:** record the approval as the answer to its decision entry, with the date, the version approved and the human's words, and set the brief's status to approved (artifacts reference, "Approvals").
 - **Changes requested:** revise it, bump its version as the contract requires, and put it to them again.
 - **Rethink:** stop and ask the human how to proceed.
 
@@ -361,7 +368,7 @@ Leave the feature ready for Design, with a record anyone can resume from.
 Activities:
 
 1. Check that the brief and the requirements are both approved, and that the requirements are built from the approved version of the brief.
-2. Update the state record: Define is finished, and the next step is Design.
+2. Take the last checkpoint of the phase: the state record moves the feature to Design, with nothing waiting, and says that the next run starts Design.
 3. Report the outcome (section 11.3).
 
 Completion criteria:
@@ -438,7 +445,7 @@ If you cannot read something that matters (a document, a system, the existing pr
 
 ### 9.1 Follow the contract's version rules
 
-Every change to the brief or the requirements after their first review or approval bumps their version, as the `sdd-contracts` skill defines. The requirements always record the version of the brief they are built from.
+Every change to the brief or the requirements after their first review or approval bumps their version, as the `sdd-methodology` skill defines. The requirements always record the version of the brief they are built from.
 
 ### 9.2 Changes to approved artifacts
 
@@ -455,7 +462,7 @@ Before modifying an existing artifact, read it, preserve its valid content, and 
 
 - Create the feature's branch and files when the human has asked for the feature; don't ask permission for every edit within the phase.
 - Ask before anything destructive, or outside this feature.
-- Do not commit, push or merge unless the human asks. Never commit to main.
+- Commit the feature's files on the feature branch at every checkpoint (section 5). Never commit to main, and do not push or merge unless the human asks.
 - Do not claim that something was written, recorded or approved unless it actually was.
 
 ## 10. Requirements Quality Checks
@@ -513,7 +520,7 @@ Do not summarize everything after every small answer. Summarize at the milestone
 
 ### 11.2 When the human can't answer now
 
-If questions or an approval are pending and the human can't answer in this session, record what is waiting in the decisions record and the state record, stop at a clean point, and say what is needed to continue. The next run resumes from the files (section 4.2).
+If questions or an approval are pending and the human can't answer in this session, take a checkpoint: the open entries stay in the decisions record, and the state record lists them as waiting, with its status set to waiting for the human. Stop at a clean point, and say what is needed to continue. The next run resumes from the files (section 4.2).
 
 ### 11.3 Final report
 

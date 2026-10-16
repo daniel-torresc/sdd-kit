@@ -60,20 +60,20 @@ Each foundational file holds one kind of knowledge, and the same fact is never k
 
 These live in the feature's folder, `specs/NNN-<slug>/`. "Built from" names the files a file is derived from: when one of them changes, this file may be stale (section 5).
 
-| File                                | What it is                                                                                                                                                                                                                 | Template          | Created in                              | Built from                             |
-|-------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|-----------------------------------------|----------------------------------------|
-| `state.yaml`                        | where the feature stands: phase, step, what waits for the human, review rounds, tasks, stale files, history                                                                                                                | `state.yaml`      | feature start; updated after every step | —                                      |
-| `decisions.md`                      | every question, answer and decision about the feature: what waits for the human, the Discover questions and answers, the human's decisions and approvals, the decisions made along the way, and the documentation affected | `decisions.md`    | feature start; added to throughout      | —                                      |
-| `brief.md`                          | the problem, the users, the desired outcome, the success criteria, the scope and non-goals, constraints, assumptions, open questions and risks                                                                             | `brief.md`        | Define                                  | the request and the Discover answers   |
-| `requirements.md`                   | the requirements and their acceptance criteria, the qualities the feature needs, and the exclusions, as observable behaviour                                                                                               | `requirements.md` | Define                                  | `brief.md`                             |
-| `research/Q-nn-<slug>.md`           | the answer to one question, with evidence, confidence and sources; for a choice, every viable option compared                                                                                                              | `research.md`     | any phase                               | —                                      |
-| `design.md`                         | how the feature is built: components, interfaces, data, technologies, qualities, failure modes, and the task list                                                                                                          | `design.md`       | Design                                  | `brief.md`, `requirements.md`          |
-| `plan.md`                           | how to approach each task: what it delivers, its dependencies, technologies and files, how it is checked, its risks                                                                                                        | `plan.md`         | Design                                  | `design.md`, `requirements.md`         |
-| `reviews/<step>-<reviewer>-r<n>.md` | one review round: the findings and the verdict                                                                                                                                                                             | `review.md`       | Design, Build, Verify                   | the file under review                  |
-| `reviews/cr-<reviewer>-<n>.md`      | findings about a file, raised outside a review                                                                                                                                                                             | `review.md`       | any phase                               | —                                      |
-| `reviews/<review-file>-answers.md`  | the answer to each finding: `R1-03: fixed` or `R1-03: rejected — <why>`, one line per finding                                                                                                                              | none              | after each review                       | the review                             |
-| `evidence/README.md`                | the results of the full check, and which test shows each acceptance criterion holds                                                                                                                                        | `evidence.md`     | Verify                                  | —                                      |
-| `evidence/traceability.md`          | the traceability matrix: for each requirement, its acceptance criteria, the components, tasks and tests that cover them                                                                                                    | none              | Verify                                  | the feature's files, tests and commits |
+| File                                | What it is                                                                                                                                                                                                 | Template          | Created in                              | Built from                             |
+|-------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|-----------------------------------------|----------------------------------------|
+| `state.yaml`                        | where the feature stands: phase, step, status, what the next run must do, what waits, tasks, stale files, history (section 7)                                                                              | `state.yaml`      | feature start; updated after every step | —                                      |
+| `decisions.md`                      | every question, answer and decision about the feature: the human's decisions and approvals, the Discover questions and answers, the choices made along the way, and the documentation affected (section 7) | `decisions.md`    | feature start; added to throughout      | —                                      |
+| `brief.md`                          | the problem, the users, the desired outcome, the success criteria, the scope and non-goals, constraints, assumptions, open questions and risks                                                             | `brief.md`        | Define                                  | the request and the Discover answers   |
+| `requirements.md`                   | the requirements and their acceptance criteria, the qualities the feature needs, and the exclusions, as observable behaviour                                                                               | `requirements.md` | Define                                  | `brief.md`                             |
+| `research/Q-nn-<slug>.md`           | the answer to one question, with evidence, confidence and sources; for a choice, every viable option compared                                                                                              | `research.md`     | any phase                               | —                                      |
+| `design.md`                         | how the feature is built: components, interfaces, data, technologies, qualities, failure modes, and the task list                                                                                          | `design.md`       | Design                                  | `brief.md`, `requirements.md`          |
+| `plan.md`                           | how to approach each task: what it delivers, its dependencies, technologies and files, how it is checked, its risks                                                                                        | `plan.md`         | Design                                  | `design.md`, `requirements.md`         |
+| `reviews/<step>-<reviewer>-r<n>.md` | one review round: the findings and the verdict                                                                                                                                                             | `review.md`       | Design, Build, Verify                   | the file under review                  |
+| `reviews/cr-<reviewer>-<n>.md`      | findings about a file, raised outside a review                                                                                                                                                             | `review.md`       | any phase                               | —                                      |
+| `reviews/<review-file>-answers.md`  | the answer to each finding: `R1-03: fixed` or `R1-03: rejected — <why>`, one line per finding                                                                                                              | none              | after each review                       | the review                             |
+| `evidence/README.md`                | the results of the full check, and which test shows each acceptance criterion holds                                                                                                                        | `evidence.md`     | Verify                                  | —                                      |
+| `evidence/traceability.md`          | the traceability matrix: for each requirement, its acceptance criteria, the components, tasks and tests that cover them                                                                                    | none              | Verify                                  | the feature's files, tests and commits |
 
 ## 5. Frontmatter, versions and staleness
 
@@ -87,7 +87,7 @@ The brief, the requirements, the design and the plan carry this frontmatter (eac
 | `version`  | an integer, bumped on every change after the first review or approval       |
 | `upstream` | the version of each file this version was built from, as `<file>@<version>` |
 
-The foundational files carry a `version` and a `status` of `draft`, `active` or `superseded`. ADRs, research notes and reviews have their own fields, shown in their templates.
+The foundational files carry a `version` and a `status` of `draft`, `active` or `superseded`. ADRs, research notes and reviews have their own fields, shown in their templates. The decisions record carries only its `artifact` and `feature`: it is append-only, so it has no version.
 
 When a file's `version` is higher than the one another file lists for it in `upstream`, that other file is **stale**. It is checked again: if it still holds, its `upstream` entry is bumped to the current version; otherwise it is revised, which bumps its own version in turn.
 
@@ -120,3 +120,56 @@ An ID is defined by a heading that starts with it, such as `### REQ-02: <title>`
 | `ADR-NNNN`       | architecture decision, numbered across the whole project                    | `docs/adr/`                                              |
 
 Links point upward, from what was built to what it was built for: an acceptance criterion belongs to its requirement, a component or interface names the requirements it covers, a task names the acceptance criteria it delivers, and a test names the acceptance criterion it proves, with its full ID (`F003:AC-02.1`).
+
+## 7. Running records
+
+Each feature keeps two running records next to its artifacts. They are what lets the work stop at any point and resume from the files alone.
+
+|         | `state.yaml`                                              | `decisions.md`                                    |
+|---------|-----------------------------------------------------------|---------------------------------------------------|
+| Answers | where the feature stands, and what happens next           | what was asked, answered and decided, and why     |
+| Shape   | small and structured; **overwritten** at every checkpoint | entries in sections; **append-only**              |
+| Read    | first, by every run of every phase                        | when resuming, approving, reviewing, or disputing |
+
+The records point to the artifacts by ID and version; they never duplicate their content.
+
+### 7.1 Resuming
+
+A run never relies on memory of an earlier session. It resumes in this order:
+
+1. Read `state.yaml`: the phase, the step, the status, and what the next run must do.
+2. Read the open entries of `decisions.md` that `state.yaml` points to, and any answers recorded since.
+3. Read the artifacts at the versions the records name.
+
+If the records and the artifacts disagree, stop and reconcile them before going on.
+
+### 7.2 Checkpoints
+
+A checkpoint is taken after every step, and before any stop: when the work waits for the human, is blocked, the phase ends, or the session ends. At each checkpoint:
+
+1. **`decisions.md`:** add what happened since the last checkpoint: questions put to the human, their answers, decisions, notable choices, documentation impact.
+2. **`state.yaml`:** overwrite `phase`, `step`, `status`, `next`, `waiting-for-human`, `blocked-by`, `tasks` and `stale` so they describe the present, and add one line to `history`.
+3. **Commit** the feature's changed files on the feature branch, never on main, with a message that starts with the feature ID and says what happened, for example `F003 define: brief.md@2 approved (H-02)`.
+
+### 7.3 Writing decisions
+
+- Add entries at the end of their section; never rewrite or delete an earlier one.
+- The only change allowed to an existing entry is filling in its answer fields once, when the human answers.
+- A correction is a new entry that names the entry it corrects and why.
+- The human's answers are recorded verbatim.
+- Every entry is dated and names the IDs and versions it concerns, such as `brief.md@2`, `REQ-03` or `H-02`.
+
+### 7.4 Approvals
+
+An approval is recorded twice, on purpose:
+
+- In `decisions.md`, as the answer to its `H-nn` entry, with the date, the version approved, and the human's words: this is the proof.
+- In the approved artifact, whose `status` becomes `approved`: this mirrors it.
+
+If the two ever disagree, `decisions.md` is correct and the artifact is fixed.
+
+### 7.5 What is waiting
+
+Everything waiting for the human lives in one place: an open `H-nn` entry, or an unanswered `Q-nn` question, in `decisions.md`. `state.yaml` lists only their IDs, in `waiting-for-human`, and sets `status` to `waiting-for-human` when nothing else can go on.
+
+Work that doesn't depend on the answer can continue in the meantime.

@@ -30,7 +30,7 @@ When information is missing and the decision isn't the human's, the work doesn't
 
 Everything of substance lives in files: the artifacts, the reviews, the questions and decisions, and where the feature stands. Nothing depends on a conversation being remembered, so the work can stop at any point and resume from the files.
 
-Each feature keeps two running records next to its artifacts: its **state** (the phase, the step, what is waiting, the tasks) and its **decisions** (every question, answer and decision about the feature).
+Each feature keeps two running records next to its artifacts: its **state** (the phase, the step, what is waiting, what comes next, the tasks) and its **decisions** (every question, answer and decision about the feature, append-only). They are updated at every checkpoint, and committed on the feature branch. How they are kept is described in [artifacts.md](artifacts.md) (section 7).
 
 ### Traceability
 
@@ -287,21 +287,21 @@ Any decision that belongs to the human (section 1) is put to them with a recomme
 
 ### Every step in order
 
-| Phase           | Step                       | Starts from                                                 | Produces                                          | Ends with                                            |
-|-----------------|----------------------------|-------------------------------------------------------------|---------------------------------------------------|------------------------------------------------------|
-| Onboard (once)  | Foundational files         | the human's description, existing documents, the repository | the foundational files, readiness verdict         | READY, or READY WITH CAVEATS                         |
-| Define          | Discover                   | the request, the product description, earlier answers       | questions and answers in the decisions record     | nothing important open, or "use the recommendations" |
-|                 | Brief                      | the request, the answers                                    | brief                                             | **human approval**                                   |
-|                 | Requirements               | the approved brief                                          | requirements                                      | **human approval**                                   |
+| Phase           | Step                       | Starts from                                                   | Produces                                          | Ends with                                            |
+|-----------------|----------------------------|---------------------------------------------------------------|---------------------------------------------------|------------------------------------------------------|
+| Onboard (once)  | Foundational files         | the human's description, existing documents, the repository   | the foundational files, readiness verdict         | READY, or READY WITH CAVEATS                         |
+| Define          | Discover                   | the request, the product description, earlier answers         | questions and answers in the decisions record     | nothing important open, or "use the recommendations" |
+|                 | Brief                      | the request, the answers                                      | brief                                             | **human approval**                                   |
+|                 | Requirements               | the approved brief                                            | requirements                                      | **human approval**                                   |
 | Design          | Design and task list       | brief, requirements, code, foundational files, ADRs, research | design, ADRs, stack changes                       | a complete design                                    |
-|                 | One-way door (when needed) | the decision, the requirements                              | research note, decision write-up, fairness review | **human decision**, then an ADR                      |
-|                 | Design review              | the design and everything before it                         | review file                                       | approval                                             |
-|                 | Design approval            | the design, its task list, open findings                    | —                                                 | **human approval**                                   |
-|                 | Plan                       | the approved design                                         | plan                                              | consistency check clean                              |
-| Build, per task | Implement                  | the task, its criteria, design, constitution, stack, code   | code and tests on the task branch                 | tests and checks pass                                |
-|                 | Review                     | the change, the task, its criteria, design                  | review file                                       | approval                                             |
-|                 | Merge                      | the approved task branch                                    | merge into the feature branch                     | full suite passes                                    |
-| Verify          | Full check                 | the feature branch                                          | evidence, traceability matrix                     | —                                                    |
-|                 | Feature review             | the whole feature, the evidence                             | review file                                       | no blocking findings, or fix tasks back to Build     |
-| Document        | Documentation              | everything that was built, the documentation notes          | updated documentation                             | docs match what was built                            |
-| Release         | Pull request               | the finished feature branch                                 | draft pull request                                | **the human merges**                                 |
+|                 | One-way door (when needed) | the decision, the requirements                                | research note, decision write-up, fairness review | **human decision**, then an ADR                      |
+|                 | Design review              | the design and everything before it                           | review file                                       | approval                                             |
+|                 | Design approval            | the design, its task list, open findings                      | —                                                 | **human approval**                                   |
+|                 | Plan                       | the approved design                                           | plan                                              | consistency check clean                              |
+| Build, per task | Implement                  | the task, its criteria, design, constitution, stack, code     | code and tests on the task branch                 | tests and checks pass                                |
+|                 | Review                     | the change, the task, its criteria, design                    | review file                                       | approval                                             |
+|                 | Merge                      | the approved task branch                                      | merge into the feature branch                     | full suite passes                                    |
+| Verify          | Full check                 | the feature branch                                            | evidence, traceability matrix                     | —                                                    |
+|                 | Feature review             | the whole feature, the evidence                               | review file                                       | no blocking findings, or fix tasks back to Build     |
+| Document        | Documentation              | everything that was built, the documentation notes            | updated documentation                             | docs match what was built                            |
+| Release         | Pull request               | the finished feature branch                                   | draft pull request                                | **the human merges**                                 |
