@@ -5,7 +5,7 @@ name: sdd-methodology
 # Always in context: Claude uses it to decide when to load this skill. It says that the skill
 # explains the methodology and its files (not how to run it), and the moments that need them.
 # Kept on one line with no ": " so every YAML parser reads it.
-description: "Explains SDD (spec-driven development), the methodology, and the files it produces. It covers its principles, the one-time onboarding and the six phases of every feature (Define, Design, Build, Verify, Document, Release), what each aims for, starts from, produces and needs before it is finished, where the human approves, and what happens when a problem or change appears. It also defines the project layout, every SDD file and its template, versions and staleness, and the IDs that link requirements to design, tasks and tests. Use it whenever you need to understand SDD or where a piece of work sits in it, before working on any SDD phase, whenever you create or fill an SDD file from its template, need to know where a file goes or which file holds something, read or assign an ID, or when the user asks how SDD works."
+description: "Explains SDD (spec-driven development), the methodology, and the files it produces. It covers its principles, the one-time onboarding and the six phases of every feature (Define, Design, Build, Verify, Document, Release), what each aims for, starts from, produces and needs before it is finished, where the human approves, the shared review and research activities, and what happens when a problem or change appears. It also defines the project layout, every SDD file and its template, versions and staleness, and the IDs that link requirements to design, tasks and tests. Use it whenever you need to understand SDD or where a piece of work sits in it, before working on any SDD phase, whenever you create or fill an SDD file from its template, need to know where a file goes or which file holds something, read or assign an ID, or when the user asks how SDD works."
 
 # Reference knowledge, not an action: hide it from the / menu. Claude can still load it on its
 # own whenever the description matches.
@@ -64,6 +64,15 @@ After it, every feature goes through the phases in order, and each phase starts 
 
 There are only two ways back. Blocking problems found in Verify become fix tasks that go through Build again. An approved artifact that turns out to be wrong is corrected at any point, and everything built on it is re-checked.
 
+## Shared activities
+
+Two activities are not phases: any phase calls on them, and they follow the same rules wherever they happen. Both are carried out independently of the work they serve, from the files alone.
+
+| Activity     | Aims to                                                                                   | Used in                                                                                     | Produces                                         |
+|--------------|-------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|--------------------------------------------------|
+| **Review**   | judge a piece of work against the sources it was built from, never its author's reasoning | the design review and the fairness review of a one-way door (Design), each task (Build), the whole feature (Verify) | a review file with findings and a verdict, and the answers to each finding |
+| **Research** | answer a question that needs outside knowledge, with evidence and a stated confidence     | any phase: the domain and regulation in Define, the options for a one-way door in Design, how a technology behaves | a research note that the work cites              |
+
 ## Project layout
 
 ```
@@ -100,6 +109,7 @@ Every file that has a template starts from it. Each brief, requirements, design 
 - **The core concepts:** the contract, decisions and assumptions, the record, traceability, versions and staleness, and how reviews work.
 - **Onboarding:** what the foundational files hold, the readiness verdict, and how features keep them current.
 - **Each phase:** its aim, what it starts from, its steps in order, what it produces, and when it is finished.
+- **The shared activities:** how a review works (findings, verdicts, answers, rounds) and how research is done.
 - **What can happen at any point:** problems, changes to approved artifacts, outside knowledge, and questions for the human.
 - **A reference table** of every step.
 

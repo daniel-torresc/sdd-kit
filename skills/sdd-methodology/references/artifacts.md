@@ -85,7 +85,7 @@ The brief, the requirements, the design and the plan carry this frontmatter (eac
 |------------|-----------------------------------------------------------------------------|
 | `artifact` | which artifact this is                                                      |
 | `feature`  | the feature ID, for example `F003`                                          |
-| `status`   | `draft`, `approved` or `superseded`                                         |
+| `status`   | `draft`, `approved` or `superseded`; the plan, which has no approval, uses `checked` instead of `approved` |
 | `version`  | an integer, bumped on every change after the first review or approval       |
 | `upstream` | the version of each file this version was built from, as `<file>@<version>` |
 

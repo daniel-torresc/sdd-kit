@@ -50,14 +50,7 @@ The brief, the requirements, the design and the plan each carry a version and li
 
 ### Independent review
 
-Every review judges the files against what they were built from (the requirements, the design, the decisions already made, the constitution), never the author's explanation of them. A reviewer never edits what it reviews.
-
-Each finding has an ID, a severity, where it is, what is wrong, the evidence and the recommended fix:
-
-- **blocking**: the work is wrong or unsafe and must change. A blocking finding without concrete evidence is minor.
-- **minor**: worth fixing, but doesn't hold the work up. Anything that adds scope is minor.
-
-A review ends with a verdict: `approve` when nothing is blocking, `changes-required` otherwise. Every finding is answered, either fixed or rejected with a reason grounded in the requirements, a decision already made, or evidence. In the next round, the reviewer first checks whether each earlier finding is resolved, then looks only for problems the revision introduced. If the rounds stop converging, with the same blocking findings coming back or new ones appearing each round, the review goes to the human, who decides how to proceed.
+Every review judges the work against the sources it was built from (the requirements, the design, the decisions already made, the constitution), never against its author's explanation of it, and never edits what it reviews. Review and research are shared activities that any phase can call on; section 10 describes how they work.
 
 ## 2. Onboard: before the first feature
 
@@ -175,21 +168,21 @@ The design covers the components and interfaces, the data, the technology choice
 - Architecturally significant choices get an ADR, and new technologies are added to the stack.
 - Technologies the human has fixed in the stack are never changed.
 
-A requirement that can't be met, or that contradicts another, is not worked around: it is a problem in the requirements (section 10).
+A requirement that can't be met, or that contradicts another, is not worked around: it is a problem in the requirements (section 11).
 
 ### One-way doors
 
 Some choices are hard to reverse: the stack, the main datastore, hosting, identity, anything whose reversal would mean a rewrite, or that costs money. These are the human's to make:
 
-1. Research compares every viable option with the same depth.
+1. Research (section 10) compares every viable option with the same depth.
 2. The decision is written up: what is being decided, what it blocks, every option with its pros, cons, fit and cost of reversal, and a recommendation marked as not binding.
-3. The write-up is reviewed for fairness: every viable option present, all judged evenly, and the recommendation following from the evidence.
+3. The write-up is reviewed for fairness (section 10): every viable option present, all judged evenly, and the recommendation following from the evidence.
 4. The human chooses.
 5. The choice gets an ADR and is recorded in the stack, and the design continues on that basis.
 
 ### The design review
 
-The complete design is reviewed independently against everything before it: the brief, the requirements, the research and the decisions already made. The review looks for gaps, contradictions, risky assumptions, unhandled failures, and requirements the design doesn't meet. It runs in rounds until it approves.
+The complete design is reviewed independently (section 10) against everything before it: the brief, the requirements, the research and the decisions already made. The review looks for gaps, contradictions, risky assumptions, unhandled failures, and requirements the design doesn't meet.
 
 ### The design approval
 
@@ -220,10 +213,10 @@ The plan has no review and no human approval of its own: it is the approved desi
 Each task goes through three steps:
 
 1. **Implement.** On its own branch, created from the feature branch, the task is built together with the tests that show its acceptance criteria hold, following the constitution's practices and the stack. Each test names the acceptance criterion it proves. The task is done when its tests and the project's checks pass. It stays within the task: work the task doesn't ask for is reported, not done. Documentation the change affects is noted for Document.
-2. **Review.** The change is reviewed independently against the task, its acceptance criteria, the design and the constitution. Blocking findings are fixed and the change is reviewed again, until it is approved. If the plan turns out to be what's wrong, the task goes back to the plan.
+2. **Review.** The change is reviewed independently (section 10) against the task, its acceptance criteria, the design and the constitution. Blocking findings are fixed and the change is reviewed again, until it is approved. If the plan turns out to be what's wrong, the task goes back to the plan.
 3. **Merge.** The approved task branch is merged into the feature branch, and the full test suite runs. If anything fails, the merge is undone and the task goes back to be fixed.
 
-If the design or the plan turns out not to work in practice, the build doesn't improvise: the task waits while the design or plan is corrected (section 10). A requirement that turns out wrong or untestable is a problem in the requirements.
+If the design or the plan turns out not to work in practice, the build doesn't improvise: the task waits while the design or plan is corrected (section 11). A requirement that turns out wrong or untestable is a problem in the requirements.
 
 **Produces** code and tests, merged task by task into the feature branch, and notes on the documentation affected.
 
@@ -236,9 +229,9 @@ If the design or the plan turns out not to work in practice, the build doesn't i
 **Starts from** the feature branch with every task merged.
 
 1. **Full check.** Every check the project has runs against the feature branch. The results are recorded as evidence, together with the traceability matrix showing which test proves each acceptance criterion.
-2. **Feature review.** The whole feature, its full difference from main, is reviewed independently against the requirements, the design and the evidence.
+2. **Feature review.** The whole feature, its full difference from main, is reviewed independently (section 10) against the requirements, the design and the evidence.
 
-If the full check fails or the review finds blocking problems, each becomes a **fix task**, added to the task list and the plan. Fix tasks go through Build like any other task, and then Verify runs again from the start. A problem that lies in the requirements, not the code, is a problem in the requirements (section 10).
+If the full check fails or the review finds blocking problems, each becomes a **fix task**, added to the task list and the plan. Fix tasks go through Build like any other task, and then Verify runs again from the start. A problem that lies in the requirements, not the code, is a problem in the requirements (section 11).
 
 **Produces** the evidence (check results and the traceability matrix) and the feature review.
 
@@ -264,11 +257,66 @@ The feature branch is pushed and a draft pull request is opened into main. Its d
 
 **Finished when** the human merges the pull request. Merging into main is always the human's act. If the human wants something different instead, that is a decision for them to make, not a guess.
 
-## 10. What can happen at any point
+## 10. Shared activities: review and research
+
+Review and research are not phases of their own. Every phase can call on them, and they follow the same rules wherever they happen. Both are carried out independently of the work they serve: separately from whoever produced it, and from the files alone.
+
+### Review
+
+**Aim.** To judge a piece of work against the sources it was built from, independently of its author, before anything is built on it.
+
+**Where it happens:**
+
+| Review | What is reviewed | Judged against | Phase |
+|---|---|---|---|
+| Design review | the complete design and its task list | the brief, the requirements, the research, the decisions already made, the foundational files | Design |
+| Fairness review | the write-up of a one-way door | the research note, the requirements | Design |
+| Task review | the change a task makes | the task in the plan, its acceptance criteria, the design, the constitution | Build |
+| Feature review | the whole feature: its full difference from main | the requirements, the design, the evidence | Verify |
+
+**Independence.** The review receives the work and its sources, never the author's explanation or reasoning. It judges against the sources, not against preferences, and a decision the human made is challenged only with new evidence. It never edits what it reviews.
+
+**Findings.** Each finding has an ID, a severity, where it is, what is wrong, the evidence, and the recommended fix:
+
+- **Blocking:** the work is wrong or unsafe and must change. A blocking finding without concrete evidence is minor.
+- **Minor:** worth fixing, but doesn't hold the work up. Anything that adds scope is minor.
+
+**Verdict and answers.** A review ends with a verdict: `approve` when nothing is blocking, `changes-required` otherwise. Every finding is answered, one answer per finding: fixed, which bumps the artifact's version, or rejected with a reason grounded in the requirements, a decision already made, or evidence. A disagreement that survives a revision goes to the human.
+
+**Rounds.** After a revision, the next round first checks whether each earlier finding is resolved, then looks only for problems the revision introduced. If the rounds stop converging, with the same blocking findings coming back or new ones appearing each round, the review goes to the human, who decides how to proceed.
+
+**Findings outside a review.** Any phase that finds a defect in an artifact it is not producing records it as a finding in a review file of its own, and keeps going if it can. The finding is answered the same way.
+
+**Produces** a review file for each round, and the answers to its findings.
+
+**Finished when** the verdict is `approve`, or the human decides how to proceed.
+
+### Research
+
+**Aim.** To answer a question that needs knowledge from outside the project's files, with evidence, so that a decision rests on facts rather than guesses.
+
+**Where it happens:** in any phase. For example, the domain, the users, the market or a regulation during Discover; the options for a one-way door, or how a technology behaves, during Design; how a library behaves during Build.
+
+**Independence.** Research informs a decision; it never makes one. For a choice, every viable option is compared with the same depth and the same criteria, whichever option the work leans towards. Facts are cited, inferences are marked as such, and confidence is stated.
+
+**Steps:**
+
+1. State the question, the decision it informs, and what "answered" means.
+2. Gather the evidence: sources, the existing code, anything tried out.
+3. Record each finding with its confidence.
+4. For a choice, compare every viable option on its fit with the requirements and qualities, the evidence, its cost, the cost of reversing it, and its risks.
+5. Give the answer with an overall confidence, and a recommendation only when one was asked for, marked as such.
+6. State what is still unknown, and how it could be established.
+
+**Produces** a research note, which the work that asked for it cites.
+
+**Finished when** the question is answered with a stated confidence, or what cannot be established is stated, with how it could be.
+
+## 11. What can happen at any point
 
 ### A problem in an artifact
 
-A defect found in an artifact, in a review or during other work, is recorded as a finding in a review file, and the work goes on if it can. The artifact is then corrected, or the finding is rejected with a reason, one answer per finding. If the disagreement survives, the human decides.
+A defect found in an artifact, in a review or during other work, is recorded as a finding in a review file (section 10), and the work goes on if it can. The artifact is then corrected, or the finding is rejected with a reason, one answer per finding. If the disagreement survives, the human decides.
 
 ### A change to an approved artifact
 
@@ -279,13 +327,13 @@ Fixing a problem, or the human changing their mind, can change an artifact that 
 
 ### Outside knowledge
 
-Any question needing outside knowledge (the market, regulation, the domain, how a library behaves, the options for a technology decision) can be researched at any point. The answer is a research note with the evidence, a confidence level, and what is still unknown. Research informs a decision; it never makes one.
+Any question needing outside knowledge (the market, regulation, the domain, how a library behaves, the options for a technology decision) can be researched at any point, as section 10 describes. Research informs a decision; it never makes one.
 
 ### A question only the human can answer
 
 Any decision that belongs to the human (section 1) is put to them with a recommended answer, and their answer is recorded in the decisions record. Work that doesn't depend on the answer can go on in the meantime.
 
-## 11. Reference
+## 12. Reference
 
 ### Every step in order
 
