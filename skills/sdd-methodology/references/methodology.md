@@ -57,7 +57,7 @@ Each finding has an ID, a severity, where it is, what is wrong, the evidence and
 - **blocking**: the work is wrong or unsafe and must change. A blocking finding without concrete evidence is minor.
 - **minor**: worth fixing, but doesn't hold the work up. Anything that adds scope is minor.
 
-A review ends with a verdict: `approve` when nothing is blocking, `changes-required` otherwise. Every finding is answered, either fixed or rejected with a reason grounded in the requirements, a decision already made, or evidence. In the next round, the reviewer first checks whether each earlier finding is resolved, then looks only for problems the revision introduced.
+A review ends with a verdict: `approve` when nothing is blocking, `changes-required` otherwise. Every finding is answered, either fixed or rejected with a reason grounded in the requirements, a decision already made, or evidence. In the next round, the reviewer first checks whether each earlier finding is resolved, then looks only for problems the revision introduced. If the rounds stop converging, with the same blocking findings coming back or new ones appearing each round, the review goes to the human, who decides how to proceed.
 
 ## 2. Onboard: before the first feature
 
