@@ -77,6 +77,7 @@ Onboarding produces the **foundational files**, each from its template:
 - **The stack:** the technologies the project uses, and which of them the human has fixed.
 - **The product description:** what the product is, why it exists, whom it serves, what it can do, its domain language and its business rules.
 - **The architecture description:** how the system is structured, how its parts work together, and its known debt.
+- **The skills catalogue:** the skills the project relies on as reference for its technologies, patterns, principles and practices, and the phases in which each applies.
 
 Each file holds one kind of knowledge, and the same fact is never kept in two of them. The exact set of files is described in [artifacts.md](artifacts.md), and each has its template.
 
@@ -97,6 +98,7 @@ Onboarding happens once, but the foundational files live as long as the project.
 - Define reads the product description and the constitution.
 - Design adds to the stack and the architecture decisions.
 - Build follows the constitution's practices and the stack.
+- Every phase loads the skills the catalogue lists for it and for the work at hand, and proposes new ones when they would help.
 - Document brings the product and architecture descriptions in line with what was built.
 
 The foundational files can also be reviewed or updated deliberately at any time, outside any feature, with the same care as when they were first written.

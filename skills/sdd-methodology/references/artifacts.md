@@ -12,7 +12,8 @@ The templates are in this skill's `templates/` folder. When and why each file is
 │   ├── constitution.md
 │   ├── stack.yaml
 │   ├── product.md
-│   └── architecture.md
+│   ├── architecture.md
+│   └── skills.yaml
 ├── docs/
 │   ├── adr/ADR-NNNN-<slug>.md     one architecture decision each
 │   └── …                          the project's own documentation
@@ -43,16 +44,17 @@ Every file that has a template starts from it.
 
 ## 3. Project files
 
-These describe the project as a whole and outlive any single feature. The four files in `.sdd/` are the **foundational files**, established at onboarding.
+These describe the project as a whole and outlive any single feature. The five files in `.sdd/` are the **foundational files**, established at onboarding. Every one of them is required.
 
-| File                                 | What it is                                                                                                                  | Template          | Created | Read or updated by                                             |
-|--------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|-------------------|---------|----------------------------------------------------------------|
-| `.sdd/constitution.md`               | the project's engineering principles, non-negotiable constraints, and the practices everyone must follow                    | `constitution.md` | Onboard | read by every phase; changed only deliberately, with the human |
-| `.sdd/stack.yaml`                    | the project's technology stack; entries marked `fixed: true` are the human's constraints and never change without the human | `stack.yaml`      | Onboard | Design adds or updates entries                                 |
-| `.sdd/product.md`                    | what the product is, why it exists, whom it serves, what it can do, its domain language and its business rules              | `product.md`      | Onboard | Define reads it; Document updates it                           |
-| `.sdd/architecture.md`               | how the system is structured, how its parts work together, its conventions and known debt                                   | `architecture.md` | Onboard | Design reads it; Document updates it                           |
-| `docs/adr/ADR-NNNN-<slug>.md`        | one architecturally significant decision: its context, the options, the choice and its consequences                         | `adr.md`          | Design  | superseded by a later ADR, never rewritten                     |
-| `README.md`, `docs/` (except `adr/`) | the project's own documentation for users and developers                                                                    | none              | —       | Document updates it                                            |
+| File                                 | What it is                                                                                                                                | Template          | Created | Read or updated by                                              |
+|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|-------------------|---------|-----------------------------------------------------------------|
+| `.sdd/constitution.md`               | the project's engineering principles, non-negotiable constraints, and the practices everyone must follow                                  | `constitution.md` | Onboard | read by every phase; changed only deliberately, with the human  |
+| `.sdd/stack.yaml`                    | the project's technology stack; entries marked `fixed: true` are the human's constraints and never change without the human               | `stack.yaml`      | Onboard | Design adds or updates entries                                  |
+| `.sdd/product.md`                    | what the product is, why it exists, whom it serves, what it can do, its domain language and its business rules                            | `product.md`      | Onboard | Define reads it; Document updates it                            |
+| `.sdd/architecture.md`               | how the system is structured, how its parts work together, its conventions and known debt                                                 | `architecture.md` | Onboard | Design reads it; Document updates it                            |
+| `.sdd/skills.yaml`                   | the skills the project relies on as reference for its technologies, patterns, principles and practices, and when each applies             | `skills.yaml`     | Onboard | read by every phase; entries added once the human approves them |
+| `docs/adr/ADR-NNNN-<slug>.md`        | one architecturally significant decision: its context, the options, the choice and its consequences                                       | `adr.md`          | Design  | superseded by a later ADR, never rewritten                      |
+| `README.md`, `docs/` (except `adr/`) | the project's own documentation for users and developers                                                                                  | none              | —       | Document updates it                                             |
 
 Each foundational file holds one kind of knowledge, and the same fact is never kept in two of them. Where a template has a **Source of Truth** section, it says which file owns which kind of information.
 
@@ -173,3 +175,13 @@ If the two ever disagree, `decisions.md` is correct and the artifact is fixed.
 Everything waiting for the human lives in one place: an open `H-nn` entry, or an unanswered `Q-nn` question, in `decisions.md`. `state.yaml` lists only their IDs, in `waiting-for-human`, and sets `status` to `waiting-for-human` when nothing else can go on.
 
 Work that doesn't depend on the answer can continue in the meantime.
+
+## 8. The skills catalogue
+
+Skills carry established practice for the technologies, patterns and practices a project uses. The skills catalogue, `.sdd/skills.yaml`, says which skills the project relies on and when each one applies. Every project has one, established at onboarding and kept current.
+
+- **Load what matches.** At the start of every step, load the `approved` entries whose `use-when` includes the current phase and whose `covers` touches the work: the technologies a task names, the patterns and practices it involves. Apply their guidance. Do not load entries that don't match.
+- **The project's files win.** When a skill's guidance conflicts with the constitution, the architecture or the requirements, the project's file applies, and the conflict is recorded in the decisions record.
+- **A missing skill doesn't stop the work.** When a listed skill isn't available in the session, report it, and record it in the state record's history; the work goes on without it.
+- **New skills are approved by the human.** A phase that finds a skill would help proposes it through a decision entry; it is added as `approved` once the human agrees. Candidate skills come from the skills the session lists as available, or from the human, never from scanning the machine.
+- **Keep it current.** When the stack, the architecture or the constitution changes, check the entries that cover what changed: add, retire, or keep them.

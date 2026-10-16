@@ -456,6 +456,16 @@ For brownfield projects:
 
 If the constitution requires a standard that the current system does not satisfy, record the gap and determine whether remediation can be phased. Do not silently weaken the desired standard to match the existing implementation.
 
+#### Skills that support the project
+
+Once the technologies (Phase 4) and the principles, patterns, and practices (this phase) are known, identify the skills that carry established guidance for them. The skills catalogue is required, like every foundational file; its entries are the user's choice.
+
+- For each significant technology, architectural pattern, principle, or practice, establish whether a skill supports it.
+- Propose candidates from the skills the session lists as available, and ask the user which skills they already use or want to install. Never scan the machine for skills.
+- For each candidate, explain what it covers, in which phases it helps, and why. The user approves, rejects, or defers it.
+- Record the approved skills in the catalogue, linked to what they cover. Record a wanted skill that isn't installed yet with how to obtain it.
+- Where no skill supports an important technology or practice, say so: it is a gap the user may want to fill.
+
 Completion criteria:
 
 - Proposed principles and constraints are relevant to the project.
@@ -463,6 +473,7 @@ Completion criteria:
 - Material governance expectations have been considered.
 - The constitution's content is consistent with the project context and intended stack.
 - Significant gaps between current practice and intended standards are understood.
+- The skills that support the stack, the architecture, and the practices have been identified, and the user has decided on each candidate.
 
 ### Phase 6 — Consolidation and Decision Review
 

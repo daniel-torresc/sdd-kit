@@ -1,0 +1,34 @@
+# The project's skills catalogue: the skills this project relies on as reference for its
+# technologies, architectural patterns, engineering principles and practices.
+#
+# Where its entries come from:
+#   - Onboarding: the skills that support the stack, the architecture and the constitution,
+#     proposed from the skills the session lists as available, or named by the human.
+#   - Any phase, later: a skill that would help is proposed through the feature's decisions record,
+#     and added once the human approves it.
+#
+# How it is used:
+#   - At the start of every step, the approved entries whose `use-when` includes the phase and whose
+#     `covers` touches the work are loaded, and their guidance applied.
+#   - The project's own files win: when a skill's guidance conflicts with the constitution, the
+#     architecture or the requirements, the project's file applies and the conflict is reported.
+#   - A listed skill that is not available in the session is reported; the work goes on without it.
+
+version: [version]
+
+skills:
+  - skill: <exact skill name>          # as the session lists it, e.g. plugin-name:skill-name
+    covers: [<concern or reference>]   # stack.yaml concerns, constitution IDs (PR-001, EP-002),
+                                       # architecture sections, or patterns and practices by name
+    use-when: [<phase>]                # onboard | define | design | build | verify | document | release
+    why: "<what it brings to this project>"
+    source: "<where it comes from: official, community, the project's own, and how to install it>"
+    status: approved                   # approved | proposed | retired
+
+  - skill: <exact skill name>
+    covers: [<concern or reference>]
+    use-when: [<phase>]
+    why: "<what it would bring>"
+    source: "<where it comes from>"
+    status: proposed
+    decision: specs/001-<slug>/decisions.md#H-01   # the decision entry while proposed

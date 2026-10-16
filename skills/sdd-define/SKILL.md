@@ -137,6 +137,7 @@ Read what the project already knows before asking the human anything:
 - The product description: who the product serves, what it already does, its domain language.
 - The constitution: obligations and practices that constrain what may be specified.
 - The stack: technologies the human has fixed, which may constrain the feature.
+- The skills catalogue: load the approved skills that apply to Define and to this request, such as skills for the product's domain or for writing requirements, as the artifacts reference describes ("The skills catalogue"). If a skill would help and isn't in the catalogue, propose it to the human through a decision entry; don't wait for it to continue.
 - Earlier features' briefs and requirements that touch the same area.
 - The existing product's behaviour, where it is relevant to the request.
 

@@ -48,7 +48,7 @@ This skill explains the methodology: its principles, its phases, and the files a
 
 ✔ = a human approval. [✔ one-way door] = when there is a hard-to-reverse choice.
 
-**Onboard** runs once per project, before its first feature. It establishes the **foundational files** for working with SDD: the project-wide context every feature reads and keeps current, namely its engineering principles and practices, its technology stack, what the product is, and how the system is built.
+**Onboard** runs once per project, before its first feature. It establishes the **foundational files** for working with SDD: the project-wide context every feature reads and keeps current, namely its engineering principles and practices, its technology stack, what the product is, how the system is built, and the skills the project relies on.
 
 After it, every feature goes through the phases in order, and each phase starts only when the one before it has finished.
 
@@ -72,7 +72,8 @@ There are only two ways back. Blocking problems found in Verify become fix tasks
 │   ├── constitution.md            principles, non-negotiable constraints, practices
 │   ├── stack.yaml                 the technology stack; the human's fixed choices
 │   ├── product.md                 what the product is, for whom, what it can do
-│   └── architecture.md            how the system is built, its conventions and debt
+│   ├── architecture.md            how the system is built, its conventions and debt
+│   └── skills.yaml                the skills the project relies on, and when each applies
 ├── docs/
 │   ├── adr/ADR-NNNN-<slug>.md     one architecture decision each
 │   └── …                          the project's own documentation
@@ -108,3 +109,5 @@ Every file that has a template starts from it. Each brief, requirements, design 
 - **Every project and feature file:** what it is, its template, when it is created, what it is built from.
 - **Frontmatter, versions and staleness.**
 - **Every ID,** where it is defined, and how IDs link.
+- **The skills catalogue:** which skills to load in each phase, and how new ones are added.
+- **The running records:** how a feature is resumed, how a checkpoint is taken, and how decisions and approvals are recorded.
