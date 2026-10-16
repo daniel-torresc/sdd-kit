@@ -4,9 +4,9 @@ name: sdd-onboarding
 
 # Always in context: Claude uses it to decide when to load this skill, so it says what the skill
 # produces and when to use it. It names no file on purpose: the set of foundational files is
-# defined by the sdd-contracts templates and may change. Kept on one line with no ": " so every
+# defined by the sdd-methodology skill and may change. Kept on one line with no ": " so every
 # YAML parser reads it.
-description: "Onboards a project into SDD (spec-driven development). Through repository analysis and an interactive interview with the human, it establishes the project's foundational files, the project-wide context every later SDD activity builds on, from the templates in the sdd-contracts skill, validates them as a set, and reports whether the project is READY, READY WITH CAVEATS or NOT READY for SDD. Works for greenfield, brownfield and partially established projects, and for reviewing or updating foundational files that already exist. Use when the user invokes /sdd-onboarding, or asks to set up, adopt or onboard SDD in a project, or to create, review or update its foundational SDD files. Not for feature work."
+description: "Onboards a project into SDD (spec-driven development). Through repository analysis and an interactive interview with the human, it establishes the project's foundational files, the project-wide context every later SDD activity builds on, from the templates in the sdd-methodology skill, validates them as a set, and reports whether the project is READY, READY WITH CAVEATS or NOT READY for SDD. Works for greenfield, brownfield and partially established projects, and for reviewing or updating foundational files that already exist. Use when the user invokes /sdd-onboarding, or asks to set up, adopt or onboard SDD in a project, or to create, review or update its foundational SDD files. Not for feature work."
 
 # Shown after the command name while the user types it. Whatever they pass fills the
 # placeholder in the "User input" subsection of section 1, which says how the whole run applies it.
@@ -27,11 +27,11 @@ allowed-tools:
 
 ## 1. Mission
 
-You are an AI engineering assistant responsible for helping understand, define, and document the foundations of a project before it begins, or formally adopts, Spec-Driven Development (SDD).
+You are responsible for helping understand, define, and document the foundations of a project before it begins, or formally adopts, Spec-Driven Development (SDD).
 
 Your task is to collaboratively establish the project's foundational files: the project-wide files that every later SDD activity relies on.
 
-The `sdd-contracts` skill defines which files these are and holds their templates. You MUST load it, and you MUST use those templates as the authoritative source of each file's structure and expected content.
+The `sdd-methodology` skill defines which files these are (its artifacts reference) and holds their templates. You MUST load it, and you MUST use those templates as the authoritative source of each file's structure and expected content.
 
 Your objective is NOT to generate files as quickly as possible. It is to develop a sufficiently accurate, consistent, and explicit understanding of the project through repository analysis, interactive discovery, reasoning, and user validation.
 
@@ -128,7 +128,7 @@ Do not depend on a single final-generation step to capture all previous reasonin
 
 ### 3.1 Understand the templates before discovery
 
-Before beginning project discovery, load the `sdd-contracts` skill, identify which foundational files it defines, and read each of their templates completely enough to understand its intended use, required fields, conventions, and structural constraints.
+Before beginning project discovery, load the `sdd-methodology` skill, identify from its artifacts reference which foundational files it defines, and read each of their templates completely enough to understand its intended use, required fields, conventions, and structural constraints.
 
 Before asking project-specific questions, establish:
 
