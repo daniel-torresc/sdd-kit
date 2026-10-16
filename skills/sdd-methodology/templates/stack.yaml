@@ -1,12 +1,13 @@
 # The project's technology stack — the place that says which technologies this project uses.
 #
-# Who writes it:
-#   - The human, at any time: entries with `fixed: true` are constraints. Agents must never change
-#     or remove them; they appear in every technology decision as non-negotiable.
-#   - The architect: entries the human chose in a decision or smaller, reversible choices of its own.
+# Where its entries come from:
+#   - The human, at any time: entries with `fixed: true` are constraints. They never change without
+#     the human, and every technology decision treats them as non-negotiable.
+#   - Onboarding: the technologies already in use, and the targets the human confirms.
+#   - Design: the choices the human made in a decision, and smaller, reversible choices.
 #
 # How it is used:
-#   - Agents read it to know which technologies the work involves (a task's `stack:` field names the concerns).
+#   - Every phase reads it to know which technologies the work involves (a task's `stack:` field names the concerns).
 #   - Entries with `status: proposed` are pending decisions (see `decision`).
 
 version: 1
@@ -16,10 +17,10 @@ technologies:
     choice: <technology>               # null while undecided
     version: "<version or range>"
     status: decided                    # proposed | decided | superseded
-    decided-by: human                  # human | agent | existing (already in the code)
-    fixed: true                        # true = human constraint; agents may not change it
+    decided-by: human                  # human | design (a reversible choice made in Design) | existing (already in the code)
+    fixed: true                        # true = human constraint; never changed without the human
     rationale: "<why>"
-    adr: null                          # ADR-NNNN when decided through the agent
+    adr: null                          # ADR-NNNN when the decision has one
     decision: null                     # decisions.md entry while proposed
     research: null                     # research note(s) about this technology (options analysis, technology reference)
 
@@ -30,7 +31,7 @@ technologies:
     fixed: false
     decision: specs/001-<slug>/decisions.md#H-01
 
-# Project commands, by purpose, so every agent builds, checks and runs the project the same way.
+# Project commands, by purpose, so the project is always installed, tested, checked, built and run the same way.
 # Add any purpose the project needs. Never list production deploys or infrastructure applies.
 commands:
   install:            # install dependencies

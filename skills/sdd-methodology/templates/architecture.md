@@ -2,7 +2,7 @@
 artifact: architecture
 version: [version]
 status: [draft | active | superseded]
-owner: human | librarian
+owner: [responsible role or team]
 ---
 
 # Architecture: <product>
@@ -342,7 +342,7 @@ Include decisions whose rationale is important for understanding, maintaining, o
 
 Do not record every implementation choice.
 
-If the project maintains Architecture Decision Records (ADRs), use this section as a concise index or summary rather than duplicating their full contents.]
+If the project maintains Architecture Decision Records (ADRs), use this section as a concise index or summary rather than duplicating their full contents.
 
 ### 8.2 Architectural Constraints
 

@@ -2,7 +2,7 @@
 artifact: product
 version: [version]
 status: [draft | active | superseded]
-owner: human | librarian
+owner: [responsible role or team]
 ---
 
 # <Product>

@@ -1,4 +1,5 @@
 ---
+artifact: constitution
 version: [version]
 status: [draft | active | superseded]
 owner: [responsible role or team]
@@ -82,8 +83,7 @@ Establish cross-cutting expectations for software quality and the evidence requi
 - Mandatory requirements MUST have appropriate verification evidence before the relevant change is accepted.
 - Automated checks SHOULD be used when they provide reliable, repeatable evidence.
 - Engineering judgment MAY be required when a principle cannot be assessed mechanically.
-- Material verification gaps MUST be resolved or handled through an explicitly authorized 
-  exception, where permitted.
+- Material verification gaps MUST be resolved or handled through an explicitly authorized exception, where permitted.
 
 [Add only project-wide quality expectations that are not already expressed by the principles or constraints above.]
 
