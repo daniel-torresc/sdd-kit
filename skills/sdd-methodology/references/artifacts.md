@@ -13,7 +13,8 @@ The templates are in this skill's `templates/` folder. When and why each file is
 │   ├── stack.yaml
 │   ├── product.md
 │   ├── architecture.md
-│   └── skills.yaml
+│   ├── skills.yaml
+│   └── documentation.yaml
 ├── docs/
 │   ├── adr/ADR-NNNN-<slug>.md     one architecture decision each
 │   └── …                          the project's own documentation
@@ -44,7 +45,7 @@ Every file that has a template starts from it.
 
 ## 3. Project files
 
-These describe the project as a whole and outlive any single feature. The five files in `.sdd/` are the **foundational files**, established at onboarding. Every one of them is required.
+These describe the project as a whole and outlive any single feature. The six files in `.sdd/` are the **foundational files**, established at onboarding. Every one of them is required.
 
 | File                                 | What it is                                                                                                                                | Template          | Created | Read or updated by                                              |
 |--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|-------------------|---------|-----------------------------------------------------------------|
@@ -53,6 +54,7 @@ These describe the project as a whole and outlive any single feature. The five f
 | `.sdd/product.md`                    | what the product is, why it exists, whom it serves, what it can do, its domain language and its business rules                            | `product.md`      | Onboard | Define reads it; Document updates it                            |
 | `.sdd/architecture.md`               | how the system is structured, how its parts work together, its conventions and known debt                                                 | `architecture.md` | Onboard | Design reads it; Document updates it                            |
 | `.sdd/skills.yaml`                   | the skills the project relies on as reference for its technologies, patterns, principles and practices, and when each applies             | `skills.yaml`     | Onboard | read by every phase; entries added once the human approves them |
+| `.sdd/documentation.yaml`            | every document the project must keep current beyond the foundational files (company, regulatory, contractual or team documents) and when each must be updated (section 10) | `documentation.yaml` | Onboard | Document updates the documents it lists; entries added once the human approves them |
 | `docs/adr/ADR-NNNN-<slug>.md`        | one architecturally significant decision: its context, the options, the choice and its consequences                                       | `adr.md`          | Design  | superseded by a later ADR, never rewritten                      |
 | `README.md`, `docs/` (except `adr/`) | the project's own documentation for users and developers                                                                                  | none              | —       | Document updates it                                             |
 
@@ -195,4 +197,14 @@ The method only requires that:
 - A commit made for a task is traceable to its feature and its task, however the convention expresses it.
 
 When the constitution says nothing about version control, follow the convention the repository's history shows, record it as an assumption in the decisions record, and recommend that the human make it a practice.
+
+## 10. The documentation catalogue
+
+Some documents must be kept current because the company, a regulation, a contract or the team requires them: runbooks, support guides, compliance records, API references, the README. The documentation catalogue, `.sdd/documentation.yaml`, lists each one, why it is required, the structure it must keep, and what makes it need an update. Every project has one, established at onboarding and kept current.
+
+- **Document updates what the feature triggers.** In Document, every `active` entry whose `update-when` matches what the feature changed is brought in line with what was built, following its `format`.
+- **The required structure wins.** A document that follows a company template, a standard or a skill keeps that structure; it is filled in, never reorganized.
+- **Nothing is skipped silently.** When an entry cannot be updated with the information available, it is put to the human through a decision entry, with what is missing.
+- **New documents are approved by the human.** A phase that finds a document should be kept proposes it through a decision entry; it is added once the human agrees.
+- **Keep it current.** When a document is retired, replaced or moved, its entry is retired or updated, never deleted.
 

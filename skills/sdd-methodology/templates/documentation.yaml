@@ -1,0 +1,32 @@
+# The project's documentation catalogue: every document the project must keep current, beyond the
+# foundational files, and when each one must be updated.
+#
+# Where its entries come from:
+#   - Onboarding: the documents the project already has, and the ones the user says it must keep:
+#     required by the company, by a regulation or a contract, or by the team.
+#   - Any phase, later: a document that should be kept is proposed through the feature's decisions
+#     record, and added once the human approves it.
+#
+# How it is used:
+#   - In Document, every active entry whose `update-when` matches what the feature changed is brought
+#     in line with what was built, following its `format`.
+#   - An entry that cannot be updated with the information available is put to the human; it is
+#     never skipped silently.
+
+version: [version]
+
+documents:
+  - path: README.md                    # file, folder, or glob, relative to the project root
+    purpose: "<what the document is for, and who reads it>"
+    required-by: team                  # company | regulation | contract | team, and which one
+    update-when: [<trigger>]           # what makes it need an update, e.g. "any change visible to users",
+                                       # "a new or changed public API", "a deployment change", "every feature"
+    format: "<the structure it must keep: a template path, a standard, or a skill from skills.yaml>"
+    status: active                     # active | retired
+
+  - path: <path>
+    purpose: "<what the document is for, and who reads it>"
+    required-by: "company: <policy or team that requires it>"
+    update-when: [<trigger>]
+    format: "<template, standard, or skill>"
+    status: active

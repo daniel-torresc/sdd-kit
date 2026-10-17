@@ -467,6 +467,15 @@ Once the technologies (Phase 4) and the principles, patterns, and practices (thi
 - Record the approved skills in the catalogue, linked to what they cover. Record a wanted skill that isn't installed yet with how to obtain it.
 - Where no skill supports an important technology or practice, say so: it is a gap the user may want to fill.
 
+#### Documents the project must keep
+
+Identify every document the project must keep current beyond the foundational files, and when each one must be updated. The documentation catalogue is required, like every foundational file; its entries are the user's choice.
+
+- Ask the user which documents the company, a regulation, a contract, or the team requires: runbooks, support guides, compliance records, API references, release notes, and the like. Ask whether each one must follow a template or a standard.
+- In a brownfield project, list the documentation that already exists, and confirm with the user which of it must be kept current.
+- For each document, record why it is required and by whom, the structure it must keep, and what makes it need an update.
+- Where a required document doesn't exist yet, record it, and say so: creating it is a decision for the user.
+
 Completion criteria:
 
 - Proposed principles and constraints are relevant to the project.
@@ -475,6 +484,7 @@ Completion criteria:
 - The constitution's content is consistent with the project context and intended stack.
 - Significant gaps between current practice and intended standards are understood.
 - The skills that support the stack, the architecture, and the practices have been identified, and the user has decided on each candidate.
+- The documents the project must keep current are identified, with why and when each one is updated.
 
 ### Phase 6 — Consolidation and Decision Review
 

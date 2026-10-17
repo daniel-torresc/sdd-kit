@@ -71,6 +71,7 @@ Onboarding produces the **foundational files**, each from its template:
 - **The product description:** what the product is, why it exists, whom it serves, what it can do, its domain language and its business rules.
 - **The architecture description:** how the system is structured, how its parts work together, and its known debt.
 - **The skills catalogue:** the skills the project relies on as reference for its technologies, patterns, principles and practices, and the phases in which each applies.
+- **The documentation catalogue:** every other document the project must keep current, such as those the company, a regulation or the team requires, and what makes each one need an update.
 
 Each file holds one kind of knowledge, and the same fact is never kept in two of them. The exact set of files is described in [artifacts.md](artifacts.md), and each has its template.
 
@@ -92,7 +93,7 @@ Onboarding happens once, but the foundational files live as long as the project.
 - Design adds to the stack and the architecture decisions.
 - Build follows the constitution's practices and the stack.
 - Every phase loads the skills the catalogue lists for it and for the work at hand, and proposes new ones when they would help.
-- Document brings the product and architecture descriptions in line with what was built.
+- Document brings the product and architecture descriptions, and every document in the documentation catalogue that the feature affects, in line with what was built.
 
 The foundational files can also be reviewed or updated deliberately at any time, outside any feature, with the same care as when they were first written.
 
@@ -243,9 +244,15 @@ A quality that cannot be verified in the environment available is recorded as un
 
 **Aim.** To bring the project's documentation in line with what was built.
 
-**Starts from** the documentation notes collected during Build, the brief, the requirements, the design, the plan, the ADRs and the code.
+**Starts from** the documentation impact collected during Build, the documentation catalogue, the brief, the requirements, the design, the plan, the ADRs, the evidence and the code.
 
-The project's own documentation, and the foundational files that describe the product and the architecture, are updated to describe what was built, not what was planned. Where the two differ, the code is the truth, and the gap is reported as a problem in the specification.
+Three kinds of documentation are updated, to describe what was built, not what was planned:
+
+- the foundational files that describe the product and the architecture;
+- every document in the documentation catalogue whose update triggers match what the feature changed, keeping the structure each one requires;
+- the rest of the project's own documentation that the documentation impact names.
+
+Where the code and the specification differ, the code is the truth, and the gap is reported as a problem in the specification. A required document that cannot be updated with the information available is put to the human, never skipped.
 
 **Produces** updated documentation.
 

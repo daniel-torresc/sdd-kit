@@ -48,7 +48,7 @@ This skill explains the methodology: its principles, its phases, and the files a
 
 ✔ = a human approval. [✔ one-way door] = when there is a hard-to-reverse choice.
 
-**Onboard** runs once per project, before its first feature. It establishes the **foundational files** for working with SDD: the project-wide context every feature reads and keeps current, namely its engineering principles and practices, its technology stack, what the product is, how the system is built, and the skills the project relies on.
+**Onboard** runs once per project, before its first feature. It establishes the **foundational files** for working with SDD: the project-wide context every feature reads and keeps current, namely its engineering principles and practices, its technology stack, what the product is, how the system is built, the skills the project relies on, and the documents it must keep current.
 
 After it, every feature goes through the phases in order, and each phase starts only when the one before it has finished.
 
@@ -59,7 +59,7 @@ After it, every feature goes through the phases in order, and each phase starts 
 | **Design**   | decide how to build it, prove the approach before any code, and split the work into tasks                             | the design with its task list, ADRs, stack changes, the plan | the human approves the design and the plan passes its consistency check                     |
 | **Build**    | turn the plan into working code, one reviewed task at a time                                                          | code and tests, each task reviewed and integrated            | every task is reviewed and integrated, and the full test suite passes                       |
 | **Verify**   | confirm the whole feature does what the requirements say                                                              | the evidence and a feature review                            | all checks pass, every acceptance criterion has a passing test, no blocking findings        |
-| **Document** | bring the documentation in line with what was built                                                                   | updated documentation                                        | the documentation describes the feature as built                                            |
+| **Document** | bring the documentation in line with what was built                                                                   | updated documentation                                        | the documentation, including every required document the feature affects, describes the feature as built |
 | **Release**  | hand the feature to the human                                                                                         | a draft pull request                                         | the human merges it                                                                         |
 
 There are only two ways back. Blocking problems found in Verify become fix tasks that go through Build again. An approved artifact that turns out to be wrong is corrected at any point, and everything built on it is re-checked.
@@ -82,7 +82,8 @@ Two activities are not phases: any phase calls on them, and they follow the same
 │   ├── stack.yaml                 the technology stack; the human's fixed choices
 │   ├── product.md                 what the product is, for whom, what it can do
 │   ├── architecture.md            how the system is built, its conventions and debt
-│   └── skills.yaml                the skills the project relies on, and when each applies
+│   ├── skills.yaml                the skills the project relies on, and when each applies
+│   └── documentation.yaml         the documents the project must keep current, and when
 ├── docs/
 │   ├── adr/ADR-NNNN-<slug>.md     one architecture decision each
 │   └── …                          the project's own documentation
@@ -120,5 +121,6 @@ Every file that has a template starts from it. Each brief, requirements, design 
 - **Frontmatter, versions and staleness.**
 - **Every ID,** where it is defined, and how IDs link.
 - **The skills catalogue:** which skills to load in each phase, and how new ones are added.
+- **The documentation catalogue:** which documents the project must keep current, and when Document updates them.
 - **The running records:** how a feature is resumed, how a checkpoint is taken, and how decisions and approvals are recorded.
 - **Branches and commits:** what the method requires, and where the project defines its own conventions.
