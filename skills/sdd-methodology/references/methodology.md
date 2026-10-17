@@ -260,11 +260,21 @@ Where the code and the specification differ, the code is the truth, and the gap 
 
 ## 9. Release: the human merges
 
-**Aim.** To hand the finished feature to the human for the merge.
+**Aim.** To hand the finished feature to the human for the merge, with everything they need to decide, and to close the feature once it is merged.
 
-The feature branch is pushed and a draft pull request is opened into main. Its description summarizes what the feature does, links to the brief, the requirements and the evidence, and lists the decisions the human made.
+**Starts from** a feature that has passed Verify and finished Document, with nothing waiting for the human.
 
-**Finished when** the human merges the pull request. Merging into main is always the human's act. If the human wants something different instead, that is a decision for them to make, not a guess.
+1. **Bring the feature up to date.** The feature branch is updated with the latest main, as the project's version-control practices say, and the full test suite and the checks run again. Conflicts or failures go back to Build as fix tasks; Release never fixes code.
+2. **Release chores.** Whatever the project's practices or its documentation catalogue require for a release, such as a version bump, a changelog entry or release notes, is done. The method itself requires none.
+3. **The pull request.** The feature branch is pushed and a draft pull request is opened into main. Its description says what the feature does; links to the brief, the requirements, the design and the evidence; lists the decisions the human made and the ADRs; states what the human accepts by merging (assumptions, open risks, unverified qualities, known failures); names the documentation updated; and says how to try it.
+4. **While it is open.** A failing check on the pull request goes back for fix tasks, as in Verify. The human's comments on it are their input: a fix within the approved approach becomes a fix task, a change to the requirements goes back to Define, and a question is answered.
+5. **Closing.** Once the human merges it, the feature is done. Its merged branch is cleaned up as the project's practices say, and its follow-ups (deferred questions, scope exclusions, work reported but not done) are listed as candidates for later features.
+
+Deploying is the project's own process, after the merge; it is not part of the method.
+
+**Produces** the draft pull request, and, once it is merged, the closed feature with its follow-ups.
+
+**Finished when** the human merges the pull request. Merging into main is always the human's act. If the human closes it without merging, or wants something different instead, that is a decision for them to make, not a guess.
 
 ## 10. Shared activities: review and research
 
@@ -363,4 +373,6 @@ Any decision that belongs to the human (section 1) is put to them with a recomme
 | Verify          | Full check                 | the feature branch                                            | evidence, traceability matrix                     | —                                                    |
 |                 | Feature review             | the whole feature, the evidence                               | review file                                       | no blocking findings, or fix tasks back to Build     |
 | Document        | Documentation              | everything that was built, the documentation notes            | updated documentation                             | docs match what was built                            |
-| Release         | Pull request               | the finished feature branch                                   | draft pull request                                | **the human merges**                                 |
+| Release         | Update and release chores  | the documented feature branch, the latest main                | updated branch, version or changelog if required  | full suite passes                                    |
+|                 | Pull request               | the updated feature branch                                    | draft pull request                                | **the human merges**                                 |
+|                 | Close                      | the merged pull request                                       | the feature done, its follow-ups                  | feature closed                                       |
