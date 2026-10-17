@@ -150,7 +150,7 @@ If the records and the artifacts disagree, stop and reconcile them before going 
 A checkpoint is taken after every step, and before any stop: when the work waits for the human, is blocked, the phase ends, or the session ends. At each checkpoint:
 
 1. **`decisions.md`:** add what happened since the last checkpoint: questions put to the human, their answers, decisions, notable choices, documentation impact.
-2. **`state.yaml`:** overwrite `phase`, `step`, `status`, `next`, `waiting-for-human`, `blocked-by`, `tasks` and `stale` so they describe the present, and add one line to `history`.
+2. **`state.yaml`:** overwrite `phase`, `step`, `status`, `next`, `waiting-for-human`, `blocked-by`, `tasks`, `known-failures` and `stale` so they describe the present, and add one line to `history`.
 3. **Commit** the feature's changed files on the feature branch, never on main, with a message that says what happened, following the project's version-control practices (section 9).
 
 ### 7.3 Writing decisions

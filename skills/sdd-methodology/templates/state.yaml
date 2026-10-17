@@ -13,10 +13,14 @@ next: "[One sentence: what the next run must do]"
 
 waiting-for-human: []                    # IDs of open entries in decisions.md, e.g. [H-03, Q-07]
 blocked-by: []                           # anything else that stops the work, with where it is recorded,
-                                         # e.g. ["REQ-04 is untestable (reviews/cr-design-1.md)"]
+                                         # e.g. ["REQ-04 is untestable (reviews/findings-1.md)"]
 
 tasks: {}                                # filled in Design from plan.md, updated in Build,
-                                         # e.g. { T-01: merged, T-02: in-review, T-03: blocked, T-04: pending }
+                                         # pending | in-progress | in-review | approved | merged | held
+                                         # e.g. { T-01: merged, T-02: in-review, T-03: held, T-04: pending }
+
+known-failures: []                       # tests or checks already failing when Build started,
+                                         # e.g. ["tests/test_export.py::test_csv_encoding"]
 
 stale: []                                # files to check again because a file they were built from changed,
                                          # e.g. ["design.md: built from requirements.md@2, now @3"]
