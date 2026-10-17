@@ -233,6 +233,8 @@ If the design or the plan turns out not to work in practice, the build doesn't i
 
 If the full check fails or the review finds blocking problems, each becomes a **fix task**, added to the task list and the plan. Fix tasks go through Build like any other task, and then Verify runs again from the start. A problem that lies in the requirements, not the code, is a problem in the requirements (section 11).
 
+A quality that cannot be verified in the environment available is recorded as unverified, with the reason, and put to the human: they accept verifying it later, as a recorded risk, or provide what is needed. It never passes silently.
+
 **Produces** the evidence (check results and the traceability matrix) and the feature review.
 
 **Finished when** the full check passes, every acceptance criterion has a passing test, and the feature review has no blocking findings.
