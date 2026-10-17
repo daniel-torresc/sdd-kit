@@ -59,6 +59,8 @@ Define the practices that translate the principles and constraints into repeatab
 
 Examples: write the tests before the code; every public function documented; pair every migration with a rollback.
 
+Include the project's version-control practices: how branches are named, how commit messages are written, and how work is merged. Whatever the convention, a commit made for a task MUST be traceable to its feature and its task.
+
 ### EP-001 — [Practice Name]
 
 **Practice**

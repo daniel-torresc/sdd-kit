@@ -121,3 +121,4 @@ Every file that has a template starts from it. Each brief, requirements, design 
 - **Every ID,** where it is defined, and how IDs link.
 - **The skills catalogue:** which skills to load in each phase, and how new ones are added.
 - **The running records:** how a feature is resumed, how a checkpoint is taken, and how decisions and approvals are recorded.
+- **Branches and commits:** what the method requires, and where the project defines its own conventions.

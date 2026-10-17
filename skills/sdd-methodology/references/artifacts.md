@@ -151,7 +151,7 @@ A checkpoint is taken after every step, and before any stop: when the work waits
 
 1. **`decisions.md`:** add what happened since the last checkpoint: questions put to the human, their answers, decisions, notable choices, documentation impact.
 2. **`state.yaml`:** overwrite `phase`, `step`, `status`, `next`, `waiting-for-human`, `blocked-by`, `tasks` and `stale` so they describe the present, and add one line to `history`.
-3. **Commit** the feature's changed files on the feature branch, never on main, with a message that starts with the feature ID and says what happened, for example `F003 define: brief.md@2 approved (H-02)`.
+3. **Commit** the feature's changed files on the feature branch, never on main, with a message that says what happened, following the project's version-control practices (section 9).
 
 ### 7.3 Writing decisions
 
@@ -185,3 +185,15 @@ Skills carry established practice for the technologies, patterns and practices a
 - **A missing skill doesn't stop the work.** When a listed skill isn't available in the session, report it, and record it in the state record's history; the work goes on without it.
 - **New skills are approved by the human.** A phase that finds a skill would help proposes it through a decision entry; it is added as `approved` once the human agrees. Candidate skills come from the skills the session lists as available, or from the human, never from scanning the machine.
 - **Keep it current.** When the stack, the architecture or the constitution changes, check the entries that cover what changed: add, retire, or keep them.
+
+## 9. Branches and commits
+
+Branch names, commit messages and the way work is merged belong to the project, not to the method. They are defined in the constitution's practices, and a skill in the skills catalogue may help apply them.
+
+The method only requires that:
+
+- Feature work happens on a feature branch, and each task on its own branch from it. Nothing is committed to main; the human merges into main.
+- A commit made for a task is traceable to its feature and its task, however the convention expresses it.
+
+When the constitution says nothing about version control, follow the convention the repository's history shows, record it as an assumption in the decisions record, and recommend that the human make it a practice.
+

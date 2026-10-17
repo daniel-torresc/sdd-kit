@@ -471,7 +471,7 @@ Before modifying an existing artifact, read it and preserve its valid content. N
 
 - Write the feature's design files when the human has asked for the design; don't ask permission for every edit within the phase.
 - Ask before anything destructive, or outside this feature. Changes to project files other than the stack and the ADRs wait for Document.
-- Commit the feature's files on the feature branch at every checkpoint. Never commit to main, and do not push or merge unless the human asks.
+- Commit the feature's files on the feature branch at every checkpoint, following the constitution's version-control practices. Never commit to main, and do not push or merge unless the human asks.
 - Do not claim that something was written, reviewed, decided or approved unless it actually was.
 
 ## 10. Quality Checks

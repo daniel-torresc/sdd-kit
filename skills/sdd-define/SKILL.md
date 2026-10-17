@@ -243,7 +243,7 @@ Activities:
 
 1. Give the feature the next free number. Check the existing feature folders and the open feature branches, so the number is not taken.
 2. Give it a short, descriptive name of a few words.
-3. Create its branch from the latest main. If the repository has no commits yet, ask the human to make the first one; never commit to main yourself.
+3. Create its branch from the latest main, named as the constitution's version-control practices define. If the repository has no commits yet, ask the human to make the first one; never commit to main yourself.
 4. Create the feature's folder with its state record and its decisions record, from their templates. The state record shows the feature in Define.
 5. Take the first checkpoint, so the feature exists in the repository before any question is asked.
 
@@ -463,7 +463,7 @@ Before modifying an existing artifact, read it, preserve its valid content, and 
 
 - Create the feature's branch and files when the human has asked for the feature; don't ask permission for every edit within the phase.
 - Ask before anything destructive, or outside this feature.
-- Commit the feature's files on the feature branch at every checkpoint (section 5). Never commit to main, and do not push or merge unless the human asks.
+- Commit the feature's files on the feature branch at every checkpoint (section 5), following the constitution's version-control practices. Never commit to main, and do not push or merge unless the human asks.
 - Do not claim that something was written, recorded or approved unless it actually was.
 
 ## 10. Requirements Quality Checks

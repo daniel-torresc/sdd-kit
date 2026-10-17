@@ -437,6 +437,7 @@ Explore relevant topics such as:
 - Documentation and knowledge preservation.
 - Compatibility and migration safety.
 - Review, approval, and release practices.
+- Version control: how branches are named, how commit messages are written, and how work is merged. In a brownfield project, the repository's history usually shows the current convention; confirm it with the user rather than assume it.
 - Governance and handling of exceptions.
 
 These are candidate topics, not mandatory principles. Do not create a principle merely because a category appears in this list, or because it sounds professionally desirable. Establish whether the expectation meaningfully applies to the project, and consider its rationale, scope, and practical implications before making it mandatory.
