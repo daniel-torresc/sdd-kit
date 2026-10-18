@@ -8,5 +8,6 @@
   },
   "homepage": "https://github.com/daniel-torresc/sdd-kit",
   "repository": "https://github.com/daniel-torresc/sdd-kit",
+  "license": "Apache-2.0",
   "keywords": ["sdd", "spec-driven-development", "methodology", "skills"]
 }

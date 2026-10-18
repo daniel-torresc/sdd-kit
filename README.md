@@ -6,7 +6,7 @@ sdd-kit gives an AI coding agent a structured way to build software. A project i
 
 sdd-kit is **the core methodology, not a complete ecosystem**. It sets the development process: the phases, the artifacts, the approvals, the reviews and the traceability. It does not try to teach the agent every framework, architecture style or engineering practice, and it does not ship integrations. Those come from the skills, tools and MCP servers you already use, or choose to add. A project records the skills it relies on in a catalogue, and every phase loads the ones that apply. You keep your existing open-source and proprietary skills, your tools and your practices. **The methodology organizes the process. The ecosystem around it makes the agent capable.**
 
-> **Status:** early (`version 0.1.0`). The methodology is defined as instructions and templates. Nothing in the repository enforces it with code: there are no scripts, hooks or validators yet. Today it runs as a [Claude Code](https://code.claude.com) plugin, installed from [sdd-marketplace](https://github.com/daniel-torresc/sdd-marketplace). See [Current capabilities and limitations](#current-capabilities-and-limitations).
+> **Status:** early (`version 0.1.0`), open source under the [Apache License 2.0](LICENSE). The methodology is defined as instructions and templates. Nothing in the repository enforces it with code: there are no scripts, hooks or validators yet. Today it runs as a [Claude Code](https://code.claude.com) plugin, installed from [sdd-marketplace](https://github.com/daniel-torresc/sdd-marketplace). See [Current capabilities and limitations](#current-capabilities-and-limitations).
 
 ---
 
@@ -739,7 +739,7 @@ Each of these would reuse the existing records, IDs, reviews and Verify, and dif
 
 ### Around the methodology
 
-- **Near term:** an orchestrating skill that runs the phases in sequence and stops at human decisions; a licence and contribution guidelines; more plugins in sdd-marketplace that cover common stacks and practices; worked example projects; evaluations of each skill.
+- **Near term:** an orchestrating skill that runs the phases in sequence and stops at human decisions; contribution guidelines and issue templates; more plugins in sdd-marketplace that cover common stacks and practices; worked example projects; evaluations of each skill.
 - **Validation as code:** a script that checks IDs, `upstream` staleness, plan coverage and the traceability matrix; hooks that block commits to main or changes to `fixed` stack entries. These would turn some conventions into enforcement.
 - **Ecosystem:** a tool and MCP catalogue alongside `skills.yaml`; better candidate suggestions at onboarding; support for other agents, with the methodology kept agent-neutral and the agent mechanics isolated.
 - **Integrations:** linking features to issue trackers; deployment hand-off after Release.
@@ -748,7 +748,7 @@ Each of these would reuse the existing records, IDs, reviews and Verify, and dif
 
 ## Contributing
 
-Contribution guidelines, issue templates and tests don't exist yet. Until they do, open an issue or a pull request on the repository and describe the change and its reason.
+Contribution guidelines, issue templates and tests don't exist yet. Until they do, open an issue or a pull request on the repository and describe the change and its reason. Contributions are accepted under the project's licence, Apache-2.0: as its section 5 says, anything you submit is licensed under the same terms unless you state otherwise.
 
 Decide first which kind of change you are proposing, because they belong in different places:
 
@@ -800,6 +800,6 @@ Conventions visible in the current skills, worth keeping:
 
 ## License
 
-The repository doesn't include a licence file yet. Until one is added, no licence is granted for reuse. Check the repository for updates before you redistribute or modify it.
+Copyright 2026 Daniel Torres Candil.
 
-Author: Daniel Torres Candil.
+sdd-kit is licensed under the [Apache License, Version 2.0](LICENSE). You may use, modify and redistribute it, including in commercial and proprietary work, under the terms of that licence. Skills and plugins you use alongside sdd-kit keep their own licences.
