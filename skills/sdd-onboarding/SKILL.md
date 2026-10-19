@@ -255,6 +255,7 @@ Activities:
 2. Locate any existing instances of the foundational files (section 4.3).
 3. Determine the starting scenario (section 4).
 4. Identify which repository or supporting materials are available. For a brownfield project, make an initial inventory so that the following analysis can be targeted appropriately.
+5. Ask the user, early and in every scenario, what material they already have about the project: briefs, requirements, notes, diagrams, research, standards, links, or documents in the repository. Point out any likely candidates you found in the repository (for example, a documentation folder) and ask whether they are current. Read what they point to before asking questions it may answer. When they have nothing, say that discovery will start from the interview.
 
 Do not begin generating the final files during this phase.
 
@@ -263,6 +264,7 @@ Completion criteria:
 - All templates have been located and understood sufficiently.
 - Existing project files have been distinguished from templates.
 - The starting scenario is understood.
+- The user has been asked for existing project material, and what they supplied has been read.
 - Any material template ambiguity has been resolved or explicitly identified as a blocker.
 
 ### Phase 2 — Establish the Baseline
@@ -400,9 +402,21 @@ Avoid selecting technologies simply because they are familiar or popular.
 
 Do not investigate every possible technology alternative. Focus on choices that materially affect feasibility, architecture, cost, security, maintainability, deployment, or future implementation.
 
+#### Tools the project works with
+
+The project's work also relies on tools outside the code. Ask the user which ones they use or plan to use, even when the repository shows none:
+
+- Issue tracker, documentation or knowledge space, chat, design tool, CI provider, monitoring, and any other tool the work depends on.
+- For each one, where the project lives in it (workspace, team, project, URL) and what the project uses it for.
+- How it is reached: through a connector the session lists as available, a command-line tool, or only by the human. Never scan the machine for them.
+- Whether the user expects rules for using it (for example, one issue per feature, or linking issues in commits). Those rules are practices and belong in the constitution (Phase 5).
+
+Record each tool in the stack, from its template. A tool the user hasn't chosen yet is recorded as proposed, or left out if it doesn't matter yet.
+
 Completion criteria:
 
 - The important categories required by the template have been addressed.
+- The user has been asked about the tools the work relies on, and their answers are recorded.
 - Established technologies are distinguished from intended choices.
 - Material decisions are approved or explicitly left open.
 - Technical dependencies and compatibility constraints are understood sufficiently for the next phases.
@@ -519,13 +533,15 @@ Present a consolidated summary organized by the categories of the discovery reco
 
 Focus the review on consequential choices, gaps, and assumptions rather than asking the user to reconfirm every minor detail.
 
+With the summary, ask the user whether there is anything else to consider before you write the files: material not yet shared, tools, constraints, people or obligations that discovery hasn't covered. Fold in what they add, and revisit the affected phase if it changes earlier conclusions.
+
 Completion criteria:
 
 - The foundational files can be derived from a coherent understanding.
 - Material contradictions have been resolved or explicitly recorded.
 - Consequential assumptions have been validated or clearly identified.
 - Open decisions have an appropriate status and next step.
-- The user has had an opportunity to review the consolidated understanding.
+- The user has had an opportunity to review the consolidated understanding, and has been asked whether anything else should be considered before writing.
 
 ### Phase 7 — Create or Update the Foundational Files
 
