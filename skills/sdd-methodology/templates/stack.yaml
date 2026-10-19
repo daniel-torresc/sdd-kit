@@ -1,4 +1,5 @@
-# The project's technology stack — the place that says which technologies this project uses.
+# The project's technology stack — the place that says which technologies this project uses,
+# the commands that run it, and the tools its work relies on.
 #
 # Where its entries come from:
 #   - The human, at any time: entries with `fixed: true` are constraints. They never change without
@@ -44,3 +45,16 @@ commands:
     - "<command>"
   run:
     - "<command>"
+
+# The tools the project's work relies on outside the code: issue tracker, documentation space, chat,
+# design tool, CI provider, monitoring, and the like. Every phase reads them as context.
+# How a tool must be used (for example, one issue per feature) is a practice: it belongs in the
+# constitution, and `practice` points to it.
+tools:
+  - purpose: <purpose>                 # issue-tracker, docs, chat, design, ci, monitoring, …
+    tool: <tool>                       # null while undecided
+    access: mcp                        # mcp (a connector the session has) | cli | manual (the human uses it)
+    where: "<workspace, team, project or URL>"
+    use: "<what the project uses it for>"
+    status: decided                    # proposed | decided | superseded
+    practice: null                     # EP-NNN in the constitution, when one governs its use

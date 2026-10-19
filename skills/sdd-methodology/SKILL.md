@@ -48,7 +48,7 @@ This skill explains the methodology: its principles, its phases, and the files a
 
 ✔ = a human approval. [✔ one-way door] = when there is a hard-to-reverse choice.
 
-**Onboard** runs once per project, before its first feature. It establishes the **foundational files** for working with SDD: the project-wide context every feature reads and keeps current, namely its engineering principles and practices, its technology stack, what the product is, how the system is built, the skills the project relies on, and the documents it must keep current.
+**Onboard** runs once per project, before its first feature. It establishes the **foundational files** for working with SDD: the project-wide context every feature reads and keeps current, namely its engineering principles and practices, its technology stack and the tools its work relies on, what the product is, how the system is built, the skills the project relies on, and the documents it must keep current.
 
 After it, every feature goes through the phases in order, and each phase starts only when the one before it has finished.
 
@@ -79,7 +79,7 @@ Two activities are not phases: any phase calls on them, and they follow the same
 <project>/
 ├── .sdd/                          the foundational files: the project as a whole
 │   ├── constitution.md            principles, non-negotiable constraints, practices
-│   ├── stack.yaml                 the technology stack; the human's fixed choices
+│   ├── stack.yaml                 the technology stack and work tools; the human's fixed choices
 │   ├── product.md                 what the product is, for whom, what it can do
 │   ├── architecture.md            how the system is built, its conventions and debt
 │   ├── skills.yaml                the skills the project relies on, and when each applies

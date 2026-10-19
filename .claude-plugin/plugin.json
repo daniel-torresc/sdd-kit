@@ -1,7 +1,7 @@
 {
   "name": "sdd-kit",
   "description": "Spec-driven development (SDD) as a set of skills: onboard a project, then take each feature from an approved specification through design, build, verification and documentation to a pull request the human merges, with independent reviews and research along the way. Every phase can run on its own or as part of the whole flow, and resumes from the project's files.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "Daniel Torres Candil",
     "email": "daniel.torrescandil@hotmail.com"

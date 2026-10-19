@@ -6,7 +6,7 @@ sdd-kit gives an AI coding agent a structured way to build software. A project i
 
 sdd-kit is **the core methodology, not a complete ecosystem**. It sets the development process: the phases, the artifacts, the approvals, the reviews and the traceability. It does not try to teach the agent every framework, architecture style or engineering practice, and it does not ship integrations. Those come from the skills, tools and MCP servers you already use, or choose to add. A project records the skills it relies on in a catalogue, and every phase loads the ones that apply. You keep your existing open-source and proprietary skills, your tools and your practices. **The methodology organizes the process. The ecosystem around it makes the agent capable.**
 
-> **Status:** early (`version 0.1.0`), open source under the [Apache License 2.0](LICENSE). The methodology is defined as instructions and templates. Nothing in the repository enforces it with code: there are no scripts, hooks or validators yet. Today it runs as a [Claude Code](https://code.claude.com) plugin, installed from [sdd-marketplace](https://github.com/daniel-torresc/sdd-marketplace). See [Current capabilities and limitations](#current-capabilities-and-limitations).
+> **Status:** early (`version 0.1.1`), open source under the [Apache License 2.0](LICENSE). The methodology is defined as instructions and templates. Nothing in the repository enforces it with code: there are no scripts, hooks or validators yet. Today it runs as a [Claude Code](https://code.claude.com) plugin, installed from [sdd-marketplace](https://github.com/daniel-torresc/sdd-marketplace). See [Current capabilities and limitations](#current-capabilities-and-limitations).
 
 ---
 
@@ -195,7 +195,7 @@ Each phase is a skill you invoke. Every phase skill:
 **Skill:** `sdd-onboarding` · **Purpose:** establish the project-wide context every feature builds on, so that no feature has to invent it.
 
 - **Inputs:** your description of the project; any existing documents, diagrams or standards; in an existing codebase, the repository itself.
-- **Activities:** the agent reads the templates first, then works out whether the project is greenfield, brownfield or mixed. For a brownfield project it inventories the repository, including its structure, dependencies, tests, CI, deployment and existing docs. It then interviews you across four areas: the product's context and scope, the stack and the technical decisions, engineering principles and practices (version control included), and the skills and documents the project relies on. It consolidates what it learned, asks you to correct it, writes the files and validates them as a set.
+- **Activities:** the agent reads the templates first, then works out whether the project is greenfield, brownfield or mixed. For a brownfield project it inventories the repository, including its structure, dependencies, tests, CI, deployment and existing docs. It asks for any material you already have (briefs, notes, documents) and reads it first. It then interviews you across four areas: the product's context and scope, the stack, the technical decisions and the tools the work relies on (issue tracker, docs space, chat, CI), engineering principles and practices (version control included), and the skills and documents the project relies on. It consolidates what it learned, asks you to correct it and whether anything else should be considered, writes the files and validates them as a set.
 - **Rules worth knowing:** existing code counts as evidence of what the system does, not as a standard to copy. Current state, intended state and technical debt are kept apart. A decision can stay open when nothing yet depends on it. Replacing or restructuring existing foundational files needs your confirmation.
 - **Outputs:** the six [foundational files](#project-files), and a **readiness verdict**:
   - **READY:** the files are coherent and complete enough to start.
@@ -319,7 +319,7 @@ All artifacts live in your project, not in sdd-kit. Each starts from a template 
 <your-project>/
 ├── .sdd/                          foundational files: the project as a whole
 │   ├── constitution.md            principles, non-negotiable constraints, practices
-│   ├── stack.yaml                 technologies (human-fixed and decided) and project commands
+│   ├── stack.yaml                 technologies (human-fixed and decided), project commands and work tools
 │   ├── product.md                 what the product is, for whom, what it does, its domain rules
 │   ├── architecture.md            how the system is built, its conventions and debt
 │   ├── skills.yaml                the skills the project relies on, and when each applies
@@ -346,7 +346,7 @@ All six foundational files are required. Each holds one kind of knowledge, and n
 | File | Purpose | Created | Updated by |
 |---|---|---|---|
 | `constitution.md` | Principles (`PR-nnn`), non-negotiable constraints (`NC-nnn`), practices (`EP-nnn`) including version control, quality expectations, governance | Onboard | Only deliberately, with the human |
-| `stack.yaml` | Each technology by concern, with status and who decided it; `fixed: true` marks human constraints; `commands:` for install, test, check, build, run | Onboard | Design adds or updates entries |
+| `stack.yaml` | Each technology by concern, with status and who decided it; `fixed: true` marks human constraints; `commands:` for install, test, check, build, run; `tools:` for the issue tracker, docs space and other work tools | Onboard | Design adds or updates entries |
 | `product.md` | Purpose, users, capabilities, domain concepts, business rules, scope, current state | Onboard | Document |
 | `architecture.md` | Components, interactions, data, cross-cutting concerns, deployment, debt, mapping to code | Onboard | Document |
 | `skills.yaml` | The skills the project relies on: what each covers, in which phases, why, and where it comes from | Onboard | Entries added once the human approves |
@@ -594,6 +594,7 @@ The methodology supplied the process and the record. The two skills supplied kno
 | How many tasks Build runs in parallel | `constitution.md` practices, or the `/sdd-build` input | Default 3. |
 | Technologies, and which ones are non-negotiable | `stack.yaml` `technologies:` | `fixed: true` entries are never changed without you. |
 | How to install, test, check, build and run the project | `stack.yaml` `commands:` | Build, Verify and Release run these. Never list production deploys or infrastructure applies. |
+| Which tools the work relies on (issue tracker, docs space, chat, CI) | `stack.yaml` `tools:` | Every phase reads them as context. Rules for using a tool are constitution practices. |
 | Which skills apply, and when | `skills.yaml` | See below. |
 | Which documents must stay current, and in what format | `documentation.yaml` | See below. |
 | Release chores (version bump, changelog) | `constitution.md` practices, or `documentation.yaml` | The method requires none. |
@@ -622,6 +623,15 @@ commands:
   install: ["uv sync"]
   test:    ["uv run pytest"]
   check:   ["uv run ruff check .", "uv run mypy ."]
+
+tools:
+  - purpose: issue-tracker
+    tool: Linear
+    access: mcp              # mcp | cli | manual
+    where: "team ENG, project Foo"
+    use: "one issue per feature"
+    status: decided
+    practice: EP-004         # the constitution practice that governs its use
 ```
 
 ### `skills.yaml`
