@@ -1,11 +1,38 @@
-# sdd-kit
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/sdd-kit-lockup-dark.svg">
+    <img src="docs/brand/sdd-kit-lockup.svg" alt="SDD Kit" width="360">
+  </picture>
+</p>
 
-**A spec-driven development (SDD) methodology for AI coding agents, packaged as a set of skills.**
+<h3 align="center">Specify first. Trace everything.</h3>
 
-sdd-kit gives an AI coding agent a structured way to build software. A project is onboarded once. After that, every feature starts as a written specification the human approves. It is then designed, built task by task, verified, and documented, and it ends as a draft pull request that only the human merges. Each step leaves a versioned file in the repository, so the work can be reviewed, traced, paused and resumed by anyone, in any session.
+<p align="center">
+  A spec-driven development (SDD) methodology for AI coding agents, packaged as a set of skills.
+</p>
 
-sdd-kit is **the core methodology, not a complete ecosystem**. It sets the development process: the phases, the artifacts, the approvals, the reviews and the traceability. It does not try to teach the agent every framework, architecture style or engineering practice, and it does not ship integrations. Those come from the skills, tools and MCP servers you already use, or choose to add. A project records the skills it relies on in a catalogue, and every phase loads the ones that apply. You keep your existing open-source and proprietary skills, your tools and your practices. **The methodology organizes the process. The ecosystem around it makes the agent capable.**
+<p align="center">
+  <a href="https://github.com/daniel-torresc/sdd-kit/blob/main/.claude-plugin/plugin.json"><img src="https://img.shields.io/badge/version-0.1.1-0b6b5d" alt="Version 0.1.1"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache_2.0-0b6b5d" alt="License: Apache 2.0"></a>
+  <a href="https://code.claude.com"><img src="https://img.shields.io/badge/Claude_Code-plugin-141c22" alt="Claude Code plugin"></a>
+  <a href="https://github.com/daniel-torresc/sdd-marketplace"><img src="https://img.shields.io/badge/install_from-sdd--marketplace-141c22" alt="Install from sdd-marketplace"></a>
+</p>
 
+<p align="center">
+  <a href="#getting-started">Getting started</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#principles">Principles</a> ·
+  <a href="#artifacts">Artifacts</a> ·
+  <a href="#contributing">Contributing</a>
+</p>
+
+---
+
+SDD Kit gives an AI coding agent a structured way to build software. A project is onboarded once. After that, every feature starts as a written specification the human approves. It is then designed, built task by task, verified, and documented, and it ends as a draft pull request that only the human merges. Each step leaves a versioned file in the repository, so the work can be reviewed, traced, paused and resumed by anyone, in any session.
+
+SDD Kit is **the core methodology, not a complete ecosystem**. It sets the development process: the phases, the artifacts, the approvals, the reviews and the traceability. It does not try to teach the agent every framework, architecture style or engineering practice, and it does not ship integrations. Those come from the skills, tools and MCP servers you already use, or choose to add. A project records the skills it relies on in a catalogue, and every phase loads the ones that apply. You keep your existing open-source and proprietary skills, your tools and your practices. **The methodology organizes the process. The ecosystem around it makes the agent capable.**
+
+> [!NOTE]
 > **Status:** early (`version 0.1.1`), open source under the [Apache License 2.0](LICENSE). The methodology is defined as instructions and templates. Nothing in the repository enforces it with code: there are no scripts, hooks or validators yet. Today it runs as a [Claude Code](https://code.claude.com) plugin, installed from [sdd-marketplace](https://github.com/daniel-torresc/sdd-marketplace). See [Current capabilities and limitations](#current-capabilities-and-limitations).
 
 ---
@@ -13,7 +40,7 @@ sdd-kit is **the core methodology, not a complete ecosystem**. It sets the devel
 ## Contents
 
 - [Why a methodology for AI-assisted development](#why-a-methodology-for-ai-assisted-development)
-- [What sdd-kit is, and what it is not](#what-sdd-kit-is-and-what-it-is-not)
+- [What SDD Kit is, and what it is not](#what-sdd-kit-is-and-what-it-is-not)
 - [Principles](#principles)
 - [A foundation you build on](#a-foundation-you-build-on)
 - [How it works](#how-it-works)
@@ -47,7 +74,7 @@ AI coding agents write code quickly. Used without structure, they also tend to f
 - **Traceability is weak.** You can't tell which requirement a piece of code serves, or which test proves a requirement holds.
 - **Scope grows.** "While I'm here" changes and speculative features make the change bigger than what was asked.
 
-Spec-driven development answers these by putting a written, approved specification at the start of every piece of work, and checking everything built afterwards against it. sdd-kit's version of SDD is built specifically for working with AI agents:
+Spec-driven development answers these by putting a written, approved specification at the start of every piece of work, and checking everything built afterwards against it. SDD Kit's version of SDD is built specifically for working with AI agents:
 
 - Every step reads from files and writes to files, never relying on memory.
 - The human approves at a few explicit points.
@@ -56,9 +83,9 @@ Spec-driven development answers these by putting a written, approved specificati
 
 ---
 
-## What sdd-kit is, and what it is not
+## What SDD Kit is, and what it is not
 
-| sdd-kit **is** | sdd-kit **is not** |
+| SDD Kit **is** | SDD Kit **is not** |
 |---|---|
 | A methodology: principles, phases, approvals, reviews, traceability rules | A framework, a library, or a code generator |
 | A set of agent skills that run each phase | An autonomous system that guarantees correct software |
@@ -91,7 +118,7 @@ The methodology rests on ten principles, defined in [`skills/sdd-methodology/SKI
 
 ## A foundation you build on
 
-This is the most important idea in sdd-kit: **the methodology provides the structure; skills and tools provide the knowledge and capabilities inside that structure.** They do different jobs, so you need both.
+This is the most important idea in SDD Kit: **the methodology provides the structure; skills and tools provide the knowledge and capabilities inside that structure.** They do different jobs, so you need both.
 
 | Layer | What it provides | Where it comes from |
 |---|---|---|
@@ -110,7 +137,7 @@ A few examples show how the layers fit together:
 
 ### How skills are connected to the methodology
 
-Skills are not bundled with sdd-kit and are not discovered automatically. The connection is a file in your project, the **skills catalogue** (`.sdd/skills.yaml`):
+Skills are not bundled with SDD Kit and are not discovered automatically. The connection is a file in your project, the **skills catalogue** (`.sdd/skills.yaml`):
 
 1. **At onboarding,** the agent works out which technologies, patterns, principles and practices matter to the project. It proposes skills that support them, drawn from the skills your session already lists as available, and it asks which skills you already use or want to install. It never scans your machine for them.
 2. **You decide.** For each candidate you approve, reject or defer it. Approved skills are recorded with what they cover and the phases they apply to. A skill you want but haven't installed is recorded with how to get it. Installing it is up to you.
@@ -119,7 +146,7 @@ Skills are not bundled with sdd-kit and are not discovered automatically. The co
 5. **A missing skill doesn't block.** If a listed skill isn't available in the session, the agent reports it and carries on without it.
 6. **New skills need your approval.** Any phase may propose a skill through a decision entry. It is added only once you agree.
 
-Any skill your agent can load can be listed, including ones from other repositories or private ones. sdd-kit can't guarantee how good, or how compatible, a third-party skill is.
+Any skill your agent can load can be listed, including ones from other repositories or private ones. SDD Kit can't guarantee how good, or how compatible, a third-party skill is.
 
 ### Tools and MCP servers
 
@@ -313,7 +340,7 @@ Research answers one question that needs outside knowledge, such as the domain, 
 
 ## Artifacts
 
-All artifacts live in your project, not in sdd-kit. Each starts from a template in [`skills/sdd-methodology/templates/`](skills/sdd-methodology/templates/), and the agent keeps the template's structure: its frontmatter, its headings and their order. The full rules are in [`references/artifacts.md`](skills/sdd-methodology/references/artifacts.md).
+All artifacts live in your project, not in SDD Kit. Each starts from a template in [`skills/sdd-methodology/templates/`](skills/sdd-methodology/templates/), and the agent keeps the template's structure: its frontmatter, its headings and their order. The full rules are in [`references/artifacts.md`](skills/sdd-methodology/references/artifacts.md).
 
 ```
 <your-project>/
@@ -405,7 +432,7 @@ An approval is recorded as the answer to its `H-nn` entry in `decisions.md`, wit
 
 ## Repository structure
 
-sdd-kit is a Claude Code plugin made entirely of skills: Markdown instructions and templates. It contains no executable code.
+SDD Kit is a Claude Code plugin made entirely of skills: Markdown instructions and templates. It contains no executable code.
 
 ```
 sdd-kit/
@@ -427,6 +454,7 @@ sdd-kit/
 │   ├── sdd-verify/SKILL.md        Verify
 │   ├── sdd-document/SKILL.md      Document
 │   └── sdd-release/SKILL.md       Release
+├── docs/brand/                    brand files: logo lockups, marks, icons, social preview
 ├── .mcp.json, .lsp.json, settings.json   empty placeholders
 └── README.md
 ```
@@ -439,7 +467,7 @@ sdd-kit/
 - **Activation.** In Claude Code, every skill except `sdd-methodology` is a slash command. Skills also load automatically when your request matches their description, so "let's design feature 3" works too. `sdd-methodology` is hidden from the menu (`user-invocable: false`) and loads whenever the method or its files are needed.
 - **Permissions.** Each skill pre-approves only reading files and inspecting git, plus web search for `sdd-research` and `git fetch` for `sdd-release` (`allowed-tools`). Writing files, committing, running tests, pushing and opening pull requests go through your agent's normal permission prompts.
 
-You normally don't modify anything in sdd-kit to use it. Your project's configuration lives in your project's `.sdd/` folder.
+You normally don't modify anything in SDD Kit to use it. Your project's configuration lives in your project's `.sdd/` folder.
 
 ---
 
@@ -474,14 +502,14 @@ You normally don't modify anything in sdd-kit to use it. Your project's configur
 
 ### Prerequisites
 
-- **[Claude Code](https://code.claude.com).** sdd-kit is a Claude Code plugin; no other agent is supported or tested today.
+- **[Claude Code](https://code.claude.com).** SDD Kit is a Claude Code plugin; no other agent is supported or tested today.
 - **A git repository** for your project.
 - **Optional:** a remote, and a way for the agent to push and open pull requests (for example the GitHub CLI). Without one, Release hands over the feature branch instead of a pull request.
 - **Optional:** the skills and MCP servers you want the project to use, installed in Claude Code.
 
 ### Install
 
-sdd-kit is distributed through **[sdd-marketplace](https://github.com/daniel-torresc/sdd-marketplace)**, a Claude Code plugin marketplace that also lists plugins curated to work alongside sdd-kit. In a Claude Code session:
+SDD Kit is distributed through **[sdd-marketplace](https://github.com/daniel-torresc/sdd-marketplace)**, a Claude Code plugin marketplace that also lists plugins curated to work alongside SDD Kit. In a Claude Code session:
 
 ```
 /plugin marketplace add daniel-torresc/sdd-marketplace
@@ -496,9 +524,9 @@ The same commands work from your shell as `claude plugin marketplace add …` an
 
 To give everyone working in a repository the marketplace, run `claude plugin marketplace add daniel-torresc/sdd-marketplace --scope project` once in that repository and commit the `.claude/settings.json` it writes. If you have no GitHub SSH key, set `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1` so plugins are cloned over HTTPS.
 
-**Updates.** A new version reaches you when sdd-kit's `version` changes. Turn on auto-update for the marketplace under **Marketplaces** in `/plugin`, or run `claude plugin update sdd-kit@sdd-marketplace`.
+**Updates.** A new version reaches you when SDD Kit's `version` changes. Turn on auto-update for the marketplace under **Marketplaces** in `/plugin`, or run `claude plugin update sdd-kit@sdd-marketplace`.
 
-**Working on sdd-kit itself.** Load a local checkout for one session, without installing it:
+**Working on SDD Kit itself.** Load a local checkout for one session, without installing it:
 
 ```bash
 git clone https://github.com/daniel-torresc/sdd-kit.git
@@ -547,7 +575,7 @@ Each phase reads the current feature from the checked-out branch and its `state.
 
 ### An illustrative example
 
-*This example is illustrative. The skill names are examples of external skills; they are not part of sdd-kit.*
+*This example is illustrative. The skill names are examples of external skills; they are not part of SDD Kit.*
 
 A team builds a Python service that summarizes ticket threads with LangChain and validates data with Pydantic. During onboarding they approve two external skills they already have installed. The catalogue records them:
 
@@ -579,13 +607,13 @@ Then they run the feature:
 4. **Verify:** the traceability matrix shows a passing test for every criterion. The latency quality can't be measured without production traffic, so the team accepts it as a recorded risk.
 5. **Document and Release:** the API reference is in `documentation.yaml`, with `update-when: ["a new or changed public API"]` and `format: acme-platform:api-standards`, so Document updates it in the company format. Release opens a draft pull request that lists the accepted latency risk. A human merges it.
 
-The methodology supplied the process and the record. The two skills supplied knowledge sdd-kit doesn't have.
+The methodology supplied the process and the record. The two skills supplied knowledge SDD Kit doesn't have.
 
 ---
 
 ## Configuration and customization
 
-**Configuring a project** means editing the files in your project's `.sdd/`. **Changing the methodology** means editing sdd-kit's skills and templates (see [Contributing](#contributing)). Most teams only need the first.
+**Configuring a project** means editing the files in your project's `.sdd/`. **Changing the methodology** means editing SDD Kit's skills and templates (see [Contributing](#contributing)). Most teams only need the first.
 
 | To decide… | Put it in | Notes |
 |---|---|---|
@@ -656,7 +684,7 @@ Document updates every `active` entry whose triggers match what the feature chan
 
 ### Conventions, not enforcement
 
-Every rule above is an instruction the agent follows: the fixed stack entries, approved skills only, nothing committed to main, the human merges. sdd-kit has no hook or script that blocks a violation. If you need hard guarantees, add them in your environment, for example with branch protection on main, CI checks, or your agent's permission settings.
+Every rule above is an instruction the agent follows: the fixed stack entries, approved skills only, nothing committed to main, the human merges. SDD Kit has no hook or script that blocks a violation. If you need hard guarantees, add them in your environment, for example with branch protection on main, CI checks, or your agent's permission settings.
 
 ---
 
@@ -701,7 +729,7 @@ Each benefit below rests on a concrete mechanism. How much of it you get depends
 | Technology and practice freedom | A technology-agnostic method; your stack, constitution and skills catalogue supply the specifics |
 | Works with your existing ecosystem | Any skill your agent can load, any MCP server or tool, your CI and your hosting platform |
 
-sdd-kit makes no measured claims about speed or defect rates. No empirical evaluation exists yet.
+SDD Kit makes no measured claims about speed or defect rates. No empirical evaluation exists yet.
 
 ---
 
@@ -812,4 +840,4 @@ Conventions visible in the current skills, worth keeping:
 
 Copyright 2026 Daniel Torres Candil.
 
-sdd-kit is licensed under the [Apache License, Version 2.0](LICENSE). You may use, modify and redistribute it, including in commercial and proprietary work, under the terms of that licence. Skills and plugins you use alongside sdd-kit keep their own licences.
+SDD Kit is licensed under the [Apache License, Version 2.0](LICENSE). You may use, modify and redistribute it, including in commercial and proprietary work, under the terms of that licence. Skills and plugins you use alongside SDD Kit keep their own licences.

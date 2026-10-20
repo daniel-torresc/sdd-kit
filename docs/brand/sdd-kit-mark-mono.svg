@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="SDD Kit">
+  <title>SDD Kit</title>
+  <line x1="110" y1="402" x2="326.75" y2="185.25" stroke="#141C22" stroke-width="6"/>
+  <rect x="82" y="374" width="56" height="56" rx="8" fill="#141C22"/>
+  <rect x="152" y="304" width="56" height="56" rx="8" fill="#141C22"/>
+  <rect x="222" y="234" width="56" height="56" rx="8" fill="#141C22"/>
+  <polygon points="326.75,185.25 310.18,123.44 355.44,78.18 417.25,94.75 433.82,156.56 388.56,201.82" fill="#141C22"/>
+</svg>
