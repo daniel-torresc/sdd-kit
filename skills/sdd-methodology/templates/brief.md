@@ -72,7 +72,7 @@ Repeat for each success criterion.
 
 List the capabilities, behaviors, or outcomes this change must address to achieve its objective.
 
-Keep the scope at the level of the requested change, not individual implementation tasks. Aim for the smallest scope that delivers the desired outcome.
+Keep the scope at the level of the requested change, not individual implementation tasks. Aim for the smallest scope that delivers the desired outcome, within the roadmap item the feature delivers: the scope may narrow the item, never widen it.
 
 - [In-scope item]
 
@@ -80,7 +80,7 @@ Keep the scope at the level of the requested change, not individual implementati
 
 Identify relevant exclusions to prevent misunderstandings or unintended scope expansion.
 
-Include only exclusions that materially clarify the boundaries of this change.
+Include only exclusions that materially clarify the boundaries of this change. An exclusion worth a later feature names the roadmap item that holds it.
 
 - [Excluded item]
 
@@ -194,6 +194,7 @@ IDs are never reused. An item that no longer applies keeps its heading, marked `
 
 - This document is the canonical reference for why the feature exists and what it must achieve.
 - The feature's requirements define the exact, observable behavior that delivers it.
+- `roadmap.md` holds the item this feature delivers, named in the feature's state record, and the later items that hold what this brief leaves out.
 - `product.md` describes the product as a whole; `constitution.md` governs engineering principles and mandatory constraints; `stack.yaml` records the technologies in use.
 - The feature's decisions record holds the questions, answers, and approvals behind this brief.
 

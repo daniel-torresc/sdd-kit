@@ -6,6 +6,7 @@
 
 feature: [feature ID]                    # e.g. F003
 title: "[Short feature name]"
+roadmap-item: [RM-nn]                    # the roadmap item this feature delivers, e.g. RM-04
 phase: define                            # define | design | build | verify | document | release | done
 step: "[The step in progress, or the last one finished]"
 status: in-progress                      # in-progress | waiting-for-human | blocked | done

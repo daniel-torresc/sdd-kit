@@ -443,9 +443,19 @@ If a technology the human fixed in the stack cannot meet a requirement or a qual
 
 ### 8.4 Scope creep
 
-When the design starts to serve needs the requirements don't state, remove that part, or record it as a possible later change. Design only what was approved.
+When the design starts to serve needs the requirements don't state, remove that part, or record it in the decisions record as a possible later change, which Document adds to the roadmap. Design only what was approved.
 
-### 8.5 Insufficient evidence or access
+### 8.5 A feature too large to build as one
+
+The feature delivers one roadmap item, and should be small enough to build, verify and release on its own. When the design shows it is not, by the size signals of the methodology reference (its roadmap section) or a sizing practice of the constitution, do not design it as one:
+
+1. Explain to the human what makes it too large, with the evidence from the design: for example, parts of the requirements that could be released without the others, several one-way doors, or task groups that share nothing.
+2. Propose a split, with the piece to keep in this feature and why.
+3. If the human agrees, the requirements are narrowed in Define (the `sdd-define` skill, revising approved requirements), which adds what is taken out to the roadmap. Continue the design against the narrowed version.
+
+If the human decides to keep it as one feature, record their decision, and continue.
+
+### 8.6 Insufficient evidence or access
 
 If you cannot inspect something that matters (part of the code, an external system, a deployment), say what remains unverified, record it as an assumption or an open question, and state how it affects the design. Never claim to have checked what you didn't.
 
@@ -485,7 +495,7 @@ Before modifying an existing artifact, read it and preserve its valid content. N
 - **Interfaces:** each states its operations, inputs, outputs, errors and guarantees, and its effect on existing callers.
 - **Qualities:** each non-functional requirement has a way to be met and a way to be verified.
 - **Failure:** the important failure modes are identified, with detection, behavior and recovery.
-- **Tasks:** each is small enough to build and review on its own; dependencies are stated; enablers say so.
+- **Tasks:** each is small enough to build and review on its own; dependencies are stated; enablers say so. Together, they are still one feature (section 8.5).
 - **Proportion:** nothing is more complex than the requirements need.
 
 ### 10.2 The plan's consistency check

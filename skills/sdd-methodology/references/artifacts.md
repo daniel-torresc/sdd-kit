@@ -14,7 +14,8 @@ The templates are in this skill's `templates/` folder. When and why each file is
 │   ├── product.md
 │   ├── architecture.md
 │   ├── skills.yaml
-│   └── documentation.yaml
+│   ├── documentation.yaml
+│   └── roadmap.md
 ├── docs/
 │   ├── adr/ADR-NNNN-<slug>.md     one architecture decision each
 │   └── …                          the project's own documentation
@@ -45,7 +46,7 @@ Every file that has a template starts from it.
 
 ## 3. Project files
 
-These describe the project as a whole and outlive any single feature. The six files in `.sdd/` are the **foundational files**, established at onboarding. Every one of them is required.
+These describe the project as a whole and outlive any single feature. The seven files in `.sdd/` are the **foundational files**, established at onboarding. Every one of them is required.
 
 | File                                 | What it is                                                                                                                                | Template          | Created | Read or updated by                                              |
 |--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|-------------------|---------|-----------------------------------------------------------------|
@@ -55,6 +56,7 @@ These describe the project as a whole and outlive any single feature. The six fi
 | `.sdd/architecture.md`               | how the system is structured, how its parts work together, its conventions and known debt                                                 | `architecture.md` | Onboard | Design reads it; Document updates it                            |
 | `.sdd/skills.yaml`                   | the skills the project relies on as reference for its technologies, patterns, principles and practices, and when each applies             | `skills.yaml`     | Onboard | read by every phase; entries added once the human approves them |
 | `.sdd/documentation.yaml`            | every document the project must keep current beyond the foundational files (company, regulatory, contractual or team documents) and when each must be updated (section 10) | `documentation.yaml` | Onboard | Document updates the documents it lists; entries added once the human approves them |
+| `.sdd/roadmap.md`                    | the small increments the product will grow by, in the order the human has chosen, and those delivered, split or dropped (section 11) | `roadmap.md` | Onboard | Define reads it and adds candidates; Document closes the delivered item and adds follow-ups; reordered, placed or dropped only by the human |
 | `docs/adr/ADR-NNNN-<slug>.md`        | one architecturally significant decision: its context, the options, the choice and its consequences                                       | `adr.md`          | Design  | superseded by a later ADR, never rewritten                      |
 | `README.md`, `docs/` (except `adr/`) | the project's own documentation for users and developers                                                                                  | none              | —       | Document updates it                                             |
 
@@ -66,7 +68,7 @@ These live in the feature's folder, `specs/NNN-<slug>/`. "Built from" names the 
 
 | File                                | What it is                                                                                                                                                                                                 | Template          | Created in                              | Built from                                |
 |-------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|-----------------------------------------|-------------------------------------------|
-| `state.yaml`                        | where the feature stands: phase, step, status, what the next run must do, what waits, tasks, stale files, history (section 7)                                                                              | `state.yaml`      | feature start; updated after every step | —                                         |
+| `state.yaml`                        | where the feature stands: the roadmap item it delivers, phase, step, status, what the next run must do, what waits, tasks, stale files, history (section 7)                                                                              | `state.yaml`      | feature start; updated after every step | —                                         |
 | `decisions.md`                      | every question, answer and decision about the feature: the human's decisions and approvals, the Discover questions and answers, the choices made along the way, and the documentation affected (section 7) | `decisions.md`    | feature start; added to throughout      | —                                         |
 | `brief.md`                          | the problem, the users, the desired outcome, the success criteria, the scope and non-goals, constraints, assumptions, open questions and risks                                                             | `brief.md`        | Define                                  | the request and the Discover answers      |
 | `requirements.md`                   | the requirements and their acceptance criteria, the qualities the feature needs, and the exclusions, as observable behaviour                                                                               | `requirements.md` | Define                                  | `brief.md`                                |
@@ -98,7 +100,7 @@ Each `upstream` entry names a file that exists in the feature folder.
 
 ## 6. IDs
 
-IDs are local to a feature. Across features, prefix the feature: `F003:REQ-02`.
+IDs are local to a feature, except `ADR`, `CAP` and `RM`, which are numbered across the whole project. Across features, prefix the feature: `F003:REQ-02`.
 
 An ID is defined by a heading that starts with it, such as `### REQ-02: <title>`. IDs are never reused or renumbered: an item that no longer applies keeps its heading, marked `[withdrawn]`, and is never deleted.
 
@@ -121,8 +123,10 @@ An ID is defined by a heading that starts with it, such as `### REQ-02: <title>`
 | `RISK-nn`        | risk                                                                        | any feature file                                         |
 | `R<round>-nn`    | finding in a review round                                                   | `reviews/`                                               |
 | `ADR-NNNN`       | architecture decision, numbered across the whole project                    | `docs/adr/`                                              |
+| `CAP-nn`         | product capability, numbered across the whole project                       | `.sdd/product.md`                                        |
+| `RM-nn`          | roadmap item: one future feature, numbered across the whole project         | `.sdd/roadmap.md`                                        |
 
-Links point upward, from what was built to what it was built for: an acceptance criterion belongs to its requirement, a component or interface names the requirements it covers, a task names the acceptance criteria it delivers, and a test names the acceptance criterion it proves, with its full ID (`F003:AC-02.1`).
+Links point upward, from what was built to what it was built for: a feature names the roadmap item it delivers in its state record, a roadmap item names the capability it advances, an acceptance criterion belongs to its requirement, a component or interface names the requirements it covers, a task names the acceptance criteria it delivers, and a test names the acceptance criterion it proves, with its full ID (`F003:AC-02.1`).
 
 ## 7. Running records
 
@@ -207,4 +211,18 @@ Some documents must be kept current because the company, a regulation, a contrac
 - **Nothing is skipped silently.** When an entry cannot be updated with the information available, it is put to the human through a decision entry, with what is missing.
 - **New documents are approved by the human.** A phase that finds a document should be kept proposes it through a decision entry; it is added once the human agrees.
 - **Keep it current.** When a document is retired, replaced or moved, its entry is retired or updated, never deleted.
+
+## 11. The roadmap
+
+The roadmap, `.sdd/roadmap.md`, holds the increments the product will grow by. Each item is one future feature. When an item is ready, the signs that it is too large and how it is split are explained in [methodology.md](methodology.md) (section 3). Every project has one, established at onboarding and kept current.
+
+- **Where an item sits says what it is.** The sequence holds the items the human has placed, in priority order, the first being the next feature. The inbox holds candidates not yet placed. Closed holds the items delivered, split or dropped.
+- **Two statuses while open.** `candidate`: not yet refined enough to start. `ready`: meets the readiness criteria and can become a feature. The items near the top of the sequence are ready.
+- **In progress is not recorded.** An item is in progress while a feature whose state record names it is open. It is not marked in the roadmap, because that change would sit on the feature branch, unseen on main, until the merge.
+- **One item, one feature.** A feature delivers exactly one item, named in its state record's `roadmap-item`. A feature that leaves part of its item for later splits it: the original is closed as split, each piece becomes an item, and the feature names the piece it builds.
+- **The order is the human's.** Placing an item in the sequence, reordering it and dropping an item are the human's decisions. Refining an item, splitting it with the human's agreement, and adding candidates to the inbox are not.
+- **Features change it on their branch.** Define adds the remainder of an item it narrows or splits; Document closes the delivered item, with the feature and the date, and adds the feature's follow-ups to the inbox; Release adds what the human defers while the pull request is open. Those changes reach main with the merge. Outside a feature, the roadmap is changed in the working tree, and the human commits it.
+- **Never delete.** A closed item keeps its heading and its ID, with how it closed. IDs are never reused.
+- **Point, don't copy.** An item names its capability (`CAP-nn`) and its dependencies (`RM-nn`) by ID. It never restates the product description, a feature's requirements or the design.
+- **Keep it aligned.** Every planned capability in the product description has at least one item, or is explicitly deferred there. Every item names a capability that exists, or says it is an enabler. Every delivered item names a merged feature.
 

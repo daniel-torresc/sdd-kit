@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/daniel-torresc/sdd-kit/blob/main/.claude-plugin/plugin.json"><img src="https://img.shields.io/badge/version-0.1.1-0b6b5d" alt="Version 0.1.1"></a>
+  <a href="https://github.com/daniel-torresc/sdd-kit/blob/main/.claude-plugin/plugin.json"><img src="https://img.shields.io/badge/version-0.2.0-0b6b5d" alt="Version 0.2.0"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache_2.0-0b6b5d" alt="License: Apache 2.0"></a>
   <a href="https://code.claude.com"><img src="https://img.shields.io/badge/Claude_Code-plugin-141c22" alt="Claude Code plugin"></a>
   <a href="https://github.com/daniel-torresc/sdd-marketplace"><img src="https://img.shields.io/badge/install_from-sdd--marketplace-141c22" alt="Install from sdd-marketplace"></a>
@@ -33,7 +33,7 @@ SDD Kit gives an AI coding agent a structured way to build software. A project i
 SDD Kit is **the core methodology, not a complete ecosystem**. It sets the development process: the phases, the artifacts, the approvals, the reviews and the traceability. It does not try to teach the agent every framework, architecture style or engineering practice, and it does not ship integrations. Those come from the skills, tools and MCP servers you already use, or choose to add. A project records the skills it relies on in a catalogue, and every phase loads the ones that apply. You keep your existing open-source and proprietary skills, your tools and your practices. **The methodology organizes the process. The ecosystem around it makes the agent capable.**
 
 > [!NOTE]
-> **Status:** early (`version 0.1.1`), open source under the [Apache License 2.0](LICENSE). The methodology is defined as instructions and templates. Nothing in the repository enforces it with code: there are no scripts, hooks or validators yet. Today it runs as a [Claude Code](https://code.claude.com) plugin, installed from [sdd-marketplace](https://github.com/daniel-torresc/sdd-marketplace). See [Current capabilities and limitations](#current-capabilities-and-limitations).
+> **Status:** early (`version 0.2.0`), open source under the [Apache License 2.0](LICENSE). The methodology is defined as instructions and templates. Nothing in the repository enforces it with code: there are no scripts, hooks or validators yet. Today it runs as a [Claude Code](https://code.claude.com) plugin, installed from [sdd-marketplace](https://github.com/daniel-torresc/sdd-marketplace). See [Current capabilities and limitations](#current-capabilities-and-limitations).
 
 ---
 
@@ -161,11 +161,14 @@ No foundational file catalogues tools the way `skills.yaml` catalogues skills (s
 
 ## How it works
 
-There are two levels: **onboarding**, once per project, and **the feature lifecycle**, once per feature.
+There are three levels: **onboarding**, once per project; **the roadmap**, kept at any time, which splits the product into small increments in the order you choose; and **the feature lifecycle**, once per increment.
 
 ```mermaid
 flowchart TD
-    ON["Onboard (once per project)<br/>foundational files + readiness verdict"] --> START["Start a feature<br/>number, branch, folder, records"]
+    ON["Onboard (once per project)<br/>foundational files, first roadmap<br/>+ readiness verdict"] --> RM["Roadmap (any time)<br/>refine, split, order the increments"]
+    RM --> G0{{"Human decides the order"}}
+    G0 --> PICK["Define: choose the item<br/>the next ready one, split if too large"]
+    PICK --> START["Start a feature<br/>number, branch, folder, records"]
     START --> DISC["Define: Discover<br/>question rounds with the human"]
     DISC --> BRIEF["Write the brief"]
     BRIEF --> G1{{"Human approves brief"}}
@@ -182,10 +185,11 @@ flowchart TD
     BUILD --> VER["Verify: full check, evidence,<br/>independent feature review"]
     VER -- "blocking problems" --> FIX["Design adds fix tasks"]
     FIX --> BUILD
-    VER -- "pass" --> DOC["Document: docs match what was built"]
+    VER -- "pass" --> DOC["Document: docs match what was built,<br/>roadmap item closed, follow-ups added"]
     DOC --> REL["Release: update with main,<br/>release chores, draft PR"]
     REL --> G5{{"Human merges"}}
-    G5 --> CLOSE["Close the feature<br/>record follow-ups"]
+    G5 --> CLOSE["Close the feature"]
+    CLOSE -. "next increment" .-> RM
 ```
 
 Hexagons are human decisions. Within a feature, each phase starts only when the one before it has finished, and each phase skill checks that before it starts. There are only two ways back: blocking problems found in Verify (or later, on the pull request) become **fix tasks** that go through Build again, and an approved artifact that turns out to be wrong can be corrected at any point, after which everything built on it is checked again.
@@ -195,6 +199,7 @@ Hexagons are human decisions. Within a feature, each phase starts only when the 
 | Moment | What the human does |
 |---|---|
 | Onboarding | Answers the interview, makes or defers the foundational decisions, and approves the skills and documents the project relies on |
+| Roadmap | Decides the order of the increments, which candidates to place, and which to drop; agrees to splits |
 | Discover | Answers question rounds, each question with a recommended answer, or says "use your recommendations" |
 | Brief, requirements, design | Approves each one, asks for changes, or rethinks |
 | One-way doors | Chooses between options presented with a fair comparison |
@@ -222,9 +227,9 @@ Each phase is a skill you invoke. Every phase skill:
 **Skill:** `sdd-onboarding` · **Purpose:** establish the project-wide context every feature builds on, so that no feature has to invent it.
 
 - **Inputs:** your description of the project; any existing documents, diagrams or standards; in an existing codebase, the repository itself.
-- **Activities:** the agent reads the templates first, then works out whether the project is greenfield, brownfield or mixed. For a brownfield project it inventories the repository, including its structure, dependencies, tests, CI, deployment and existing docs. It asks for any material you already have (briefs, notes, documents) and reads it first. It then interviews you across four areas: the product's context and scope, the stack, the technical decisions and the tools the work relies on (issue tracker, docs space, chat, CI), engineering principles and practices (version control included), and the skills and documents the project relies on. It consolidates what it learned, asks you to correct it and whether anything else should be considered, writes the files and validates them as a set.
+- **Activities:** the agent reads the templates first, then works out whether the project is greenfield, brownfield or mixed. For a brownfield project it inventories the repository, including its structure, dependencies, tests, CI, deployment and existing docs. It asks for any material you already have (briefs, notes, documents) and reads it first. It then interviews you across four areas: the product's context and scope, the stack, the technical decisions and the tools the work relies on (issue tracker, docs space, chat, CI), engineering principles and practices (version control included), and the skills and documents the project relies on. With you, it slices the planned capabilities into the first roadmap, refines its first items until they are ready, and you decide the order. It consolidates what it learned, asks you to correct it and whether anything else should be considered, writes the files and validates them as a set.
 - **Rules worth knowing:** existing code counts as evidence of what the system does, not as a standard to copy. Current state, intended state and technical debt are kept apart. A decision can stay open when nothing yet depends on it. Replacing or restructuring existing foundational files needs your confirmation.
-- **Outputs:** the six [foundational files](#project-files), and a **readiness verdict**:
+- **Outputs:** the seven [foundational files](#project-files), including the first roadmap, and a **readiness verdict**:
   - **READY:** the files are coherent and complete enough to start.
   - **READY WITH CAVEATS:** you can start, but named gaps need attention in the phases they affect.
   - **NOT READY:** a material gap or contradiction blocks a reliable start, and the verdict says what must be resolved.
@@ -232,17 +237,27 @@ Each phase is a skill you invoke. Every phase skill:
 
 Onboarding can be run again at any time to review or update the foundational files.
 
+### Roadmap: what to build next
+
+**Skill:** `sdd-roadmap` · **Purpose:** make sure the next feature is always a small, independently deliverable increment, and that nothing a feature leaves for later is lost.
+
+- **Inputs:** the product description and its capabilities (`CAP-nn`), the roadmap, the features delivered and in progress, the architecture's known debt, and your priorities.
+- **Activities:** builds the first roadmap (at onboarding, or for a project onboarded before roadmaps existed); answers "what's next?" with the first ready item; refines the items near the top until they are **ready**; splits items that are too large into vertical slices; places new ideas and follow-ups; proposes an order for you to decide; and checks the roadmap against the product description and the delivered features.
+- **Ready means:** one outcome, for one user group, along one main flow, that can be shown working on its own; the product still works and could be released after it; a slice through what users observe, not a layer; its dependencies delivered; at most one one-way door. The method sets no size limits: it gives signals that an item is too large (an outcome that needs an "and", parts that could ship without the others, several one-way doors, a layer instead of an outcome), and your constitution can add limits of its own.
+- **Rules worth knowing:** only the first few items are detailed; the rest stay coarse until they come near the top. In a greenfield project, the first item is usually a **walking skeleton**. The order, placing and dropping are your decisions. Whether an item is in progress isn't stored in the roadmap: it is the open feature whose `state.yaml` names it. Outside a feature, the skill writes the roadmap and you commit it.
+
 ### Define: what and why
 
 **Skill:** `sdd-define` · **Purpose:** agree with you on the problem, the users, what success looks like and exactly what the feature must do, before anyone thinks about how.
 
-- **Inputs:** your request; the product description, the constitution, the stack, and earlier features that touch the same area.
+- **Inputs:** the next ready roadmap item, or your request; the product description, the constitution, the stack, and earlier features that touch the same area.
 - **Activities:**
-  1. **Open the feature:** it gets the next free number (`F003`), a short name, a branch from the latest main named as your constitution says, and a folder `specs/003-<slug>/` holding `state.yaml` and `decisions.md`.
-  2. **Discover:** for every unknown, the agent decides whether the files answer it, whether it needs research, whether it can be a recorded assumption, or whether only you can answer it. Your questions come in rounds. Each question says why it matters and gives a recommended answer. Answers are recorded word for word, and nothing is asked twice. There is no fixed number of rounds: the loop ends when nothing important is open, or when you say "use the recommendations".
-  3. **Brief:** the problem, the users, the desired outcome, success criteria (`SC-nn`) with baselines and targets, scope and non-goals, constraints (`CON-nn`), assumptions, open questions and risks. You approve it.
-  4. **Requirements:** functional requirements (`REQ-nn`), written in EARS patterns ("When …, the system shall …"), each with acceptance criteria (`AC-nn.m`) concrete enough that anyone could check them, plus measurable qualities (`NFR-nn`), each stating how it will be verified. You approve them.
-- **Quality controls:** Define never chooses technologies or components. The requirements are checked for coverage of the brief, unambiguous wording and observability before they reach you. Growth beyond the smallest valuable slice is named, and you decide what stays in scope.
+  1. **Choose the item:** the feature delivers exactly one roadmap item. Asked for the next feature, the agent takes the first ready item. Given a request, it matches it to an item or checks it as a new one. An item or request that is too large is split with you before the feature opens, and the rest goes to the roadmap.
+  2. **Open the feature:** it gets the next free number (`F003`), a short name, a branch from the latest main named as your constitution says, and a folder `specs/003-<slug>/` holding `state.yaml` and `decisions.md`.
+  3. **Discover:** for every unknown, the agent decides whether the files answer it, whether it needs research, whether it can be a recorded assumption, or whether only you can answer it. Your questions come in rounds. Each question says why it matters and gives a recommended answer. Answers are recorded word for word, and nothing is asked twice. There is no fixed number of rounds: the loop ends when nothing important is open, or when you say "use the recommendations".
+  4. **Brief:** the problem, the users, the desired outcome, success criteria (`SC-nn`) with baselines and targets, scope and non-goals, constraints (`CON-nn`), assumptions, open questions and risks. You approve it.
+  5. **Requirements:** functional requirements (`REQ-nn`), written in EARS patterns ("When …, the system shall …"), each with acceptance criteria (`AC-nn.m`) concrete enough that anyone could check them, plus measurable qualities (`NFR-nn`), each stating how it will be verified. You approve them.
+- **Quality controls:** Define never chooses technologies or components. The requirements are checked for coverage of the brief, unambiguous wording and observability before they reach you. Growth beyond the smallest valuable slice is named, and you decide what stays in scope; what is left out goes to the roadmap's inbox, and the brief may narrow its roadmap item but never widen it.
 - **Done when:** both the brief and the requirements are approved. From here on they are **the contract**.
 
 ### Design: how to build it
@@ -287,7 +302,7 @@ Onboarding can be run again at any time to review or update the foundational fil
 
 **Skill:** `sdd-document` · **Purpose:** bring documentation in line with what was built, not with what was planned.
 
-- **Updates:** the product and architecture descriptions; every entry in the **documentation catalogue** whose `update-when` trigger matches the feature, in the structure that document requires; and anything else named in the documentation impact collected during Build.
+- **Updates:** the product and architecture descriptions; the roadmap, where it closes the delivered item and adds the feature's follow-ups as candidates; every entry in the **documentation catalogue** whose `update-when` trigger matches the feature, in the structure that document requires; and anything else named in the documentation impact collected during Build.
 - **Rules worth knowing:** where the code and the specification differ, the documentation follows the code, and the gap is reported to you. A required document that can't be completed with the information available goes to you, and is never skipped.
 
 ### Release: the human merges
@@ -297,9 +312,9 @@ Onboarding can be run again at any time to review or update the foundational fil
 - **Activities:**
   1. Bring the branch up to date with main, then re-run the suite and the checks. Conflicts and new failures become fix tasks; Release never fixes code itself.
   2. Do the release chores your practices or catalogue require, such as a version bump, a changelog entry or release notes. The method itself requires none.
-  3. Push the branch and open a **draft pull request**. Its description says what the feature does, links the specification and the evidence, lists your decisions and the ADRs, states **what you accept by merging** (assumptions, open risks, unverified qualities, known failures), names the documentation updated, and explains how to try it. With no remote, the branch itself is the handover.
-  4. While the pull request is open, failing checks become fix tasks. Your comments are recorded and routed: a fix within the approved approach becomes a fix task, a change to the requirements goes back to Define, and a question is answered.
-  5. Once you merge, the feature is closed, the branch is cleaned up as your practices say, and its **follow-ups** are recorded as candidates for later features.
+  3. Push the branch and open a **draft pull request**. Its description says what the feature does, links the specification and the evidence, lists your decisions and the ADRs, states **what you accept by merging** (assumptions, open risks, unverified qualities, known failures), names the documentation updated and the roadmap item delivered with the follow-ups added, and explains how to try it. With no remote, the branch itself is the handover.
+  4. While the pull request is open, failing checks become fix tasks. Your comments are recorded and routed: a fix within the approved approach becomes a fix task, a change to the requirements goes back to Define, a request to leave something for later goes to the roadmap, and a question is answered.
+  5. Once you merge, the feature is closed and the branch is cleaned up as your practices say. Its roadmap item and **follow-ups** were updated on the feature branch, so they reach main with the merge and you see them in the pull request.
 - **Rules worth knowing:** Release never merges into main and never pushes to it. Deployment is your own process, after the merge, and is outside the method.
 
 ---
@@ -350,7 +365,8 @@ All artifacts live in your project, not in SDD Kit. Each starts from a template 
 │   ├── product.md                 what the product is, for whom, what it does, its domain rules
 │   ├── architecture.md            how the system is built, its conventions and debt
 │   ├── skills.yaml                the skills the project relies on, and when each applies
-│   └── documentation.yaml         the documents the project must keep current, and when
+│   ├── documentation.yaml         the documents the project must keep current, and when
+│   └── roadmap.md                 the coming increments, in your order, and those delivered
 ├── docs/
 │   └── adr/ADR-NNNN-<slug>.md     one architecture decision each
 └── specs/
@@ -368,16 +384,17 @@ All artifacts live in your project, not in SDD Kit. Each starts from a template 
 
 ### Project files
 
-All six foundational files are required. Each holds one kind of knowledge, and no fact is kept in two of them.
+All seven foundational files are required. Each holds one kind of knowledge, and no fact is kept in two of them.
 
 | File | Purpose | Created | Updated by |
 |---|---|---|---|
 | `constitution.md` | Principles (`PR-nnn`), non-negotiable constraints (`NC-nnn`), practices (`EP-nnn`) including version control, quality expectations, governance | Onboard | Only deliberately, with the human |
 | `stack.yaml` | Each technology by concern, with status and who decided it; `fixed: true` marks human constraints; `commands:` for install, test, check, build, run; `tools:` for the issue tracker, docs space and other work tools | Onboard | Design adds or updates entries |
-| `product.md` | Purpose, users, capabilities, domain concepts, business rules, scope, current state | Onboard | Document |
+| `product.md` | Purpose, users, capabilities (`CAP-nn`), domain concepts, business rules, scope, current state | Onboard | Document |
 | `architecture.md` | Components, interactions, data, cross-cutting concerns, deployment, debt, mapping to code | Onboard | Document |
 | `skills.yaml` | The skills the project relies on: what each covers, in which phases, why, and where it comes from | Onboard | Entries added once the human approves |
 | `documentation.yaml` | The other documents the project must keep current: why, who requires them, what triggers an update, the required format | Onboard | Document updates the listed documents; entries added once the human approves |
+| `roadmap.md` | The increments the product grows by (`RM-nn`), each a future feature: the sequence in your order, an inbox of unplaced candidates, and closed items (delivered, split, dropped) | Onboard | `sdd-roadmap` at any time; Define adds splits and candidates; Document closes the delivered item and adds follow-ups; only you reorder or drop |
 | `docs/adr/ADR-NNNN-*.md` | One significant decision: context, options, choice, consequences, `decided-by: human \| design` | Design | Superseded by a later ADR, never rewritten |
 
 ### Feature files
@@ -443,8 +460,9 @@ sdd-kit/
 │   │   ├── references/
 │   │   │   ├── methodology.md     the method in full: every phase and step
 │   │   │   └── artifacts.md       every file, template rule, version, ID, record, catalogue
-│   │   └── templates/             16 templates for project and feature files
+│   │   └── templates/             17 templates for project and feature files
 │   ├── sdd-onboarding/SKILL.md    Onboard
+│   ├── sdd-roadmap/SKILL.md       the roadmap: what to build next, at any time
 │   ├── sdd-define/SKILL.md        Define
 │   ├── sdd-design/SKILL.md        Design
 │   ├── sdd-build/SKILL.md         Build (coordinator)
@@ -463,6 +481,7 @@ sdd-kit/
 
 - **`sdd-methodology` defines; the other skills execute.** The methodology skill describes the method and the files, and holds the templates. It names no roles and says nothing about who runs what. Every other skill must load it, and treats its templates as the authority on structure. That is why the phase skills name no file paths: the set of files is defined in one place and can change.
 - **Phase skills** (`sdd-onboarding`, `sdd-define`, `sdd-design`, `sdd-build`, `sdd-verify`, `sdd-document`, `sdd-release`) each run one phase end to end. They check its preconditions, resume from the records, take checkpoints and report.
+- **The roadmap skill** (`sdd-roadmap`) works on the project, not on a feature, like onboarding. It can run at any time, and the phases rely on the roadmap it keeps.
 - **Shared skills** (`sdd-implement`, `sdd-review`, `sdd-research`) do one unit of work each. A phase starts them in a **subagent** that gets only the feature, the IDs and the file paths, so the work stays independent. Each one documents how a phase should start it, in its last section. You can also invoke them directly, for example to review a specific task.
 - **Activation.** In Claude Code, every skill except `sdd-methodology` is a slash command. Skills also load automatically when your request matches their description, so "let's design feature 3" works too. `sdd-methodology` is hidden from the menu (`user-invocable: false`) and loads whenever the method or its files are needed.
 - **Permissions.** Each skill pre-approves only reading files and inspecting git, plus web search for `sdd-research` and `git fetch` for `sdd-release` (`allowed-tools`). Writing files, committing, running tests, pushing and opening pull requests go through your agent's normal permission prompts.
@@ -549,17 +568,24 @@ What to expect:
 - Questions about principles and practices, including your branch and commit conventions.
 - **Skills:** for each significant technology, pattern or practice, the agent proposes skills from the ones your session lists, and asks which ones you already use or want. You approve, reject or defer each one.
 - **Documents:** the agent asks which documents the company, a regulation, a contract or the team requires you to keep current, and whether each one must follow a template.
-- A consolidated summary for you to correct, then the six files in `.sdd/`, then a validation report with a READY / READY WITH CAVEATS / NOT READY verdict.
+- **Roadmap:** the planned capabilities sliced into small increments, the first ones refined until they are ready, and an order for you to decide.
+- A consolidated summary for you to correct, then the seven files in `.sdd/`, then a validation report with a READY / READY WITH CAVEATS / NOT READY verdict.
 
 Review the files and commit them to main yourself. The onboarding skill doesn't commit them, and every later phase works on feature branches and never commits to main, so features start from the main branch that holds your foundational files.
 
 ### 2. Define the first feature
 
 ```
+/sdd-define next
+```
+
+or, with a request of your own:
+
+```
 /sdd-define Agents should be able to see a one-paragraph summary of a long ticket thread
 ```
 
-The agent opens the feature (number, name, branch, folder), asks question rounds, and then puts the brief and then the requirements to you for approval. Read the assumptions it lists. That is where silent guesses would otherwise hide.
+The agent takes the first ready roadmap item, or checks your request against the roadmap, and proposes a split if it is too large to be one feature. It then opens the feature (number, name, branch, folder), asks question rounds, and then puts the brief and then the requirements to you for approval. Read the assumptions it lists. That is where silent guesses would otherwise hide.
 
 ### 3. Continue through the phases
 
@@ -693,6 +719,7 @@ Every rule above is an instruction the agent follows: the fixed stack entries, a
 | Mechanism | What it controls | When | What it can catch | Limits |
 |---|---|---|---|---|
 | Template compliance | Structure, frontmatter, ID conventions, no leftover placeholders | Whenever a file is created | Missing sections, invented structure | Performed by the agent; checks form, not truth |
+| Roadmap readiness and size signals | Each feature is one small, independently deliverable increment | Roadmap, Define, Design | Epics posing as features, layers instead of slices, deferred work that gets lost | Judgement by the agent against signals, not fixed limits; your order and your approvals decide |
 | Onboarding validation and readiness verdict | Consistency within and across the foundational files; brownfield evidence; constitution quality | End of Onboard | Contradictions, misplaced facts, debt disguised as a standard | Judgement by the agent; doesn't prove the files are complete |
 | Requirements checks | Coverage of the brief, one behaviour per requirement, unambiguous and observable wording, checkable criteria | Before the requirements reach you | Vague words, untestable criteria, scope drift | The agent can't know needs you never stated |
 | Human approvals | Brief, requirements, design, one-way doors, merge | Define, Design, Release | Misread intent, wrong approach | Only as good as the review you give them |
@@ -723,8 +750,8 @@ Each benefit below rests on a concrete mechanism. How much of it you get depends
 | Continuity across sessions | `state.yaml` + `decisions.md`, a checkpoint and commit after every step, a fixed order for resuming |
 | Reviewable AI output | Small tasks, an independent review per task, a feature review, and a pull request description that states what merging accepts |
 | Traceability | Stable IDs, `upstream` versions, tests that name the criteria they prove, the traceability matrix |
-| Scope control | Smallest valuable slice, non-goals, "reported, not done", scope-adding findings are minor |
-| Reusable project knowledge | Six foundational files kept current by Document, and ADRs |
+| Scope control | A roadmap of ready, small increments; smallest valuable slice, non-goals, "reported, not done", scope-adding findings are minor |
+| Reusable project knowledge | Seven foundational files kept current by Document, and ADRs |
 | Easier onboarding of people | The same files tell a new developer what the product is, how it is built and why |
 | Technology and practice freedom | A technology-agnostic method; your stack, constitution and skills catalogue supply the specifics |
 | Works with your existing ecosystem | Any skill your agent can load, any MCP server or tool, your CI and your hosting platform |
@@ -738,6 +765,7 @@ SDD Kit makes no measured claims about speed or defect rates. No empirical evalu
 ### Supported today
 
 - One-time onboarding for greenfield, brownfield and mixed projects, and later review or update of the foundational files.
+- A roadmap of small, independently deliverable increments, kept at any time, from which every feature starts.
 - The full feature lifecycle: Define → Design → Build → Verify → Document → Release, with resumption at any step.
 - One-way doors, independent design, fairness, task and feature reviews, and independent research.
 - Parallel task builds with per-task branches and working copies, and merge-and-test after each task.
@@ -814,9 +842,11 @@ Conventions visible in the current skills, worth keeping:
 | Term | Meaning |
 |---|---|
 | **SDD** | Spec-driven development: building software from written, approved specifications |
-| **Foundational files** | The six project-wide files in `.sdd/`, established at onboarding and kept current |
+| **Foundational files** | The seven project-wide files in `.sdd/`, established at onboarding and kept current |
 | **Constitution** | The project's principles, non-negotiable constraints and practices |
-| **Feature** | One unit of work through the lifecycle, with its own number (`F003`), branch and folder |
+| **Feature** | One unit of work through the lifecycle, with its own number (`F003`), branch and folder; it delivers one roadmap item |
+| **Roadmap item** | One future feature (`RM-04`): a small increment with one observable outcome, `candidate` until refined, then `ready` |
+| **Walking skeleton** | The usual first item of a greenfield project: the thinnest end-to-end slice through the real system and release path |
 | **Contract** | The approved brief and requirements, against which everything later is checked |
 | **Discover** | Define's question loop with the human |
 | **Acceptance criterion** | A concrete, checkable condition (`AC-02.1`) belonging to a requirement |
