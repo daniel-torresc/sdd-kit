@@ -5,7 +5,7 @@ name: sdd-methodology
 # Always in context: Claude uses it to decide when to load this skill. It says that the skill
 # explains the methodology and its files (not how to run it), and the moments that need them.
 # Kept on one line with no ": " so every YAML parser reads it.
-description: "Explains SDD (spec-driven development), the methodology, and the files it produces. It covers its principles, the one-time onboarding and the six phases of every feature (Define, Design, Build, Verify, Document, Release), what each aims for, starts from, produces and needs before it is finished, where the human approves, the shared review and research activities, and what happens when a problem or change appears. It also defines the project layout, every SDD file and its template, versions and staleness, and the IDs that link requirements to design, tasks and tests. Use it whenever you need to understand SDD or where a piece of work sits in it, before working on any SDD phase, whenever you create or fill an SDD file from its template, need to know where a file goes or which file holds something, read or assign an ID, or when the user asks how SDD works."
+description: "Explains SDD (spec-driven development), the methodology, and the files it produces. It covers its principles, the one-time onboarding, the roadmap of small increments every feature is chosen from, and the six phases of every feature (Define, Design, Build, Verify, Document, Release), what each aims for, starts from, produces and needs before it is finished, where the human approves, the shared review and research activities, and what happens when a problem or change appears. It also defines the project layout, every SDD file and its template, versions and staleness, and the IDs that link requirements to design, tasks and tests. Use it whenever you need to understand SDD or where a piece of work sits in it, before working on any SDD phase, whenever you create or fill an SDD file from its template, need to know where a file goes or which file holds something, need to judge whether a feature is small enough or how to split it, read or assign an ID, or when the user asks how SDD works."
 
 # Reference knowledge, not an action: hide it from the / menu. Claude can still load it on its
 # own whenever the description matches.
@@ -29,14 +29,16 @@ This skill explains the methodology: its principles, its phases, and the files a
 7. **Review is independent.** Work is judged against its sources, never against its author's explanation of it.
 8. **Changes propagate.** When something changes, everything derived from it is checked again. A change to intent, scope or the approved approach goes back to the human.
 9. **The record outlives the work session.** All state lives in versioned artifacts, not in memory or conversation, so work can pause, resume or change hands at any point.
-10. **Small, verifiable steps.** Work is split into pieces small enough to build, review and verify one at a time, and the system keeps working after each one.
+10. **Small, verifiable steps.** The product grows one small feature at a time, each a releasable increment chosen from the roadmap, and each feature is split into tasks small enough to build, review and verify one at a time. The system keeps working after each one.
 
 ## The phases
 
 ```
-   ONBOARD            once per project: the foundational files
+   ONBOARD            once per project: the foundational files and the first roadmap
       │
-   ┄┄┄│┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄  every feature
+   ROADMAP            any time: refine, split and order the coming increments
+      │               ✔ the order
+   ┄┄┄│┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄  every feature: one ready item
       ▼
    DEFINE ──────► DESIGN ──────► BUILD ──────► VERIFY ──────► DOCUMENT ──────► RELEASE
    what & why     how, in tasks   task by task  the whole      docs match      the human
@@ -46,21 +48,24 @@ This skill explains the methodology: its principles, its phases, and the files a
                                    └─ fix tasks ◄┘
 ```
 
-✔ = a human approval. [✔ one-way door] = when there is a hard-to-reverse choice.
+✔ = a human approval or decision. [✔ one-way door] = when there is a hard-to-reverse choice. Each feature delivers one roadmap item; Document closes it and adds the feature's follow-ups to the roadmap.
 
-**Onboard** runs once per project, before its first feature. It establishes the **foundational files** for working with SDD: the project-wide context every feature reads and keeps current, namely its engineering principles and practices, its technology stack and the tools its work relies on, what the product is, how the system is built, the skills the project relies on, and the documents it must keep current.
+**Onboard** runs once per project, before its first feature. It establishes the **foundational files** for working with SDD: the project-wide context every feature reads and keeps current, namely its engineering principles and practices, its technology stack and the tools its work relies on, what the product is, how the system is built, the skills the project relies on, the documents it must keep current, and the roadmap: the small increments the product will grow by, in the order the human has chosen.
+
+The **roadmap** is kept at any time, outside the features: its items are refined, split when they are too large, and put in order by the human. Every feature starts from one ready item, usually the first.
 
 After it, every feature goes through the phases in order, and each phase starts only when the one before it has finished.
 
 | Phase        | Aims to                                                                                                               | Produces                                                     | Finished when                                                                               |
 |--------------|-----------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|---------------------------------------------------------------------------------------------|
 | **Onboard**  | establish, with the human, the project-wide context features build on, once per project                               | the foundational files, and a readiness verdict              | the files pass validation and the project is ready for SDD, or ready with stated caveats    |
+| **Roadmap**  | keep the coming increments small, independently deliverable and in the human's order, any time                         | refined, split and ordered roadmap items                     | the next item is ready and the human has approved the order                                 |
 | **Define**   | agree on the problem, the users, what success looks like and what the feature must do, before anyone thinks about how | the brief and the requirements, with acceptance criteria     | the human approves both                                                                     |
 | **Design**   | decide how to build it, prove the approach before any code, and split the work into tasks                             | the design with its task list, ADRs, stack changes, the plan | the human approves the design and the plan passes its consistency check                     |
 | **Build**    | turn the plan into working code, one reviewed task at a time                                                          | code and tests, each task reviewed and integrated            | every task is reviewed and integrated, and the full test suite passes                       |
 | **Verify**   | confirm the whole feature does what the requirements say                                                              | the evidence and a feature review                            | all checks pass, every acceptance criterion has a passing test, no blocking findings        |
-| **Document** | bring the documentation in line with what was built                                                                   | updated documentation                                        | the documentation, including every required document the feature affects, describes the feature as built |
-| **Release**  | hand the feature to the human, up to date with main, and close it once merged                                     | a draft pull request, then the closed feature and its follow-ups | the human merges it                                                                         |
+| **Document** | bring the documentation in line with what was built, and close the roadmap item                                      | updated documentation and roadmap                            | the documentation, including every required document the feature affects, describes the feature as built |
+| **Release**  | hand the feature to the human, up to date with main, and close it once merged                                     | a draft pull request, then the closed feature                | the human merges it                                                                         |
 
 There are only two ways back. Blocking problems found in Verify become fix tasks that go through Build again. An approved artifact that turns out to be wrong is corrected at any point, and everything built on it is re-checked.
 
@@ -83,7 +88,8 @@ Two activities are not phases: any phase calls on them, and they follow the same
 │   ├── product.md                 what the product is, for whom, what it can do
 │   ├── architecture.md            how the system is built, its conventions and debt
 │   ├── skills.yaml                the skills the project relies on, and when each applies
-│   └── documentation.yaml         the documents the project must keep current, and when
+│   ├── documentation.yaml         the documents the project must keep current, and when
+│   └── roadmap.md                 the coming increments, in order, and those delivered
 ├── docs/
 │   ├── adr/ADR-NNNN-<slug>.md     one architecture decision each
 │   └── …                          the project's own documentation
@@ -109,6 +115,7 @@ Every file that has a template starts from it. Each brief, requirements, design 
 
 - **The core concepts:** the contract, decisions and assumptions, the record, traceability, versions and staleness, and how reviews work.
 - **Onboarding:** what the foundational files hold, the readiness verdict, and how features keep them current.
+- **The roadmap:** when an item is ready, the signs that it is too large, how to split it, the first items of a greenfield or brownfield project, and who changes it when.
 - **Each phase:** its aim, what it starts from, its steps in order, what it produces, and when it is finished.
 - **The shared activities:** how a review works (findings, verdicts, answers, rounds) and how research is done.
 - **What can happen at any point:** problems, changes to approved artifacts, outside knowledge, and questions for the human.
@@ -122,5 +129,6 @@ Every file that has a template starts from it. Each brief, requirements, design 
 - **Every ID,** where it is defined, and how IDs link.
 - **The skills catalogue:** which skills to load in each phase, and how new ones are added.
 - **The documentation catalogue:** which documents the project must keep current, and when Document updates them.
+- **The roadmap file:** its items and statuses, and the rules for changing it.
 - **The running records:** how a feature is resumed, how a checkpoint is taken, and how decisions and approvals are recorded.
 - **Branches and commits:** what the method requires, and where the project defines its own conventions.

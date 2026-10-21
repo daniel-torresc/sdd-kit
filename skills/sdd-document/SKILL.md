@@ -6,7 +6,7 @@ name: sdd-document
 # produces and when to use it. It names no file path on purpose: where each artifact lives is
 # defined by the sdd-methodology skill and may change. Kept on one line with no ": " so every
 # YAML parser reads it.
-description: "Runs the Document phase of SDD (spec-driven development) for one verified feature. It brings the project's documentation in line with what was built, not what was planned. It updates the product and architecture descriptions, every document in the project's documentation catalogue that the feature affects (company, regulatory, contractual or team documents, in the structure each one requires), and the rest of the documentation the feature's documentation impact names. Where the code and the specification differ, the code is the truth and the gap is reported. Use when the user invokes /sdd-document, or asks to document a feature, or to update the project's documentation after a feature is verified. Not for writing code or changing requirements."
+description: "Runs the Document phase of SDD (spec-driven development) for one verified feature. It brings the project's documentation in line with what was built, not what was planned. It updates the product and architecture descriptions, every document in the project's documentation catalogue that the feature affects (company, regulatory, contractual or team documents, in the structure each one requires), and the rest of the documentation the feature's documentation impact names. It also brings the roadmap up to date, closing the item the feature delivered and adding the feature's follow-ups as candidates, so they reach main with the merge. Where the code and the specification differ, the code is the truth and the gap is reported. Use when the user invokes /sdd-document, or asks to document a feature, or to update the project's documentation after a feature is verified. Not for writing code or changing requirements."
 
 # Shown after the command name while the user types it. Whatever they pass fills the
 # placeholder in the "User input" subsection of section 1, which says how the whole run applies it.
@@ -36,6 +36,8 @@ Document updates three kinds of documentation:
 - **The foundational files that describe the product and the architecture.**
 - **Every document in the documentation catalogue** whose update triggers match what the feature changed: the documents the company, a regulation, a contract or the team requires, each in the structure it must keep.
 - **The rest of the project's own documentation** that the feature's documentation impact names.
+
+It also brings **the roadmap** up to date: the item the feature delivered is closed, and the work the feature leaves for later is added as candidates, so that nothing is lost and the human sees it in the pull request.
 
 The `sdd-methodology` skill defines where each artifact lives, the documentation catalogue and how it is used, and how the running records are kept (its artifacts reference), and how Document fits in the whole method (its methodology reference). You MUST load it.
 
@@ -95,6 +97,7 @@ Everything goes into the feature's files and the project's documentation, commit
 - **The documentation impact** recorded in the feature's decisions record during Build.
 - **The documentation catalogue:** every active entry, with its purpose, its required structure, and what makes it need an update.
 - **The product and architecture descriptions,** and their templates.
+- **The roadmap,** its template, and its rules in the artifacts reference: the item the feature's state record names, and what the inbox already holds.
 - **What was built:** the brief, the requirements, the design, the plan, the ADRs, the evidence, and the code on the feature branch, in particular its full difference from main.
 - **The constitution:** any documentation practices it sets.
 - **The skills catalogue:** load the approved skills that apply to Document, and the skills the catalogue's entries name as their format, as the artifacts reference describes ("The skills catalogue").
@@ -166,6 +169,7 @@ Build the list from:
 3. **The documentation catalogue:** every active entry whose `update-when` matches what the feature changed. When in doubt whether a trigger matches, include the entry and say why.
 4. **The documentation impact:** every document the feature's tasks named.
 5. **The README and the rest of the project's documentation:** anything else a reader would now find wrong or missing.
+6. **The roadmap:** the item the feature delivered, and the feature's follow-ups (Phase 3).
 
 For each document, note what must change, and why.
 
@@ -189,9 +193,17 @@ For each document:
 
 For the product and architecture descriptions, update their version, as their templates' maintenance guidelines say.
 
+For the roadmap:
+
+1. **Close the item** the feature delivered, as delivered by this feature, with the date. If the feature delivered less than its item, close it as split instead: the delivered piece as delivered, the rest as a new item in the inbox.
+2. **Add the follow-ups** to the inbox as candidates, each with its outcome and this feature as its origin: deferred open questions, scope exclusions worth a later feature, work reported but not done, rejected minor findings worth revisiting, and possible later changes recorded in Design. Skip what the roadmap already holds, and what isn't worth a feature; checks left to do after the release are stated in the pull request, not here.
+3. **Flag what the feature changed:** a later item that the feature made unnecessary, or whose outcome or dependencies it changed, gets a note saying so, for the human to decide on. Never reorder the sequence or drop an item.
+4. Bump the roadmap's version.
+
 Completion criteria:
 
 - Every document on the list is updated, or put to the human with what is missing.
+- The feature's roadmap item is closed, and its follow-ups are in the inbox.
 
 ### Phase 4 — Check the Documentation
 
@@ -245,7 +257,7 @@ When the documentation catalogue lists a document that moved or no longer exists
 
 ## 8. Change Management
 
-- Document changes the project's documentation, the product and architecture descriptions, and the running records. It never changes the code, the tests, the requirements, the design, the plan, or the documentation catalogue itself without the human's approval.
+- Document changes the project's documentation, the product and architecture descriptions, the roadmap as Phase 3 describes, and the running records. It never reorders the roadmap or drops an item. It never changes the code, the tests, the requirements, the design, the plan, or the documentation catalogue itself without the human's approval.
 - Preserve the valid content of every document you update; never delete what is still true.
 - Commit at every checkpoint, following the project's version-control practices. Never commit to main, and do not push or merge unless the human asks.
 - Do not claim that a document was updated or checked unless it actually was.
@@ -257,6 +269,7 @@ When the documentation catalogue lists a document that moved or no longer exists
 - **Complete:** every document on the list is updated, and every triggered catalogue entry is covered.
 - **Structured:** every required document keeps its template, standard, or format.
 - **Consistent:** the same fact is not stated differently in two documents, and each is kept in its authoritative place.
+- **Roadmap:** the delivered item is closed and names this feature; the capability it advanced shows its current status in the product description; every follow-up worth a feature is in the inbox.
 - **Working references:** links, paths, commands and examples point to what exists and work as written.
 - **For its readers:** each document says what its readers need, and nothing they don't.
 
@@ -277,6 +290,7 @@ When Document is finished, or when you stop, report:
 1. Where the feature stands, and its next step.
 2. Every document updated, and what changed in each.
 3. Every triggered catalogue entry, and its outcome.
-4. Every gap between the code and the specification, and where it was reported.
-5. Anything waiting for the human, and what is missing.
-6. Anything you couldn't verify.
+4. The roadmap: the item closed, the follow-ups added, and the items flagged for the human.
+5. Every gap between the code and the specification, and where it was reported.
+6. Anything waiting for the human, and what is missing.
+7. Anything you couldn't verify.

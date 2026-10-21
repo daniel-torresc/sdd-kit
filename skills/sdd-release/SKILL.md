@@ -6,7 +6,7 @@ name: sdd-release
 # produces and when to use it. It names no file path on purpose: where each artifact lives is
 # defined by the sdd-methodology skill and may change. Kept on one line with no ": " so every
 # YAML parser reads it.
-description: "Runs the Release phase of SDD (spec-driven development) for one verified and documented feature. It brings the feature branch up to date with main and checks it again, does the release chores the project requires (a version bump, a changelog, release notes), pushes the branch, and opens a draft pull request whose description gives the human everything needed to decide, including what they accept by merging. While the pull request is open, it routes failing checks and the human's comments; once the human merges it, it closes the feature and lists its follow-ups. It never merges into main itself. Use when the user invokes /sdd-release, or asks to release a feature, open its pull request, or close it after the merge."
+description: "Runs the Release phase of SDD (spec-driven development) for one verified and documented feature. It brings the feature branch up to date with main and checks it again, does the release chores the project requires (a version bump, a changelog, release notes), pushes the branch, and opens a draft pull request whose description gives the human everything needed to decide, including what they accept by merging. While the pull request is open, it routes failing checks and the human's comments; once the human merges it, it closes the feature, whose roadmap item and follow-ups reach main with the merge. It never merges into main itself. Use when the user invokes /sdd-release, or asks to release a feature, open its pull request, or close it after the merge."
 
 # Shown after the command name while the user types it. Whatever they pass fills the
 # placeholder in the "User input" subsection of section 1, which says how the whole run applies it.
@@ -39,7 +39,7 @@ Release covers the feature's last steps:
 - **Do the release chores** the project requires.
 - **Open a draft pull request** into main, with a description the human can decide from.
 - **Handle what happens while it is open:** failing checks, and the human's comments.
-- **Close the feature** once it is merged, and list its follow-ups.
+- **Close the feature** once it is merged.
 
 Merging into main is always the human's act. You never merge into main, and never push to it.
 
@@ -47,7 +47,7 @@ The `sdd-methodology` skill defines where each artifact lives, how the running r
 
 Your objective is NOT to get the feature merged. It is to give the human an accurate, complete and honest basis for deciding whether to merge it, and to leave nothing open once it is.
 
-Your success is measured by a pull request the human can decide on without asking anything, and by a feature that closes with every follow-up recorded.
+Your success is measured by a pull request the human can decide on without asking anything, and by a feature that closes with every follow-up in the roadmap.
 
 ### User input
 
@@ -80,7 +80,7 @@ The pull request's description says plainly what the human accepts by merging: t
 
 ### 2.4 Release never changes the work
 
-Release never changes the code, the tests, the requirements, the design or the plan. Conflicts, failures and requested changes go back to the phase that owns them. The only files Release changes are the ones the project's release chores require, and the running records.
+Release never changes the code, the tests, the requirements, the design or the plan. Conflicts, failures and requested changes go back to the phase that owns them. The only files Release changes are the ones the project's release chores require, the running records, and the roadmap when the human defers something while the pull request is open (Phase 5).
 
 ### 2.5 The project's practices decide the rest
 
@@ -96,6 +96,7 @@ Everything goes into the feature's files, committed at every checkpoint. The `sd
 
 - **The state record and the decisions record:** where the feature stands, every decision the human made, and anything still open.
 - **The brief, the requirements, the design, the ADRs, and the evidence:** for the pull request's description.
+- **The roadmap:** the item the feature delivers, closed by Document, and the follow-ups it added.
 - **The constitution:** its version-control practices (updating a branch, merging, cleaning up) and its release practices.
 - **The documentation catalogue:** documents to update on every release, such as a changelog or release notes.
 - **The stack:** the commands that run the tests and the checks.
@@ -135,8 +136,7 @@ Take a checkpoint, as the artifacts reference describes, at the end of every pha
 Record in the decisions record:
 
 - a decision entry for the merge, opened with the pull request, and answered with the human's merge or close;
-- the human's comments on the pull request, and how each was routed;
-- the follow-ups, when the feature closes.
+- the human's comments on the pull request, and how each was routed.
 
 ## 6. Workflow
 
@@ -212,6 +212,7 @@ Activities:
    - **The decisions:** the decisions the human made during the feature, and the ADRs.
    - **What merging accepts:** the assumptions still standing, the open risks, the qualities left unverified, and the known failures.
    - **The documentation updated.**
+   - **The roadmap:** the item it delivers, the follow-ups added as candidates, and any later item flagged as changed by this feature.
    - **How to try it.**
 3. Open the decision entry for the merge, with a link to the pull request.
 4. Take a checkpoint: the state record shows the feature in Release, waiting for the human, with the pull request and the decision entry.
@@ -232,6 +233,7 @@ Act on what happens to the pull request, without merging it.
 - **The human comments:** record each comment in the decisions record, in their words, and route it:
   - a fix within the approved approach becomes a fix task, through Design, Build and Verify;
   - a change to the requirements goes back to Define, with the human's approval;
+  - a request to leave something for later becomes a candidate in the roadmap's inbox, on the feature branch, with the human's words and this feature as its origin;
   - a question is answered, on the pull request and in the decisions record.
 - **The fix tasks are done:** bring the branch up to date (Phase 2), push it, update the description, and wait for the human again.
 
@@ -251,13 +253,13 @@ Activities:
 1. Confirm that the pull request is merged into main.
 2. Record the merge as the answer to its decision entry.
 3. Clean up the merged feature branch, locally and remotely, as the project's version-control practices say.
-4. List the follow-ups: deferred open questions, scope exclusions worth a later feature, work reported but not done, rejected minor findings worth revisiting, and qualities left to verify after release. Record them in the decisions record.
+4. Confirm that the roadmap on main shows the feature's item as delivered, and holds its follow-ups. If it doesn't, report what is missing, and recommend correcting it (the `sdd-roadmap` skill).
 5. Take the last checkpoint: the state record shows the feature as `done`, with nothing waiting.
 6. Report the outcome (section 9.3).
 
 Completion criteria:
 
-- The feature is done, its follow-ups are recorded, and its merged branch is cleaned up as the project's practices say.
+- The feature is done, its roadmap item is delivered on main, and its merged branch is cleaned up as the project's practices say.
 
 ## 7. Problems
 
@@ -279,7 +281,7 @@ If you cannot push, open the pull request, or read its state, say so, and give t
 
 ## 8. Change Management
 
-- Release changes only what the project's release chores require, and the running records. It never changes the code, the tests, the requirements, the design or the plan.
+- Release changes only what the project's release chores require, the running records, and the roadmap's inbox for what the human defers. It never changes the code, the tests, the requirements, the design or the plan.
 - Never merge into main, and never push to it. Push only the feature branch.
 - Commit at every checkpoint, following the project's version-control practices.
 - Clean up a branch only after the pull request is merged, and only as the project's practices say.
@@ -304,5 +306,5 @@ When the pull request is opened, when something is routed back, or when the feat
 3. The release chores done.
 4. What the human accepts by merging.
 5. Anything routed back, and to which phase.
-6. Once closed: the follow-ups, as candidates for later features.
+6. Once closed: the roadmap item delivered, the follow-ups waiting in the roadmap, and the next ready item.
 7. Anything you couldn't verify.

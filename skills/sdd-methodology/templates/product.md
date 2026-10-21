@@ -27,7 +27,7 @@ Explain the primary value the product provides and how it improves the situation
 
 ### 1.3 Product Vision
 
-Describe the intended long-term direction of the product, where relevant. Keep this focused on the product's purpose and evolution rather than a detailed roadmap.
+Describe the intended long-term direction of the product, where relevant. Keep this focused on the product's purpose and evolution; the order in which it will be built belongs in `roadmap.md`.
 
 ---
 
@@ -80,11 +80,14 @@ Describe the product's major capabilities and the value they provide.
 
 For each significant capability, document:
 
-- **Name:** [Capability name]
+### CAP-01: [Capability name]
+
 - **Purpose:** [What it enables and why it matters]
 - **Primary users:** [Relevant user groups, if applicable]
 - **Scope:** [The principal responsibilities or outcomes covered]
 - **Status:** [Current | Planned | Retired, where applicable]
+
+Repeat for each capability. Capability IDs are stable: `roadmap.md` refers to them, so they are never reused or renumbered, and a retired capability keeps its heading.
 
 Organize capabilities around meaningful product responsibilities or user outcomes, not individual tickets, implementation tasks, or low-level technical components.
 
@@ -224,7 +227,7 @@ Focus on limitations that influence requirements, scope, or development decision
 
 Describe important future directions, capability expansions, or changes in product responsibilities that provide context for current decisions.
 
-Distinguish established commitments from proposals and longer-term aspirations. Do not turn this section into a detailed roadmap, prioritized backlog, or implementation plan.
+Distinguish established commitments from proposals and longer-term aspirations. Do not turn this section into a roadmap, prioritized backlog, or implementation plan: the increments, their order and their status belong in `roadmap.md`.
 
 ---
 
@@ -262,6 +265,7 @@ When product discovery or implementation reveals that an established assumption 
 - `constitution.md` governs enduring engineering principles, mandatory constraints, practices, and governance.
 - `stack.yaml` records the project's technology stack and technical choices according to its defined schema.
 - `architecture.md` describes the system's architecture and how its components work together.
+- `roadmap.md` holds the increments that will build the planned capabilities, and their order.
 - Individual specifications define detailed requirements, expected behavior, and acceptance criteria for particular capabilities or changes.
 - Other specialized artifacts MAY provide more detailed information for their respective areas of responsibility.
 

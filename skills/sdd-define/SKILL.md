@@ -6,7 +6,7 @@ name: sdd-define
 # produces and when to use it. It names no file path on purpose: where each artifact lives is
 # defined by the sdd-methodology skill and may change. Kept on one line with no ": " so every
 # YAML parser reads it.
-description: "Runs the Define phase of SDD (spec-driven development) for one feature. Starting from the human's request, it opens the feature, resolves what must be known through rounds of questions with the human (Discover), then writes the brief and the requirements with their acceptance criteria and qualities from the sdd-methodology templates, and gets the human's approval of each. The approved brief and requirements become the contract every later phase is checked against. Works for a new request, for resuming a feature that is still in Define, and for revising an approved brief or requirements. Use when the user asks to start or specify a new feature, or asks to write, revise or approve a feature's brief or requirements. Not for project onboarding or for designing how to build the feature."
+description: "Runs the Define phase of SDD (spec-driven development) for one feature. Starting from the next ready roadmap item or the human's request, it makes sure the feature is one small, independently deliverable roadmap item, splitting it with the human when it is too large, opens the feature, resolves what must be known through rounds of questions with the human (Discover), then writes the brief and the requirements with their acceptance criteria and qualities from the sdd-methodology templates, and gets the human's approval of each. The approved brief and requirements become the contract every later phase is checked against. Works for a new request, for resuming a feature that is still in Define, and for revising an approved brief or requirements. Use when the user asks to start or specify a new feature, or to start the next one, or asks to write, revise or approve a feature's brief or requirements. Not for project onboarding or for designing how to build the feature."
 
 # Shown after the command name while the user types it. Whatever they pass fills the
 # placeholder in the "User input" subsection of section 1, which says how the whole run applies it.
@@ -37,6 +37,8 @@ Define produces two artifacts:
 - **The requirements**: what the feature must do, as behaviour a user or caller can observe, each requirement with acceptance criteria, and the qualities the feature needs, each with how it will be verified.
 
 Once the human approves both, they are the **contract** of the spec: the rest of the phases are all checked against them.
+
+Every feature delivers exactly one item of the project's roadmap: a small increment that can be specified, built, verified and released on its own. Define starts by making sure the feature is that, and never opens a feature too large to be one.
 
 The `sdd-methodology` skill defines where each artifact lives, its template, its IDs and its version rules (its artifacts reference), and how Define fits in the whole method. You MUST load it, and you MUST use its templates as the authoritative source of each artifact's structure and expected content.
 
@@ -103,7 +105,7 @@ Decide what is the human's to answer by its consequences: if a different answer 
 
 ### 2.5 Smallest valuable slice
 
-Aim for the smallest scope that delivers the desired outcome. Everything else becomes a non-goal or a later feature, never an unstated maybe.
+Aim for the smallest scope that delivers the desired outcome, within the roadmap item the feature delivers. The scope may narrow the item, never widen it. Everything else becomes a non-goal or a candidate in the roadmap, never an unstated maybe.
 
 Do not turn every idea raised during discovery into a requirement.
 
@@ -117,7 +119,7 @@ The feature's two **running records** make that possible: its state record says 
 
 ### 3.1 Understand the templates first
 
-Before asking any question about the feature, load the `sdd-methodology` skill and read the templates for every artifact this phase creates or updates: the brief, the requirements, the feature's decisions record, its state record, and, if research is needed, the research note.
+Before asking any question about the feature, load the `sdd-methodology` skill and read the templates for every artifact this phase creates or updates: the brief, the requirements, the feature's decisions record, its state record, the roadmap, and, if research is needed, the research note. Read also the roadmap sections of the methodology reference: when an item is ready, the size signals, and how to split.
 
 Establish for each:
 
@@ -134,6 +136,7 @@ If a template is missing, contradictory, or doesn't fit the feature, identify th
 
 Read what the project already knows before asking the human anything:
 
+- The roadmap: the next ready item, the items it depends on, and what later items hold.
 - The product description: who the product serves, what it already does, its domain language.
 - The constitution: obligations and practices that constrain what may be specified.
 - The stack: technologies the human has fixed, which may constrain the feature.
@@ -155,7 +158,7 @@ Determine which situation applies. Ask the human when it cannot be established r
 
 ### 4.1 A new feature
 
-There is a request, and no feature exists for it yet. Open the feature (Phase 2), then run the whole phase.
+There is a request, or the human asks for the next feature, and no feature exists for it yet. Choose its roadmap item (Phase 2), open the feature (Phase 3), then run the whole phase.
 
 Before opening it, check that the request isn't already covered by a feature in progress or by an existing capability. If it is, tell the human and ask whether to continue that feature, extend it, or open a new one.
 
@@ -232,7 +235,28 @@ Completion criteria:
 - The starting point is established.
 - The relevant project context has been read, and conflicts with the request are noted.
 
-### Phase 2 — Open the Feature
+### Phase 2 — Choose the Roadmap Item
+
+Only for a new feature.
+
+Objective:
+Make sure the feature is one ready roadmap item: small enough to specify, build, verify and release on its own.
+
+Activities:
+
+1. **Find the item.**
+   - The human names an item, or asks for the next feature: take that item, or the first item in the roadmap's sequence that isn't delivered or in progress. In progress means an open feature's state record names it.
+   - The human brings a request: match it to an item. If none matches, the request is a new item.
+2. **Check it** against the readiness criteria and the size signals of the methodology reference, and any sizing practice the constitution sets. For a new item, check also that it fits the product's scope, and say where it would sit in the roadmap's order.
+3. **If it is too large or not ready,** don't open the feature yet. Propose a split along one of the ways the methodology reference describes, recommend the piece to build first and why, and let the human choose. A request that isn't ready for another reason (its outcome is unclear, or what it depends on isn't delivered) is put to the human the same way.
+4. **If the roadmap is missing or has no ready item,** say so, and recommend refining it first (the `sdd-roadmap` skill). Continue only if the human chooses to, with the request checked as above.
+
+Completion criteria:
+
+- The feature will deliver one item that is ready, and the human has agreed to it, or picked it.
+- A split, if any, is agreed with the human.
+
+### Phase 3 — Open the Feature
 
 Only for a new feature.
 
@@ -244,18 +268,19 @@ Activities:
 1. Give the feature the next free number. Check the existing feature folders and the open feature branches, so the number is not taken.
 2. Give it a short, descriptive name of a few words.
 3. Create its branch from the latest main, named as the constitution's version-control practices define. If the repository has no commits yet, ask the human to make the first one; never commit to main yourself.
-4. Create the feature's folder with its state record and its decisions record, from their templates. The state record shows the feature in Define.
-5. Take the first checkpoint, so the feature exists in the repository before any question is asked.
+4. Create the feature's folder with its state record and its decisions record, from their templates. The state record shows the feature in Define, and names the roadmap item it delivers.
+5. Update the roadmap on the feature branch, if Phase 2 changed it: a new item for a request that had none, or the split item closed as split, with each piece as an item and the remainder in the inbox. Record the human's choice in the decisions record.
+6. Take the first checkpoint, so the feature exists in the repository before any question is asked.
 
-Tell the human the feature's number, name and branch.
+Tell the human the feature's number, name, branch and roadmap item.
 
 Completion criteria:
 
 - The feature has a unique number and a name.
 - Its branch exists and is checked out.
-- Its state and decisions records exist and follow their templates.
+- Its state and decisions records exist and follow their templates, and the state record names its roadmap item.
 
-### Phase 3 — Discover
+### Phase 4 — Discover
 
 Objective:
 Resolve everything that must be known to write the brief and the requirements, without asking the human anything the project's files or research can answer.
@@ -300,7 +325,7 @@ Completion criteria:
 - Every remaining gap is a recorded assumption, or a recorded open question with a default.
 - The questions and answers are in the decisions record.
 
-### Phase 4 — The Brief
+### Phase 5 — The Brief
 
 Objective:
 Write down, and get the human to approve, what the feature is for: the problem, the users, the outcome, how success is measured and the scope.
@@ -311,7 +336,7 @@ Write the brief from its template, using the request and the Discover answers:
 - **Users and context:** who is affected, their goals, their situation.
 - **Desired outcome:** what changes for users when this ships.
 - **Success metrics:** measurable, with a baseline and a target wherever possible. If no baseline exists, say so and say how it will be obtained.
-- **Scope:** the smallest valuable slice in scope, and explicit non-goals for everything near it that is left out.
+- **Scope:** the smallest valuable slice in scope, within the roadmap item, and explicit non-goals for everything near it that is left out. A non-goal worth a later feature is added to the roadmap's inbox, and the non-goal names it.
 - **Constraints:** only real ones, each traceable to the human, the project's files, or a regulation.
 - **Assumptions, open questions and risks,** each with its ID, its default or mitigation, and its reason.
 
@@ -333,7 +358,7 @@ Completion criteria:
 - The brief follows its template.
 - The human has explicitly approved its current version, and the approval is recorded.
 
-### Phase 5 — The Requirements
+### Phase 6 — The Requirements
 
 Objective:
 Turn the approved brief into the exact, observable behaviour the feature must have, so that anyone can check whether it was built.
@@ -361,7 +386,7 @@ Completion criteria:
 - The requirements follow their template, and pass the checks in section 10.
 - The human has explicitly approved their current version, and the approval is recorded.
 
-### Phase 6 — Close Define
+### Phase 7 — Close Define
 
 Objective:
 Leave the feature ready for Design, with a record anyone can resume from.
@@ -433,6 +458,10 @@ When the request or the answers grow beyond the smallest valuable slice:
 - Name the growth explicitly.
 - Recommend what stays in scope and what becomes a non-goal or a later feature.
 - Let the human decide, and record the decision.
+- What becomes a later feature is added to the roadmap's inbox as a candidate, on the feature branch, with this feature as its origin.
+- If what stays in scope no longer fits one item (the size signals of the methodology reference), the feature is too large: propose splitting it, as in Phase 2.
+
+Widening the feature beyond its roadmap item is a change to the roadmap, and the human's decision.
 
 ### 8.3 Legal, regulatory and organizational obligations
 
@@ -462,6 +491,7 @@ Before modifying an existing artifact, read it, preserve its valid content, and 
 ### 9.4 Authorization and honesty
 
 - Create the feature's branch and files when the human has asked for the feature; don't ask permission for every edit within the phase.
+- Change the roadmap only on the feature branch, and only to add the feature's item, record a split the human agreed to, or add candidates to the inbox. Never reorder it or drop an item.
 - Ask before anything destructive, or outside this feature.
 - Commit the feature's files on the feature branch at every checkpoint (section 5), following the constitution's version-control practices. Never commit to main, and do not push or merge unless the human asks.
 - Do not claim that something was written, recorded or approved unless it actually was.
@@ -478,6 +508,7 @@ Before putting the requirements to the human, verify:
 ### 10.2 Coverage
 
 - Everything in the brief's scope is covered by at least one requirement.
+- The requirements stay within the feature's roadmap item, and together show none of the size signals of the methodology reference.
 - Nothing is required that the brief's scope doesn't include.
 - Every requirement has at least one acceptance criterion.
 - Every quality has a way to verify it.
@@ -528,10 +559,11 @@ If questions or an approval are pending and the human can't answer in this sessi
 When Define is finished, or when you stop, report:
 
 1. Where the feature stands, and its next step.
-2. The artifacts created or updated, with their versions and status.
-3. The decisions the human made during this run.
-4. The assumptions and open questions the brief and the requirements carry.
-5. Anything waiting for the human.
-6. Anything you couldn't verify.
+2. The roadmap item it delivers, and any items split or added to the roadmap.
+3. The artifacts created or updated, with their versions and status.
+4. The decisions the human made during this run.
+5. The assumptions and open questions the brief and the requirements carry.
+6. Anything waiting for the human.
+7. Anything you couldn't verify.
 
 Distinguish what the human approved from what you recommend.

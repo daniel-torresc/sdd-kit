@@ -345,7 +345,7 @@ These are discovery topics, not mandatory questions for every project. Prioritiz
 
 For brownfield projects, compare the user's description with the observed implementation and available documentation, and explicitly identify discrepancies between current capabilities and intended capabilities.
 
-Do not turn every potential future feature into an immediate requirement.
+Do not turn every potential future feature into an immediate requirement. Note it instead: it may become a roadmap item (Phase 5).
 
 Completion criteria:
 
@@ -490,6 +490,14 @@ Identify every document the project must keep current beyond the foundational fi
 - For each document, record why it is required and by whom, the structure it must keep, and what makes it need an update.
 - Where a required document doesn't exist yet, record it, and say so: creating it is a decision for the user.
 
+#### The first roadmap
+
+Once the planned capabilities (Phase 3) and the stack decisions still open (Phase 4) are known, build the first roadmap with the user: the small, independently deliverable increments the product will grow by, in the order they decide. The roadmap is required, like every foundational file; its order is the user's choice.
+
+Build it as the `sdd-roadmap` skill describes for a first roadmap (its sections 4.1 and 5): the planned capabilities, given stable IDs, sliced into items, the first ones refined until they are ready, and an order recommended for the user to decide. In a greenfield project, the first item is usually a walking skeleton. In a brownfield project, the items come from the gaps between current and planned capabilities, from debt with an observable outcome, and from any backlog the user points to.
+
+Do not detail the whole roadmap. Refine only the first few items; leave the rest coarse.
+
 Completion criteria:
 
 - Proposed principles and constraints are relevant to the project.
@@ -499,6 +507,7 @@ Completion criteria:
 - Significant gaps between current practice and intended standards are understood.
 - The skills that support the stack, the architecture, and the practices have been identified, and the user has decided on each candidate.
 - The documents the project must keep current are identified, with why and when each one is updated.
+- The first roadmap is built: every planned capability has an item or is explicitly deferred, the first item is ready, and the user has decided the order.
 
 ### Phase 6 — Consolidation and Decision Review
 
@@ -515,6 +524,7 @@ Review the following dimensions together:
 - Organizational and regulatory obligations.
 - Existing-system limitations.
 - Technical debt and planned improvements.
+- The first increments and their order.
 - Unresolved decisions and material assumptions.
 
 Check for contradictions, such as:
@@ -785,6 +795,7 @@ Check that:
 - The same decision is not represented differently across files.
 - Information is stored in the appropriate file.
 - Cross-file references, if present, remain valid.
+- Every roadmap item names a capability that exists in the product description, or says it is an enabler, and every planned capability has an item or is explicitly deferred.
 
 ### 10.5 Brownfield compatibility
 
@@ -825,6 +836,7 @@ Consider whether a developer can use them to:
 - Understand the engineering rules that specifications and implementations must respect.
 - Identify consequential decisions that remain open.
 - Begin defining requirements without inventing foundational context.
+- Identify the first feature to build: a ready roadmap item, small enough to specify, build and release on its own.
 - Evaluate future specifications and technical proposals for consistency.
 
 Do not require every feature requirement, architectural decision, or implementation detail to be resolved at this stage. Those belong to subsequent SDD activities unless a foundational decision is necessary to proceed safely or coherently.
@@ -848,7 +860,7 @@ Present a concise final report containing:
 5. Significant technical debt or transition concerns, where applicable.
 6. Any limitations of the analysis or validation.
 7. The SDD readiness classification and its justification.
-8. The recommended next step.
+8. The recommended next step: usually Define for the first ready roadmap item, named with its outcome.
 
 Distinguish checks that actually passed from checks that were not performed or could not be performed.
 
