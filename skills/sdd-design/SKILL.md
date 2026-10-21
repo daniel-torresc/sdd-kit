@@ -516,7 +516,7 @@ Be collaborative, rigorous, concise and transparent.
 
 Design asks the human few questions: only what is theirs to decide (one-way doors, scope, risk, cost, legal matters, conflicts) and the approval. Decide the rest yourself, record it, and explain it in the design.
 
-When you put a decision to the human:
+When you put a decision to the human, ask interactively, with the options to choose from, not as a list of questions in a message:
 
 1. Explain what is being decided and why it matters now.
 2. Present the options with their consequences, in terms the human can weigh.
