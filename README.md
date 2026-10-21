@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/daniel-torresc/sdd-kit/blob/main/.claude-plugin/plugin.json"><img src="https://img.shields.io/badge/version-0.2.0-0b6b5d" alt="Version 0.2.0"></a>
+  <a href="https://github.com/daniel-torresc/sdd-kit/blob/main/.claude-plugin/plugin.json"><img src="https://img.shields.io/badge/version-0.2.1-0b6b5d" alt="Version 0.2.1"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache_2.0-0b6b5d" alt="License: Apache 2.0"></a>
   <a href="https://code.claude.com"><img src="https://img.shields.io/badge/Claude_Code-plugin-141c22" alt="Claude Code plugin"></a>
   <a href="https://github.com/daniel-torresc/sdd-marketplace"><img src="https://img.shields.io/badge/install_from-sdd--marketplace-141c22" alt="Install from sdd-marketplace"></a>
@@ -33,7 +33,7 @@ SDD Kit gives an AI coding agent a structured way to build software. A project i
 SDD Kit is **the core methodology, not a complete ecosystem**. It sets the development process: the phases, the artifacts, the approvals, the reviews and the traceability. It does not try to teach the agent every framework, architecture style or engineering practice, and it does not ship integrations. Those come from the skills, tools and MCP servers you already use, or choose to add. A project records the skills it relies on in a catalogue, and every phase loads the ones that apply. You keep your existing open-source and proprietary skills, your tools and your practices. **The methodology organizes the process. The ecosystem around it makes the agent capable.**
 
 > [!NOTE]
-> **Status:** early (`version 0.2.0`), open source under the [Apache License 2.0](LICENSE). The methodology is defined as instructions and templates. Nothing in the repository enforces it with code: there are no scripts, hooks or validators yet. Today it runs as a [Claude Code](https://code.claude.com) plugin, installed from [sdd-marketplace](https://github.com/daniel-torresc/sdd-marketplace). See [Current capabilities and limitations](#current-capabilities-and-limitations).
+> **Status:** early (`version 0.2.1`), open source under the [Apache License 2.0](LICENSE). The methodology is defined as instructions and templates. Nothing in the repository enforces it with code: there are no scripts, hooks or validators yet. Today it runs as a [Claude Code](https://code.claude.com) plugin, installed from [sdd-marketplace](https://github.com/daniel-torresc/sdd-marketplace). See [Current capabilities and limitations](#current-capabilities-and-limitations).
 
 ---
 
