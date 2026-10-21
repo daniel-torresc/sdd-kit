@@ -355,7 +355,7 @@ Before changing the roadmap, read it. Never delete an item or reuse an ID: a clo
 
 Be concise and concrete. Speak the product's domain language.
 
-When you put a decision to the human:
+When you put a decision to the human, ask interactively, with the options to choose from, not as a list of questions in a message:
 
 1. Say what is being decided, and why it matters now.
 2. Show the options with their consequences: what moves earlier, what waits, what depends on it.

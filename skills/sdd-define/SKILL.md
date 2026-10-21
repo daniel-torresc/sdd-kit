@@ -307,7 +307,7 @@ For each unknown, decide how it is resolved:
 3. **It isn't the human's decision.** Choose a default and record it as an assumption (section 2.4).
 4. **Only the human can answer it.** It becomes a question.
 
-Put the questions to the human in rounds:
+Put the questions to the human interactively, in rounds:
 
 - Each question says one thing, why it matters (what the answer changes in the brief or the requirements), and the answer you recommend.
 - Group related questions, and put the most consequential first.
@@ -429,6 +429,7 @@ Defer details that a later phase can settle without changing what the human aske
 - Give the answer you recommend, and your reason.
 - Where the human chooses between options, give a small set of realistic options with their consequences.
 - Use the human's domain language, not technical vocabulary.
+- Ask interactively, with the options to choose from, not as a list of questions in a message.
 
 ### 7.4 Never ask about the solution
 
